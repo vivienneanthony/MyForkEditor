@@ -1,3 +1,44 @@
+#GameEconomicUrho - Hangars
+Hangars is a extension of the Existence project an effort to create a on-line multi-player sandbox integrated with procedural generation game with ground and space environments. Starting with a single player procedural generation integrated game client. The base-bone client is currently in development but can do all of the above. 
+
+Hangars is a 2D and 3D game using elements of Existence and Urho3D game engine. 
+
+#Creative
+The current theme for Hangars is Starbase creation aka Hangars.
+
+#Developers
+Vivienne Anthony – Content creator and C/C++ programmer 
+
+#Tools
+1. Blender – Open source 3d modeling and animation software 
+2. Makehuman – Open source human character modeling software 
+3. Urho3D – Open source 3d graphics and rendering engine (http://urho3d.github.io/)
+4. GDB - Open source debugger 
+
+#Links
+1. http://garagedoorproductions.averyanthony.com/
+2. http://youtube.com/cgprojectsfx
+
+#Requirements
+1. Current build requires MySQL C++ Connector and a MySQL Server (Workbench helps in administration)
+
+#Notes
+1. Server uses Posix PThreads.
+
+#Contact
+Email: cgprojectsfx@gmail.com
+
+#License/Copyright
+Vivienne Anthony @ 2015 Creative Commons Attribution Non-Commercial License V2.0 
+
+#Building/Installation
+1. Download zip file from GitHub
+2. Download resource file from developer site.
+3. Decompress Github folder to a folder.
+4. Go to specific folder in step 1 "./cmake_generic.sh {target path}  -DURHO3D_64BIT=1 -DURHO3D_GAMEECONOMICSERVER=1 -DURHO3D_GAMEECONOMICSERVERCLIENT=1 -DURHO3D_GAMEECONOMICGAMECLIENT=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo" for example
+5. Decompress 2 in bin folder
+
+
 ![Urho3D logo](https://raw.githubusercontent.com/urho3d/Urho3D/master/bin/Data/Textures/LogoLarge.png)
 
 #Urho3D
@@ -19,19 +60,16 @@ Urho3D development, contributions and bugfixes by:
 - Danny Boisvert
 - Carlo Carollo
 - Pete Chown
-- Christian Clavet
 - Sebastian Delatorre (primitivewaste)
 - Josh Engebretson
 - Chris Friesen
 - Alex Fuller
 - Mika Heinonen
-- Jukka Jylänki
 - Graham King
 - Jason Kinzer
 - Gunnar Kriik
 - Ali Kämäräinen
 - Pete Leigh
-- Thorbjørn Lindeijer
 - Jonne Nauha
 - Paul Noome
 - David Palacios
@@ -41,8 +79,6 @@ Urho3D development, contributions and bugfixes by:
 - Nick Royer
 - Jonathan Sandusky
 - Miika Santala
-- Hualin Song
-- James Thomas
 - Joshua Tippetts
 - Daniel Wiberg
 - Steven Zhang
@@ -52,18 +88,13 @@ Urho3D development, contributions and bugfixes by:
 - Magic.Lixin
 - Mike3D
 - Modanung
-- MonkeyFirst
-- Newb I the Newbd
 - OvermindDL1
 - Skrylar
-- 1vanK
 - andmar1x
 - amadeus_osa
 - atship
 - att
 - celeron55
-- cosmy1
-- feltech
 - hdunderscore
 - marynate
 - mightyCelu
@@ -76,7 +107,6 @@ Urho3D development, contributions and bugfixes by:
 - skaiware
 - szamq
 - thebluefish
-- yushli
 
 Urho3D is greatly inspired by OGRE (http://www.ogre3d.org) and Horde3D
 (http://www.horde3d.org). Additional inspiration & research used:
@@ -101,9 +131,9 @@ Urho3D is greatly inspired by OGRE (http://www.ogre3d.org) and Horde3D
   http://warp.povusers.org/SortComparison/
 
 Urho3D uses the following third-party libraries:
-- AngelScript 2.30.2 (http://www.angelcode.com/angelscript/)
+- AngelScript 2.29.1 (http://www.angelcode.com/angelscript/)
 - Box2D 2.3.0 (http://box2d.org/)
-- Bullet 2.83.6 (http://www.bulletphysics.org/)
+- Bullet 2.82 (http://www.bulletphysics.org/)
 - Civetweb (http://sourceforge.net/projects/civetweb/)
 - FreeType 2.5.0 (http://www.freetype.org/)
 - GLEW 1.9.0 (http://glew.sourceforge.net/)
@@ -114,8 +144,6 @@ Urho3D uses the following third-party libraries:
 - LuaJIT 2.0.3 (http://www.luajit.org)
 - LZ4 (http://code.google.com/p/lz4/)
 - MojoShader (http://icculus.org/mojoshader/)
-- Mustache 1.0 (http://mustache.github.io/, https://github.com/kainjow/Mustache)
-- nanodbc 2.2.2 (http://lexicalunit.github.io/nanodbc/)
 - Open Asset Import Library (http://assimp.sourceforge.net/)
 - pugixml 1.5 (http://pugixml.org/)
 - rapidjson 0.11 (https://code.google.com/p/rapidjson/)
@@ -126,7 +154,6 @@ Urho3D uses the following third-party libraries:
 - stb_image 2.05 (http://nothings.org/)
 - stb_image_write 0.98 (http://nothings.org/)
 - stb_vorbis 1.05 (http://nothings.org/)
-- SQLite 3.8.10.2 (https://www.sqlite.org/)
 - tolua++ 1.0.93 (http://www.codenix.com/~tolua)
 
 DXT / ETC1 / PVRTC decompression code based on the Squish library and the Oolong
