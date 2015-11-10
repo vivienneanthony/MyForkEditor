@@ -8,6 +8,7 @@ The current theme for Hangars is Starbase creation aka Hangars.
 
 #Developers
 Vivienne Anthony – Content creator and C/C++ programmer 
+Andrej Skorinko - C/C++ programmer. 
 
 #Tools
 1. Blender – Open source 3d modeling and animation software 
