@@ -179,6 +179,7 @@ using namespace Urho3D;
 #include "Utility/ApplicationMessage.h"
 #include "Debugging/Debugging.h"
 #include "Interfaces/Interfaces.h"
+#include "GameAsset/GameAssetManager.h"
 #include "EngineApplication.h"
 
 #include <exception>

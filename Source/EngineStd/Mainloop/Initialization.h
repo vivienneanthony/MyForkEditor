@@ -40,6 +40,8 @@ struct GameOptions
 	int m_MaxAIs;
 	int m_MaxPlayers;
 
+    PlatformOS m_currentPlatform;
+
 	// resource cache options
 	bool m_bUseDevelopmentDirectories;
 
@@ -52,9 +54,12 @@ struct GameOptions
 	GameOptions();
 	~GameOptions();
 
-	bool Init(const char* xmlFilePath);
+	bool InitGameOptions(const char* xmlFilePath);
 	void InitResolutions();
 	bool ChangeXML();
+
+    bool InitRenderer(void);
+    void SetPlatform(PlatformOS setPlatform);
 
 	// Helper functions
 	static IntVector2 GetResolutionValues(String res);

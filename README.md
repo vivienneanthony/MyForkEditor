@@ -39,7 +39,10 @@ Vivienne Anthony @ 2015 Creative Commons Attribution Non-Commercial License V2.0
 4. Go to specific folder in step 1 "./cmake_generic.sh {target path}  -DURHO3D_64BIT=1 -DURHO3D_GAMEECONOMICSERVER=1 -DURHO3D_GAMEECONOMICSERVERCLIENT=1 -DURHO3D_GAMEECONOMICGAMECLIENT=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo" for example
 5. Decompress 2 in bin folder
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 ![Urho3D logo](https://raw.githubusercontent.com/urho3d/Urho3D/master/bin/Data/Textures/LogoLarge.png)
 
 #Urho3D
