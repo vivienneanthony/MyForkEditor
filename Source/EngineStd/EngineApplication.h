@@ -5,6 +5,8 @@
 // EngineApp - Application class contains all necessary components EngineStd.hin order to run program correctly.
 //----------------------------------------------------------------------------------------------------
 
+#include "EnginePlatform.h"
+
 #include "Mainloop/Initialization.h"
 
 using namespace Urho3D;
@@ -80,6 +82,9 @@ public:
 	inline String GetSaveDirectory() { return m_SaveDirectory; }
 	inline GameOptions& GetGameOptions() { return m_GameOptions;  }
 
+    // Get OS
+    PlatformOS GetOS(String InputString);
+
 protected:
 // For caching
 	Graphics* m_pGraphics;						// Application window handling and parameters.
@@ -114,6 +119,8 @@ protected:
 
 	Vector2 m_LastMousePos;
 	bool m_bIsInit;								// True - already initialized all subsystems. Game can be started.
+
+	PlatformOS m_currentPlatform;                          // Current platform
 
 };
 
