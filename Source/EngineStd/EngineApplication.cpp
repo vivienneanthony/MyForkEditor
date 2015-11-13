@@ -55,6 +55,9 @@ void EngineApp::Start()
 	// Save all necessary subsystems in Game Application Layer
 	context_->RegisterSubsystem(new Script(context_));
 
+    // Add resource manager
+    GameAssetManager::RegisterNewSubsystem(context_);
+
 	/*context_->RegisterSubsystem(new Audio(context_));
 */
 
