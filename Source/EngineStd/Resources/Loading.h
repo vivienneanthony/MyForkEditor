@@ -14,7 +14,6 @@ public:
 	void ProgressBarCallback(int value, bool& cancel);
 
 
-
 protected:
 	ResourceCache* m_Cache;
 	String m_Pattern;

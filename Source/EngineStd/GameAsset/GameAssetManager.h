@@ -12,41 +12,40 @@ using namespace Urho3D;
 class URHO3D_API GameAssetManager : public LogicComponent
 {
     URHO3D_OBJECT(GameAssetManager, LogicComponent);
+public:
+    // Constructor and Destructor
+    GameAssetManager(Context* context);
+    ~GameAssetManager();
 
-    public:
-        // Constructor and Destructor
-        GameAssetManager(Context * context);
-        ~GameAssetManager();
+    static void RegisterNewSubsystem(Context* context);
 
-        static void RegisterNewSubsystem(Context* context);
+    // initialize
+    void Init(void);
 
-        // initialize
-        void Init(void);
+    // add game asset - base symbol
+    GameAsset* AddGameAsset(string GA_Name, string GA_Symbol, GameAssetType GA_Type, GameAssetState GA_State);
 
-        // add game asset - base symbol
-        GameAsset * AddGameAsset(string GA_Name, string GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State);
+    // search asset by name
+    GameAsset* FindGameAssetByKeyword(string Keyword, bool useName);
+    GameAsset* FindGameAssetByName(string Keyword){ return FindGameAssetByKeyword(Keyword, true); };
+    GameAsset* FindGameAssetBySymbol(string Keyword){ return FindGameAssetByKeyword(Keyword, false); };
 
-        // search asset by name
-        GameAsset * FindGameAssetByKeyword(string Keyword, bool useName);
-        GameAsset * FindGameAssetByName(string Keyword){return FindGameAssetByKeyword(Keyword, true);};
-        GameAsset * FindGameAssetBySymbol(string Keyword){ return FindGameAssetByKeyword(Keyword, false);};
+    // find a specific asset
+    GameAsset* GetGameAssetByIdx(unsigned int idx);
 
-        // find a specific asset
-        GameAsset * GetGameAssetByIdx(unsigned int idx);
+    // get total assets
+    unsigned int GetTotalGameAssets(void);
 
-        // get total assets
-        unsigned int GetTotalGameAssets(void);
+    // delete asset
+    bool DeleteGameAsset(GameAsset* RemoveGameAsset);
 
-        // delete asset
-        bool DeleteGameAsset(GameAsset * RemoveGameAsset);
+private:
+    // Game Asset Library - Actual data
+    vector<GameAsset*>*		m_pGameAssetLibrary;
+    vector<GameAssetRule*>* m_pGameAssetRuleLibrary;
 
-    private:
-
-        // Game Asset Library - Actual data
-        vector<GameAsset *> * GameAssetLibrary;
-        vector<GameAssetRule *> * GameAssetRuleLibrary;
-
-        GameAssetData          * GameAssetResources;
+    GameAssetData*			m_pGameAssetResources;
 
 };
+
 #endif

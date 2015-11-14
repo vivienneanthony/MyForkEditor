@@ -27,4 +27,6 @@ typedef List<IAudioBuffer *> AudioBufferList;
 #include "Controllers/IPointerHandler.h"
 #include "Controllers/IKeyboardHandler.h"
 
+#include "Network/IPacket.h"
+
 #endif

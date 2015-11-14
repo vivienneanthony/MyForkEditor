@@ -35,25 +35,25 @@ void EngineApp::Setup()
     Logger::Init("logging.log");
 
     // Get this platform
-    m_currentPlatform = GetOS(GetPlatform());
+    m_CurrentPlatform = GetOS(GetPlatform());
+	URHO3D_LOGDEBUG(String("Current platform is ") + GetPlatform());
 
     // Set Platform
-    m_GameOptions.SetPlatform(m_currentPlatform);
+    m_GameOptions.SetPlatform(m_CurrentPlatform);
 
     m_GameOptions.InitRenderer();
 
     // set filename based on platform
     String PlayerOptionFile;
 
-    if(m_currentPlatform!=PlatformWindows)
+    if(m_CurrentPlatform != PlatformWindows)
     {
-        PlayerOptionFile.Append("GameData/System/GameOptions.xml");
+        PlayerOptionFile.Append("System/GameOptions.xml");
     }
     else
     {
-        PlayerOptionFile.Append("GameData\\System\\GameOptions.xml");
+        PlayerOptionFile.Append("System\\GameOptions.xml");
     }
-
 
     if (!m_GameOptions.InitGameOptions(PlayerOptionFile.CString()))
     {
@@ -103,7 +103,7 @@ void EngineApp::Start()
     m_SaveDirectory = m_CurrentWorkDirectory;
     m_SaveDirectory += "GameData/Save";
 
-    InitializeAllDelegates();
+    VInitializeAllDelegates();
 
 
     if (CreateCursor())
@@ -120,8 +120,6 @@ void EngineApp::Start()
     XMLFile* style = m_pConstantResourceCache->GetResource<XMLFile>("UI/DefaultStyle.xml");
     GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(style);
 
-
-
     if (!VCreateViewLogic())
     {
         URHO3D_LOGERROR(String("Failed to init game logic"));
@@ -135,44 +133,20 @@ void EngineApp::Start()
     m_pAudio->SetMasterGain(SOUND_VOICE, m_GameOptions.m_SpeechVolume / 100.0f);
 
 
-    // Create console
-    context_->RegisterSubsystem(new Console(context_));
-    // Show the console by default, make it large. Console will show the text edit field when there is at least one
-    // subscriber for the console command event
-    Console* console = GetSubsystem<Console>();
-    console->SetNumRows(GetSubsystem<Graphics>()->GetHeight() / 16);
-    console->SetNumBufferedRows(2 * console->GetNumRows());
-    console->SetCommandInterpreter(GetTypeName());
-    console->SetVisible(true);
-    console->GetCloseButton()->SetVisible(true);
-    console->SetDefaultStyle(style);
-    console->GetBackground()->SetOpacity(0.8f);
-    // Open the operating system console window (for stdin / stdout) if not open yet
-    OpenConsoleWindow();
+	CreateConsole(style);
 
-    // Create debug HUD.
-    DebugHud* debugHud = engine_->CreateDebugHud();
-    debugHud->SetDefaultStyle(style);
+	CreateDebugHud(style);
 
-    // *SUPER HACK* To properly created Awesomium textures in fullscreen mode. :))
-    // Try to start game in fullscreen mode without this hack...
-    if (!m_GameOptions.m_bWindowMode)
-    {
-        m_pGraphics->ToggleFullscreen();
-        m_pGraphics->ToggleFullscreen();
-    }
-
-
+  
     m_bIsInit = true;
     URHO3D_LOGINFO("Game can be started");
-    URHO3D_LOGDEBUG("DEBUG CHECK");
 }
 
 void EngineApp::Stop()
 {
     m_pGameLogic->VShutdown();
 
-    DestroyAllDelegates();
+    VDestroyAllDelegates();
 
     Logger::Shutdown();
 }
@@ -195,8 +169,17 @@ void EngineApp::InitInstance(int screenWidth, int screenHeight, bool windowMode,
         engineParameters_["WindowHeight"] = screenHeight;
     }
 
-    engineParameters_["ResourcePackages"] = String("CoreData");
-    engineParameters_["ResourcePaths"] = String("Data;CoreData");
+	if (m_GameOptions.m_bUseDevelopmentDirectories)
+	{
+		engineParameters_["ResourcePackages"] = String("CoreData.pak");
+		engineParameters_["ResourcePaths"] = String("Data;GameData");
+	}
+	else
+	{
+		engineParameters_["ResourcePackages"] = String("CoreData");
+		engineParameters_["ResourcePaths"] = String("Data;CoreData");
+	}
+
     engineParameters_["FullScreen"] = !windowMode;
     engineParameters_["VSync"] = vsync;
     engineParameters_["TripleBuffer"] = triplebuffer;
@@ -265,7 +248,33 @@ bool EngineApp::OnMessageProc(AppMsg message)
     return result;
 }
 
-void EngineApp::InitializeAllDelegates()
+void EngineApp::CreateConsole(XMLFile* style)
+{
+	// Create console
+	context_->RegisterSubsystem(new Console(context_));
+	
+	// Show the console by default, make it large. Console will show the text edit field when there is at least one
+	// subscriber for the console command event	
+	Console* console = GetSubsystem<Console>();
+	console->SetNumRows(GetSubsystem<Graphics>()->GetHeight() / 16);
+	console->SetNumBufferedRows(2 * console->GetNumRows());
+	console->SetCommandInterpreter(GetTypeName());
+	console->SetVisible(false);
+	console->GetCloseButton()->SetVisible(true);
+	console->SetDefaultStyle(style);
+	console->GetBackground()->SetOpacity(0.8f);
+	// Open the operating system console window (for stdin / stdout) if not open yet
+	OpenConsoleWindow();
+}
+
+void EngineApp::CreateDebugHud(XMLFile* style)
+{
+	// Create debug HUD.
+	DebugHud* debugHud = engine_->CreateDebugHud();
+	debugHud->SetDefaultStyle(style);
+}
+
+void EngineApp::VInitializeAllDelegates()
 {
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(EngineApp, UpdateDelegate));
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(EngineApp, KeyDownDelegate));
@@ -277,7 +286,7 @@ void EngineApp::InitializeAllDelegates()
     SubscribeToEvent(E_INPUTFOCUS, URHO3D_HANDLER(EngineApp, InputFocusDelegate));
 }
 
-void EngineApp::DestroyAllDelegates()
+void EngineApp::VDestroyAllDelegates()
 {
     UnsubscribeFromAllEvents();
 }
@@ -289,6 +298,9 @@ void EngineApp::DestroyAllDelegates()
 void EngineApp::UpdateDelegate(StringHash eventType, VariantMap& eventData)
 {
     float timeStep = eventData[Update::P_TIMESTEP].GetFloat();
+
+
+
     m_pGameLogic->VOnUpdate(timeStep);
 }
 
@@ -460,12 +472,11 @@ PlatformOS EngineApp::GetOS(String InputString)
         /// Scan List
         if(OSList.At(i) == InputString)
         {
-            returnOS = (PlatformOS) i;
+            returnOS = (PlatformOS)i;
         }
     }
 
     return returnOS;
-
 };
 
 

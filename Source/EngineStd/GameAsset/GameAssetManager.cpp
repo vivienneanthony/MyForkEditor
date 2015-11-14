@@ -1,24 +1,24 @@
+#include "EngineStd.h"
+
 #include <iostream>
 #include <vector>
-
 using namespace std;
-
-#include "EngineStd.h"
 
 #include "GameAsset.h"
 #include "GameAssetRules.h"
 #include "GameAssetManager.h"
 
 // constructor - initialize set default
-GameAssetManager::GameAssetManager(Context *context)
+GameAssetManager::GameAssetManager(Context* context)
     :LogicComponent(context)
-    ,GameAssetLibrary(NULL)
-    ,GameAssetRuleLibrary(NULL)
+	,m_pGameAssetLibrary(NULL)
+	,m_pGameAssetRuleLibrary(NULL)
+	,m_pGameAssetResources(NULL)
 
 {
     // GameAssetLibrary
-    GameAssetLibrary = new vector<GameAsset *>();
-    GameAssetRuleLibrary =new vector<GameAssetRule *>();
+    m_pGameAssetLibrary = new vector<GameAsset*>();
+    m_pGameAssetRuleLibrary = new vector<GameAssetRule*>();
 
 }
 
@@ -34,15 +34,15 @@ void GameAssetManager::RegisterNewSubsystem(Context* context)
 void GameAssetManager::Init(void)
 {
     // get file system
-    FileSystem * filesystem = GetSubsystem<FileSystem>();
+    FileSystem* filesystem = GetSubsystem<FileSystem>();
 
-    GameAssetResources = new GameAssetData(context_);
+    m_pGameAssetResources = new GameAssetData(context_);
 
     // Sets Path
-    GameAssetResources -> SetGameAssetsPath(filesystem->GetProgramDir().CString());
+    m_pGameAssetResources->SetGameAssetsPath(filesystem->GetProgramDir().CString());
 
     // Set Data filename
-    GameAssetResources -> SetAddDataFile("GameAssets.pak");
+    m_pGameAssetResources->SetAddDataFile("GameAssets.pak");
 
     return;
 }
@@ -51,19 +51,19 @@ void GameAssetManager::Init(void)
 GameAsset * GameAssetManager::AddGameAsset(string GA_Name, string GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State)
 {
     // if asset library is null
-    if(!GameAssetLibrary)
+    if(!m_pGameAssetLibrary)
     {
         return NULL;
     }
 
     // check valid
-    if(GA_Name.empty()||GA_Symbol.empty())
+    if(GA_Name.empty() || GA_Symbol.empty())
     {
         return NULL;
     }
 
     // check if state or type is valid
-    if(GA_Type==GAType_None||GA_State==GAState_None)
+    if(GA_Type == GAType_None || GA_State==GAState_None)
     {
         return NULL;
     }
@@ -77,7 +77,7 @@ GameAsset * GameAssetManager::AddGameAsset(string GA_Name, string GA_Symbol,Game
     newGameAsset ->SetTypeState(GA_Type, GA_State);
 
     // add to library
-    GameAssetLibrary->push_back(newGameAsset);
+   m_pGameAssetLibrary->push_back(newGameAsset);
 
 
     return newGameAsset;
@@ -88,7 +88,7 @@ GameAsset * GameAssetManager::FindGameAssetByKeyword(string Keyword, bool useNam
 {
 
     // if asset library is null
-    if(!GameAssetLibrary||GameAssetLibrary->size()==0)
+    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->size()==0)
     {
         return NULL;
     }
@@ -99,11 +99,11 @@ GameAsset * GameAssetManager::FindGameAssetByKeyword(string Keyword, bool useNam
         return NULL;
     }
 
-    for(unsigned int i=0; i<GameAssetLibrary->size(); i++)
+    for(unsigned int i=0; i< m_pGameAssetLibrary->size(); i++)
     {
-        if(useName==true? GameAssetLibrary->at(i)->GetName()== Keyword : GameAssetLibrary->at(i)->GetSymbol()==Keyword)
+        if(useName == true ? m_pGameAssetLibrary->at(i)->GetName()== Keyword : m_pGameAssetLibrary->at(i)->GetSymbol() == Keyword)
         {
-            return GameAssetLibrary->at(i);
+            return m_pGameAssetLibrary->at(i);
         }
     }
 
@@ -114,53 +114,52 @@ GameAsset * GameAssetManager::FindGameAssetByKeyword(string Keyword, bool useNam
 // get game asset
 GameAsset * GameAssetManager::GetGameAssetByIdx(unsigned int idx)
 {
-
     // if asset library is null
-    if(!GameAssetLibrary||GameAssetLibrary->size()==0)
+    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->size()==0)
     {
         return NULL;
     }
 
     // test size
-    if(idx<0||idx>GameAssetLibrary->size())
+    if(idx<0 || idx>m_pGameAssetLibrary->size())
     {
         return NULL;
     }
 
-    return GameAssetLibrary->at(idx);
+    return m_pGameAssetLibrary->at(idx);
 }
 
 // Get total amount of assets in library
 unsigned int GameAssetManager::GetTotalGameAssets(void)
 {
     // if asset library is null
-    if(!GameAssetLibrary||GameAssetLibrary->size()==0)
+    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->size()==0)
     {
         return 0;
     }
 
-    return GameAssetLibrary->size();
+    return m_pGameAssetLibrary->size();
 }
 
 // wipe game asset from memory
 bool GameAssetManager::DeleteGameAsset(GameAsset * RemoveGameAsset)
 {
     // if asset library is null
-    if(!GameAssetLibrary||GameAssetLibrary->size()==0)
+    if(!m_pGameAssetLibrary||m_pGameAssetLibrary->size()==0)
     {
         return false;
     }
 
     // loop through library
-    for(unsigned int i=0; i<GameAssetLibrary->size(); i++)
+	for (unsigned int i = 0; i < m_pGameAssetLibrary->size(); i++)
     {
-        if(GameAssetLibrary->at(i)==RemoveGameAsset)
+		if (m_pGameAssetLibrary->at(i) == RemoveGameAsset)
         {
             // Remove all Game Assets
-            GameAssetLibrary->at(i)->RemoveClean();
+			m_pGameAssetLibrary->at(i)->RemoveClean();
 
             // remove from library
-            GameAssetLibrary->erase(GameAssetLibrary->begin()+i);
+			m_pGameAssetLibrary->erase(m_pGameAssetLibrary->begin() + i);
 
             // remove from memory
             //delete RemoveGameAsset;
@@ -174,11 +173,10 @@ bool GameAssetManager::DeleteGameAsset(GameAsset * RemoveGameAsset)
 GameAssetManager::~GameAssetManager()
 {
     // delete game assets from memory
-    delete GameAssetLibrary;
-    delete GameAssetRuleLibrary;
+	SAFE_DELETE(m_pGameAssetLibrary);
+	SAFE_DELETE(m_pGameAssetRuleLibrary);
 
     // delete rest
-    delete GameAssetResources;
+	SAFE_DELETE(m_pGameAssetResources);
 
-    return;
 }

@@ -46,7 +46,7 @@ class GameAsset : public Object
 
 public:
     // Constructor and Destructor
-    GameAsset(Context * context);
+    GameAsset(Context* context);
     ~GameAsset();
 
     // set attributes
@@ -56,57 +56,56 @@ public:
     void SetAttributes(bool setPhysical, bool setPowered, bool setEntity, bool setLinkedGameAsset);
 
     // search asset by name
-    GameAsset * FindChildByKeyword(string Keyword, bool useName);
-    GameAsset * FindChildByName(string Keyword){return FindChildByKeyword(Keyword, true);};
-    GameAsset * FindChildBySymbol(string Keyword){ return FindChildByKeyword(Keyword, false);};
+    GameAsset* FindChildByKeyword(string Keyword, bool useName);
+    GameAsset* FindChildByName(string Keyword){ return FindChildByKeyword(Keyword, true); };
+    GameAsset* FindChildBySymbol(string Keyword){ return FindChildByKeyword(Keyword, false); };
 
     // add child
-    GameAsset * AddChild(string GA_Name, string GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State);
+    GameAsset* AddChild(string GA_Name, string GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State);
 
     // remove children
-    bool DeleteChild(GameAsset * RemoveGameAsset);
+    bool DeleteChild(GameAsset* RemoveGameAsset);
     void RemoveClean(void);
 
     // get name and symbol
-    string GetName() {return Name;};
-    string GetSymbol() {return Symbol;};
+    string GetName() {return m_Name;};
+    string GetSymbol() {return m_Symbol;};
 
     void Dump(void);
 
 private:
     // Name and Prefix
-    string Name;
-    string Symbol;
+    string m_Name;
+    string m_Symbol;
 
     // Element
-    GameAssetType Type;
-    GameAssetState State;
+    GameAssetType m_Type;
+    GameAssetState m_State;
 
     // ResourceComponents
-    vector <GameAsset *> * Children;
+    vector<GameAsset*>* m_pChildren;
 
     // Desricptor
-    float Density;
+    float m_Density;
 
     // Flags
-    bool IsPhysical;
-    bool IsTradable;
-    bool IsPowered;
-    bool IsEntity;
-    bool IsLinkedGameAsset;       // Should be tier 4
+	bool m_bIsPhysical;
+	bool m_bIsTradable;
+	bool m_bIsPowered;
+	bool m_bIsEntity;
+	bool m_bIsLinkedGameAsset;       // Should be tier 4
 
     /// Special Attributes = Default null
-    string PhysicalModel;
-
+    string m_PhysicalModel;
 };
 
 class GameAssetRule
 {
-    public:
+public:
     GameAssetRule(){};
     ~GameAssetRule(){};
 
-    private:
+private:
 };
 
 #endif

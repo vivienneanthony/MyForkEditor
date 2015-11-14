@@ -1,35 +1,35 @@
+#include "EngineStd.h"
+
 #include <iostream>
 #include <vector>
 
 using namespace std;
-
-#include "EngineStd.h"
 
 #include "GameAssetData.h"
 
 // constructor - initialize set default
 GameAssetData::GameAssetData(Context *context)
     :Object(context),
-    DataPath(NULL),
-    DataFiles(NULL)
+    m_pDataPath(NULL),
+	m_pDataFiles(NULL)
 {
 
-    DataPath = new string();
-    DataFiles = new vector<string>();
+	m_pDataPath = new string();
+	m_pDataFiles = new vector<string>();
 
 }
 
 // a resource path
 void GameAssetData::SetGameAssetsPath(string addpath)
 {
-    if(!DataPath)
+    if(!m_pDataPath)
     {
         return;
     }
 
     // empty and add path
-    DataPath->empty();
-    DataPath->append(addpath);
+    m_pDataPath->empty();
+    m_pDataPath->append(addpath);
 
     return;
 }
@@ -37,30 +37,30 @@ void GameAssetData::SetGameAssetsPath(string addpath)
 // add a resource file
 void GameAssetData::SetAddDataFile(string addfile)
 {
-    if(!DataFiles)
+	if (!m_pDataFiles)
     {
         return;
     }
 
-    DataFiles->push_back(addfile);
+	m_pDataFiles->push_back(addfile);
 
     return;
 }
 
 // get resources from all files if need be
-vector<GameAsset *> * GameAssetData::GetGameAssets(void)
+vector<GameAsset*>* GameAssetData::GetGameAssets(void)
 {
     // temporary vector list
-    vector<GameAsset *> * alldata = NULL;
+    vector<GameAsset*>* alldata = NULL;
 
-    // if DataPath of DataFile is not set exit in memory
-    if(DataPath == NULL || DataFiles == NULL)
+    // if m_pDataPath of DataFile is not set exit in memory
+	if (m_pDataPath == NULL || m_pDataFiles == NULL)
     {
         return NULL;
     }
 
     // if files and path not set
-    if(DataFiles->size()==0||DataPath->empty())
+	if (m_pDataFiles->size() == 0 || m_pDataPath->empty())
     {
         return NULL;
     }
@@ -71,8 +71,7 @@ vector<GameAsset *> * GameAssetData::GetGameAssets(void)
 // deconstructor
 GameAssetData::~GameAssetData()
 {
-    delete DataPath;
-    delete DataFiles;
+	SAFE_DELETE(m_pDataPath);
+	SAFE_DELETE(m_pDataFiles);
 
-    return;
 }

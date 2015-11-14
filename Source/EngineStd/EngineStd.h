@@ -154,6 +154,13 @@
 #include <Urho3D/IO/Serializer.h>
 #include <Urho3D/IO/MemoryBuffer.h>
 
+#include <Urho3D/Network/Connection.h>
+#include <Urho3D/Network/Network.h>
+#include <Urho3D/Network/HttpRequest.h>
+#include <Urho3D/Network/NetworkEvents.h>
+#include <Urho3D/Network/NetworkPriority.h>
+#include <Urho3D/Network/Protocol.h>
+
 #include <Urho3D/AngelScript/Script.h>
 #include <Urho3D/AngelScript/ScriptAPI.h>
 #include <Urho3D/AngelScript/ScriptFile.h>
@@ -176,10 +183,16 @@
 
 using namespace Urho3D;
 
+// Some Engine utilities
 #include "Utility/ApplicationMessage.h"
+#include "UserInterface/Urho3D/Utilities.h"
+
 #include "Debugging/Debugging.h"
 #include "Interfaces/Interfaces.h"
+
+// Game assets
 #include "GameAsset/GameAssetManager.h"
+
 #include "EngineApplication.h"
 
 #include <exception>

@@ -6,30 +6,27 @@
 GameOptions::GameOptions()
 {
     // set all the options to decent default values
-    m_Name = "Mr.Scan";
     m_Level = "";
     m_Renderer = "";
     m_bRunFullSpeed = false;
     m_SoundEffectsVolume = 100;
     m_MusicVolume = 100;
     m_SpeechVolume = 100;
-    m_ExpectedPlayers = 1;
-    m_ListenPort = -1;
-    m_GameHost = "MrMike-m1710";
-    m_NumAIs = 1;
-    m_MaxAIs = 4;
-    m_MaxPlayers = 4;
+	m_bIsEnableMusic = true;
+
+    m_ListenPort = 1234;
+    m_GameHost = "localhost";
+	m_IsEnableMultipayer = true;
+
     m_ScreenSize = IntVector2(1024, 768);
     m_bUseDevelopmentDirectories = false;
     m_bWindowMode = true;
     m_bUseDebugHud = false;
     m_Multisample = 1;	// no multisampling
     m_bTripleBuffer = false; // does not use tripple buffer
-    m_currentPlatform = PlatformUnknown;
+    m_CurrentPlatform = PlatformUnknown;
 
     // attributes
-    bool m_enablemultiplayer;
-    bool m_enablesoundmusic;
 
 }
 
@@ -40,7 +37,8 @@ GameOptions::~GameOptions()
     if (document)
     {
         // if platform is not windows use standard linux conventions
-        if(m_currentPlatform!=PlatformWindows)
+		// *ITISSCAN* Two branches do the same. 
+        if(m_CurrentPlatform != PlatformWindows)
         {
             document->save_file(m_FileName.CString());
         }
@@ -52,7 +50,7 @@ GameOptions::~GameOptions()
 }
 
 bool GameOptions::InitGameOptions(const char* xmlFilePath)
-{
+ {
 
     //// read the XML file
     //// if needed, override the XML file with options passed in on the command line.
@@ -90,18 +88,7 @@ bool GameOptions::InitGameOptions(const char* xmlFilePath)
         node = node.child("Graphics");
         if (node)
         {
-            String attribute = node.attribute("renderer").as_string();
-            /// int comp = attribute.Compare("OpenGL", false);
-
-            if (attribute.Compare("OpenGL", false) == 0 || attribute.Compare("DirectX11", false) == 0 || attribute.Compare("DirectX9", false) == 0)
-            {
-                m_Renderer = attribute;
-            }
-            else
-            {
-                return false;
-            }
-
+			String attribute;	
 
             m_ScreenSize.x_ =node.attribute("width").as_int();
             if (m_ScreenSize.x_ < 800) m_ScreenSize.x_ = 800;
@@ -131,6 +118,10 @@ bool GameOptions::InitGameOptions(const char* xmlFilePath)
         node = node.next_sibling("Sound");
         if (node)
         {
+			String attribute;
+			attribute = String(node.attribute("enableMusic").as_string());
+			m_bIsEnableMusic = (attribute == "yes") ? true : false;
+
             m_MasterVolume = node.attribute("masterVolume").as_int();
             m_MusicVolume = node.attribute("musicVolume").as_int();
             m_SoundEffectsVolume = node.attribute("sfxVolume").as_int();
@@ -140,12 +131,6 @@ bool GameOptions::InitGameOptions(const char* xmlFilePath)
         node = node.next_sibling("Multiplayer");
         if (node)
         {
-            m_Name = node.attribute("playerName").as_string();
-            m_ExpectedPlayers = node.attribute("expectedPlayers").as_int();
-            m_NumAIs = node.attribute("numAIs").as_int();
-            m_MaxAIs = node.attribute("maxAIs").as_int();
-            m_MaxPlayers = node.attribute("maxPlayers").as_int();
-
             m_ListenPort = node.attribute("listenPort").as_int();
             m_GameHost = String(node.attribute("gameHost").as_string());
         }
@@ -263,8 +248,7 @@ void GameOptions::InitResolutions()
 // Set Platform
 void GameOptions::SetPlatform(PlatformOS setPlatform)
 {
-    m_currentPlatform = setPlatform;
-
+    m_CurrentPlatform = setPlatform;
     return;
 }
 
@@ -272,7 +256,7 @@ void GameOptions::SetPlatform(PlatformOS setPlatform)
 bool GameOptions::InitRenderer(void)
 {
     // Determine renderer based on OS
-    if(m_currentPlatform!=PlatformWindows)
+    if(m_CurrentPlatform != PlatformWindows)
     {
         m_Renderer = "OpenGL";  // Mnimum Linux graphics engine
 

@@ -59,7 +59,6 @@ String SWResourceCache::GetResourcePackPath(String path)
 
 String SWResourceCache::GetResourcePackName(String path, String ext)
 {
-	String pattern = ".pak";
 	int size = path.Length() - 5;
 	for (; size >= 0; size--)
 	{

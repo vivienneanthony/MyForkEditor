@@ -10,17 +10,13 @@ public:
 	HangarsGameLogic(Context* context);
 	virtual ~HangarsGameLogic();
 
-
 public:
-	virtual bool VInitialize() { return true; }
-	virtual void VOnUpdate(float timeStep) { }
-	virtual void VShutdown() { }
+	virtual bool VInitialize();
+	virtual void VShutdown();
 
-	virtual void VDestroyActor(const ActorId actorId) { }
+	virtual void VChangeState(enum BaseGameState newState);
 
-	virtual void VChangeState(enum BaseGameState newState) { }
-
-	virtual bool VLoadGameDelegate(String pLevelData) { return true; }
+	virtual bool VLoadGameDelegate(String pLevelData);
 };
 
 #endif // HANGARS_GAME_LOGIC_H

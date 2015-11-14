@@ -1,9 +1,9 @@
+#include "EngineStd.h"
+
 #include <iostream>
 #include <vector>
 
 using namespace std;
-
-#include "EngineStd.h"
 
 #include "GameAsset.h"
 #include "GameAssetRules.h"

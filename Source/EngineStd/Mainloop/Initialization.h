@@ -5,8 +5,6 @@ typedef Vector<String> Resolutions;
 
 struct GameOptions
 {
-
-
 	// XML file
 	String m_FileName;
 	SharedPtr<Urho3D::XMLFile> m_pFile;
@@ -30,17 +28,15 @@ struct GameOptions
 	int m_SoundEffectsVolume;
 	int m_MusicVolume;
 	int m_SpeechVolume;
+	bool m_bIsEnableMusic;
 
 	// Multiplayer options
-	String m_Name;
-	int m_ExpectedPlayers;
 	int m_ListenPort;
 	String m_GameHost;
-	int m_NumAIs;
-	int m_MaxAIs;
-	int m_MaxPlayers;
+	bool m_IsEnableMultipayer;;
 
-    PlatformOS m_currentPlatform;
+	// Platform
+    PlatformOS m_CurrentPlatform;
 
 	// resource cache options
 	bool m_bUseDevelopmentDirectories;

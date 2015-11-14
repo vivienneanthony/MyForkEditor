@@ -1,17 +1,17 @@
-#include <HangarsClientStd.h>
+#include "HangarsClientStd.h"
 
-#include <EngineStd/UserInterface/UserInterface.h>
+#include "EngineStd/UserInterface/UserInterface.h"
+#include "EngineStd/UserInterface/Urho3D/Utilities.h"
 
-#include <EngineStd/GameLogic/BaseGameLogic.h>
-#include <EngineStd/GameLogic/LevelManager/LevelManager.h>
-#include <EngineStd/Resources/ResHandle.h>
-#include <EngineStd/Resources/ResourceCache.h>
+#include "EngineStd/GameLogic/BaseGameLogic.h"
+#include "EngineStd/GameLogic/LevelManager/LevelManager.h"
+#include "EngineStd/Resources/ResHandle.h"
+#include "EngineStd/Resources/ResourceCache.h"
 
 #include "MainMenuUI.h"
 
 MainMenuUI::MainMenuUI(Context* context) : BaseUI(context)
 {
-
 	m_bIsInitialized = false;
 	m_pWindow = nullptr;
 }
@@ -31,8 +31,7 @@ bool MainMenuUI::VOnRestore()
 {
 	if (!m_bIsInitialized)
 	{
-
-
+		CreateLoginWindow();
 		m_bIsInitialized = true;
 		return true;
 	}
@@ -49,19 +48,11 @@ bool MainMenuUI::VOnLostDevice()
 
 void MainMenuUI::VOnShutdown()
 {
-	m_pWebViewScene->RemoveChild(m_pMusicNode);
+	m_pMainMenuScene->RemoveChild(m_pMusicNode);
 }
 
 bool MainMenuUI::VOnMsgProc(AppMsg message)
 {
-
-	if (m_pWindow)
-	{
-		if (message.uEvent == MOUSE_LBUTTONDOWN)
-		{
-			m_pWindow->BringToFront();
-		}
-	}
 	return false;
 }
 
@@ -87,4 +78,63 @@ void MainMenuUI::VSetVisible(bool visible)
 
 }
 
+void MainMenuUI::CreateLoginWindow()
+{
+	m_pWindow = CreateCustomWindow(context_, "LoginWindow", IntVector2(0, -50));
+	
+	Text* textName = new Text(context_);
+	textName->SetText("Enter your login: ");
+
+	textName->SetTextAlignment(HorizontalAlignment::HA_CENTER);
+	textName->SetStyleAuto();
+
+	m_pWindow->AddChild(textName);
+	m_pWindow->SetFixedHeight(300);
+	m_pWindow->SetPosition(0, -100);
+
+	// Create a LoginEdit
+	m_pLoginEdit = new LineEdit(context_);
+	m_pLoginEdit->SetName("LoginEdit");
+	m_pLoginEdit->SetMinHeight(24);
+	m_pLoginEdit->SetStyleAuto();
+	m_pLoginEdit->SetFixedWidth(350);
+	m_pLoginEdit->SetFixedHeight(20);
+	m_pLoginEdit->SetAlignment(HorizontalAlignment::HA_CENTER, VA_TOP);
+	m_pWindow->AddChild(m_pLoginEdit);
+
+	Text* textPasswordName = new Text(context_);
+	textPasswordName->SetText("Enter your password: ");
+
+	textPasswordName->SetTextAlignment(HorizontalAlignment::HA_CENTER);
+	textPasswordName->SetStyleAuto();
+
+	m_pWindow->AddChild(textPasswordName);
+
+	// Create a LoginEdit
+	m_pPasswordEdit = new LineEdit(context_);
+	m_pPasswordEdit->SetName("PasswordEdit");
+	m_pPasswordEdit->SetMinHeight(24);
+	m_pPasswordEdit->SetStyleAuto();
+	m_pPasswordEdit->SetFixedWidth(350);
+	m_pPasswordEdit->SetFixedHeight(20);
+	m_pPasswordEdit->SetAlignment(HorizontalAlignment::HA_CENTER, VA_TOP);
+	m_pWindow->AddChild(m_pPasswordEdit);
+
+	Button* enterButton = CreateCustomButton(m_pWindow, "Enter", "Enter");
+	SubscribeToEvent(enterButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleEnterDelegate));
+}
+
+void MainMenuUI::HandleEnterDelegate(StringHash eventType, VariantMap& eventData)
+{
+	String loginName = m_pLoginEdit->GetText();
+	String passwordName = m_pPasswordEdit->GetText();
+
+}
+
+
+void MainMenuUI::HandleCloseDelegate(StringHash eventType, VariantMap& eventData)
+{
+	GetSubsystem<UI>()->GetRoot()->RemoveChild(m_pWindow);
+	m_pWindow = nullptr;
+}
 

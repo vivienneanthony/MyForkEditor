@@ -1,9 +1,9 @@
 #ifndef MAIN_MENU_UI_H
 #define MAIN_MENU_UI_H
 
-#include <EngineStd/GameLogic/LevelManager/LevelManager.h>
+#include "EngineStd/GameLogic/LevelManager/LevelManager.h"
 
-#include <EngineStd/UserInterface/UserInterface.h>
+#include "EngineStd/UserInterface/UserInterface.h"
 
 class MainMenuUI : public BaseUI
 {
@@ -27,17 +27,16 @@ public:
 	virtual void VSetVisible(bool visible);
 
 	// Helper functions
-	Button* CreateCloseButton();
-	void CreateCustomWindow(String name, IntVector2 offset);
-	void PlaySelectSound();
+	void CreateLoginWindow();
+	//void PlaySelectSound();
 
-	// UI delegates
+	// UI Login delegates
+	void HandleEnterDelegate(StringHash eventType, VariantMap& eventData);
+	
+	// UI Otions delegates
 	void HandleCloseDelegate(StringHash eventType, VariantMap& eventData);
 	void HandleOptionCloseDelegate(StringHash eventType, VariantMap& eventData);
 	void HandleVideoOptionCloseDelegate(StringHash eventType, VariantMap& eventData);
-
-	void HandleLevelListSelectedDelegate(StringHash eventType, VariantMap& eventData);
-	void HandleStartDelegate(StringHash eventType, VariantMap& eventData);
 
 	// Audio sliders
 	void HandleMasterSliderDelegate(StringHash eventType, VariantMap& eventData);
@@ -54,16 +53,15 @@ public:
 
 protected:
 	bool m_bIsInitialized;
-	SharedPtr<Scene> m_pWebViewScene;
+	SharedPtr<Scene> m_pMainMenuScene;
 
 	Window* m_pWindow;
 
 	Node* m_pMusicNode;
 	Node* m_pSelectSoundNode;
 
-	DropDownList* m_pLevelsList;
-	LineEdit* m_pNameEdit;
-	Levels m_Levels;
+	LineEdit* m_pLoginEdit;
+	LineEdit* m_pPasswordEdit;
 };
 
 #endif //MAIN_MENU_UI_H

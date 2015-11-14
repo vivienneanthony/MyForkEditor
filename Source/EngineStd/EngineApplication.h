@@ -27,8 +27,14 @@ public:
 	virtual void Start();						// Called after engine initialization. Setup application & subscribe to events here
 	virtual void Stop();						// Perform optional cleanup after main loop has terminated
 
+
 	void AbortGame();
 
+	// Game specific. Entry point to load the game.
+	// It can be different loading steps for one game depend on platform. (pc, mobile, ...)
+	bool VLoadGame();
+
+protected:
 	// Initialize instance. Set startup parameters for window and
 	// other subsystems
 	void InitInstance(int screenWidth, int screenHeight, bool windowMode, bool vsync, int multisample, bool triplebuffer);
@@ -39,18 +45,19 @@ public:
 	// Create game logic and game views
 	bool virtual VCreateViewLogic() = 0;			// Create specific game logic and game view.
 
-	// Game specific. Entry point to load the game.
-	// It can be different loading steps for one game depend on platform. (pc, mobile, ...)
-	bool VLoadGame();
-
-	virtual void InitializeAllDelegates();				// Register all delegates
-	virtual void DestroyAllDelegates();					// Unsubscribe from all events
+	virtual void VInitializeAllDelegates();				// Register all delegates
+	virtual void VDestroyAllDelegates();					// Unsubscribe from all events
 
 	// Delegates
 	void UpdateDelegate(StringHash eventType, VariantMap& eventData);		// Update delegeta to send update messsage
 																			// to game logic
 	// Message handling
 	bool OnMessageProc(AppMsg msg);
+
+	// Utility function
+private:
+	void CreateConsole(XMLFile* style);
+	void CreateDebugHud(XMLFile* style);
 
 	// Input/output delegates
 	void KeyDownDelegate(StringHash eventType, VariantMap& eventData);		// Handle keyboarad's button down event
@@ -64,6 +71,7 @@ public:
 	void InputFocusDelegate(StringHash eventType, VariantMap& eventData);	// Handle when focus is lost (e.x. window minimized)
 	void SetWindowSize(IntVector2 size) { m_CurrentWindowSize.x_ = size.x_; m_CurrentWindowSize.y_ = size.y_; }
 
+public:
 	// Getter/Setters
 	inline SharedPtr<Engine> GetEngine() { return engine_;  }
 	inline Renderer* GetRenderer() { return m_pRenderer; }
@@ -71,6 +79,7 @@ public:
 	inline Audio* GetAudio() { return m_pAudio; }
 	inline ResourceCache* GetConstantResCache() { return m_pConstantResourceCache; }
 	inline BaseGameLogic* GetGameLogic() const { return m_pGameLogic; }
+	inline Time* GetTimer() { return m_pTime; }
 
 	// Game specific getters/setters
 	virtual String GetWindowIcon() = 0;
@@ -120,7 +129,7 @@ protected:
 	Vector2 m_LastMousePos;
 	bool m_bIsInit;								// True - already initialized all subsystems. Game can be started.
 
-	PlatformOS m_currentPlatform;                          // Current platform
+	PlatformOS m_CurrentPlatform;               // Current platform
 
 };
 

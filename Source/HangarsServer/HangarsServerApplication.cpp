@@ -2,6 +2,7 @@
 
 #include "GameLogic/HangarsGameLogic.h"
 #include "GameView/RemoteHumanView.h"
+#include "GameView/MainMenuView.h"
 
 #include "HangarsServerApplication.h"
 
@@ -60,18 +61,21 @@ bool HangarsServerApp::VCreateViewLogic()
 		m_bIsInit = false;
 	}
 	URHO3D_LOGDEBUG("Game logic successfully initialized");
+
+	SharedPtr<IGameView> menuView = SharedPtr<IGameView>(new MainMenuView(context_, nullptr, true));
+	m_pGameLogic->VAddView(menuView);
 	return true;
 }
 
-void HangarsServerApp::InitializeAllDelegates()
+void HangarsServerApp::VInitializeAllDelegates()
 {
-	EngineApp::InitializeAllDelegates();
+	EngineApp::VInitializeAllDelegates();
 
 }
 
-void HangarsServerApp::DestroyAllDelegates()
+void HangarsServerApp::VDestroyAllDelegates()
 {
-	EngineApp::DestroyAllDelegates();
+	EngineApp::VDestroyAllDelegates();
 
 }
 

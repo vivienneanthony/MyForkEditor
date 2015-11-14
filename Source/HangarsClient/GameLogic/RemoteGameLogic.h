@@ -1,7 +1,7 @@
 #ifndef REMOTE_GAME_LOGIC_H
 #define REMOTE_GAME_LOGIC_H
 
-#include <EngineStd/GameLogic/BaseGameLogic.h>
+#include "EngineStd/GameLogic/BaseGameLogic.h"
 
 class RemoteGameLogic : public BaseGameLogic
 {
@@ -12,15 +12,16 @@ public:
 
 
 public:
-	virtual bool VInitialize() { return true; }
-	virtual void VOnUpdate(float timeStep) { }
-	virtual void VShutdown() { }
+	virtual bool VInitialize();
+	virtual void VShutdown();
 
-	virtual void VDestroyActor(const ActorId actorId) { }
 
-	virtual void VChangeState(enum BaseGameState newState) { }
+	virtual void VChangeState(enum BaseGameState newState);
 
-	virtual bool VLoadGameDelegate(String pLevelData) { return true; }
+	virtual bool VLoadGameDelegate(String pLevelData);
+
+protected:
+
 };
 
 #endif // REMOTE_GAME_LOGIC_H

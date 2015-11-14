@@ -15,7 +15,7 @@ class GameAssetData : public Object
 
 public:
     // Constructor and Destructor
-    GameAssetData(Context * context);
+    GameAssetData(Context* context);
     ~GameAssetData();
 
     // set assets path
@@ -23,14 +23,14 @@ public:
     void SetAddDataFile(string addfile);
 
     // serialize output
-    void Serialize(string OutputDataFile, const vector<GameAsset *> & Data){};
+    void Serialize(string OutputDataFile, const vector<GameAsset*> & Data) { };
 
     // get resources
-    vector<GameAsset *> * GetGameAssets(void);
+    vector<GameAsset*>* GetGameAssets(void);
 
 private:
     // data path and data files
-    string * DataPath;
-    vector<string> * DataFiles;
+    string* m_pDataPath;
+    vector<string>* m_pDataFiles;
 };
 #endif

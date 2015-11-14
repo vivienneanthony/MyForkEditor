@@ -65,21 +65,21 @@ bool HangarsClientApp::VCreateViewLogic()
 	}
 	URHO3D_LOGDEBUG("Game logic successfully initialized");
 
-	SharedPtr<IGameView> menuView = SharedPtr<IGameView>(new MainMenuView(context_, nullptr));
+	SharedPtr<IGameView> menuView = SharedPtr<IGameView>(new MainMenuView(context_, nullptr, true));
 	m_pGameLogic->VAddView(menuView);
 
 	return true;
 }
 
-void HangarsClientApp::InitializeAllDelegates()
+void HangarsClientApp::VInitializeAllDelegates()
 {
-	EngineApp::InitializeAllDelegates();
+	EngineApp::VInitializeAllDelegates();
 
 }
 
-void HangarsClientApp::DestroyAllDelegates()
+void HangarsClientApp::VDestroyAllDelegates()
 {
-	EngineApp::DestroyAllDelegates();
+	EngineApp::VDestroyAllDelegates();
 
 }
 
