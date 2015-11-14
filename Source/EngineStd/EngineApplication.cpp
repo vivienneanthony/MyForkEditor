@@ -171,13 +171,13 @@ void EngineApp::InitInstance(int screenWidth, int screenHeight, bool windowMode,
 
 	if (m_GameOptions.m_bUseDevelopmentDirectories)
 	{
-		engineParameters_["ResourcePackages"] = String("CoreData.pak");
-		engineParameters_["ResourcePaths"] = String("Data;GameData");
+		engineParameters_["ResourcePackages"] = String("CoreData");
+		engineParameters_["ResourcePaths"] = String("Data;CoreData");
 	}
 	else
 	{
-		engineParameters_["ResourcePackages"] = String("CoreData");
-		engineParameters_["ResourcePaths"] = String("Data;CoreData");
+		engineParameters_["ResourcePackages"] = String("CoreData.pak");
+		engineParameters_["ResourcePaths"] = String("Data;GameData");
 	}
 
     engineParameters_["FullScreen"] = !windowMode;
