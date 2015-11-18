@@ -1,7 +1,7 @@
 #include "EngineStd.h"
 
 #include <iostream>
-#include <vector>
+
 using namespace std;
 
 #include "GameAsset.h"
@@ -17,8 +17,8 @@ GameAssetManager::GameAssetManager(Context* context)
 
 {
     // GameAssetLibrary
-    m_pGameAssetLibrary = new vector<GameAsset*>();
-    m_pGameAssetRuleLibrary = new vector<GameAssetRule*>();
+    m_pGameAssetLibrary = new Vector<GameAsset*>();
+    m_pGameAssetRuleLibrary = new Vector<GameAssetRule*>();
 
 }
 
@@ -48,7 +48,7 @@ void GameAssetManager::Init(void)
 }
 
 // add game asset - base symbol
-GameAsset * GameAssetManager::AddGameAsset(string GA_Name, string GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State)
+GameAsset * GameAssetManager::AddGameAsset(String GA_Name, String GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State)
 {
     // if asset library is null
     if(!m_pGameAssetLibrary)
@@ -57,7 +57,7 @@ GameAsset * GameAssetManager::AddGameAsset(string GA_Name, string GA_Symbol,Game
     }
 
     // check valid
-    if(GA_Name.empty() || GA_Symbol.empty())
+    if(GA_Name.Empty() || GA_Symbol.Empty())
     {
         return NULL;
     }
@@ -77,33 +77,33 @@ GameAsset * GameAssetManager::AddGameAsset(string GA_Name, string GA_Symbol,Game
     newGameAsset ->SetTypeState(GA_Type, GA_State);
 
     // add to library
-   m_pGameAssetLibrary->push_back(newGameAsset);
+   m_pGameAssetLibrary->Push(newGameAsset);
 
 
     return newGameAsset;
 }
 
 // find a child
-GameAsset * GameAssetManager::FindGameAssetByKeyword(string Keyword, bool useName=0)
+GameAsset * GameAssetManager::FindGameAssetByKeyword(String Keyword, bool useName=0)
 {
 
     // if asset library is null
-    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->size()==0)
+    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->Size()==0)
     {
         return NULL;
     }
 
     // check valid
-    if(Keyword.empty())
+    if(Keyword.Empty())
     {
         return NULL;
     }
 
-    for(unsigned int i=0; i< m_pGameAssetLibrary->size(); i++)
+    for(unsigned int i=0; i< m_pGameAssetLibrary->Size(); i++)
     {
-        if(useName == true ? m_pGameAssetLibrary->at(i)->GetName()== Keyword : m_pGameAssetLibrary->at(i)->GetSymbol() == Keyword)
+        if(useName == true ? m_pGameAssetLibrary->At(i)->GetName()== Keyword : m_pGameAssetLibrary->At(i)->GetSymbol() == Keyword)
         {
-            return m_pGameAssetLibrary->at(i);
+            return m_pGameAssetLibrary->At(i);
         }
     }
 
@@ -115,51 +115,51 @@ GameAsset * GameAssetManager::FindGameAssetByKeyword(string Keyword, bool useNam
 GameAsset * GameAssetManager::GetGameAssetByIdx(unsigned int idx)
 {
     // if asset library is null
-    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->size()==0)
+    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->Size()==0)
     {
         return NULL;
     }
 
     // test size
-    if(idx<0 || idx>m_pGameAssetLibrary->size())
+    if(idx<0 || idx>m_pGameAssetLibrary->Size())
     {
         return NULL;
     }
 
-    return m_pGameAssetLibrary->at(idx);
+    return m_pGameAssetLibrary->At(idx);
 }
 
 // Get total amount of assets in library
 unsigned int GameAssetManager::GetTotalGameAssets(void)
 {
     // if asset library is null
-    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->size()==0)
+    if(!m_pGameAssetLibrary || m_pGameAssetLibrary->Size()==0)
     {
         return 0;
     }
 
-    return m_pGameAssetLibrary->size();
+    return m_pGameAssetLibrary->Size();
 }
 
 // wipe game asset from memory
 bool GameAssetManager::DeleteGameAsset(GameAsset * RemoveGameAsset)
 {
     // if asset library is null
-    if(!m_pGameAssetLibrary||m_pGameAssetLibrary->size()==0)
+    if(!m_pGameAssetLibrary||m_pGameAssetLibrary->Size()==0)
     {
         return false;
     }
 
     // loop through library
-	for (unsigned int i = 0; i < m_pGameAssetLibrary->size(); i++)
+	for (unsigned int i = 0; i < m_pGameAssetLibrary->Size(); i++)
     {
-		if (m_pGameAssetLibrary->at(i) == RemoveGameAsset)
+		if (m_pGameAssetLibrary->At(i) == RemoveGameAsset)
         {
             // Remove all Game Assets
-			m_pGameAssetLibrary->at(i)->RemoveClean();
+			m_pGameAssetLibrary->At(i)->RemoveClean();
 
             // remove from library
-			m_pGameAssetLibrary->erase(m_pGameAssetLibrary->begin() + i);
+			m_pGameAssetLibrary->Erase(m_pGameAssetLibrary->Begin() + i);
 
             // remove from memory
             //delete RemoveGameAsset;

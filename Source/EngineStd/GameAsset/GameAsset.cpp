@@ -1,7 +1,7 @@
 #include "EngineStd.h"
 
 #include <iostream>
-#include <vector>
+
 #include "GameAsset.h"
 
 using namespace std;
@@ -21,19 +21,19 @@ GameAsset::GameAsset(Context* context)
     ,Object(context)
 {
    // GameAssetLibrary
-    m_pChildren = new vector<GameAsset*>();
+    m_pChildren = new Vector<GameAsset*>();
 
     return;
 }
 
 // set name
-void GameAsset::SetName(string setName)
+void GameAsset::SetName(String setName)
 {
     m_Name = setName;
 }
 
 // set name
-void GameAsset::SetSymbol(string setName)
+void GameAsset::SetSymbol(String setName)
 {
 	m_Symbol = setName;
 }
@@ -60,8 +60,8 @@ void GameAsset::SetAttributes(bool setPhysical, bool setPowered, bool setEntity,
 void GameAsset::Dump(void)
 {
     // out data
-    cout << " " << m_Name.c_str();
-    cout << " " << m_Symbol.c_str();
+    cout << " " << m_Name.CString();
+    cout << " " << m_Symbol.CString();
     cout << " "  << m_Type;
     cout << " "  << m_State;
     cout << " "  << m_Density;
@@ -79,20 +79,20 @@ void GameAsset::Dump(void)
     }
 
     // get number of children
-    unsigned int numberChildren = m_pChildren->size();
+    unsigned int numberChildren = m_pChildren->Size();
 
     cout << " " << numberChildren;
 
     // if children
     if(numberChildren>0)
     {
-        for(unsigned int i =0; i < m_pChildren->size();i++)
+        for(unsigned int i =0; i < m_pChildren->Size();i++)
         {
             // start
             cout << " " << i << " " << "{";
 
             // serialize output
-            m_pChildren->at(i)->Dump();
+            m_pChildren->At(i)->Dump();
 
             // end
             cout << " }";
@@ -101,7 +101,7 @@ void GameAsset::Dump(void)
     }
 }
 // add a child to a game asset
-GameAsset* GameAsset::AddChild(string GA_Name, string GA_Symbol, GameAssetType GA_Type, GameAssetState GA_State)
+GameAsset* GameAsset::AddChild(String GA_Name, String GA_Symbol, GameAssetType GA_Type, GameAssetState GA_State)
 {
     // if asset library is null
     if(!m_pChildren)
@@ -110,7 +110,7 @@ GameAsset* GameAsset::AddChild(string GA_Name, string GA_Symbol, GameAssetType G
     }
 
     // check valid
-    if(GA_Name.empty() || GA_Symbol.empty())
+    if(GA_Name.Empty() || GA_Symbol.Empty())
     {
         return NULL;
     }
@@ -131,7 +131,7 @@ GameAsset* GameAsset::AddChild(string GA_Name, string GA_Symbol, GameAssetType G
     newGameAsset->SetTypeState(GA_Type,GA_State);
 
     // add to library
-    m_pChildren->push_back(newGameAsset);
+    m_pChildren->Push(newGameAsset);
 
     return newGameAsset;
 }
@@ -142,21 +142,21 @@ GameAsset* GameAsset::AddChild(string GA_Name, string GA_Symbol, GameAssetType G
 bool GameAsset::DeleteChild(GameAsset* RemoveGameAsset)
 {
     // if asset library is null
-	if (!m_pChildren || m_pChildren->size() == 0)
+	if (!m_pChildren || m_pChildren->Size() == 0)
     {
         return false;
     }
 
     // loop through library
-	for (unsigned int i = 0; i<m_pChildren->size(); i++)
+	for (unsigned int i = 0; i<m_pChildren->Size(); i++)
     {
-		if (m_pChildren->at(i) == RemoveGameAsset)
+		if (m_pChildren->At(i) == RemoveGameAsset)
         {
             // Remove all Game Assets
-			m_pChildren->at(i)->RemoveClean();
+			m_pChildren->At(i)->RemoveClean();
 
             // remove from library
-			m_pChildren->erase(m_pChildren->begin() + i);
+			m_pChildren->Erase(m_pChildren->Begin() + i);
 
             // remove from memory
             SAFE_DELETE(RemoveGameAsset);
@@ -167,7 +167,7 @@ bool GameAsset::DeleteChild(GameAsset* RemoveGameAsset)
 }
 
 // find a child by keyword
-GameAsset* GameAsset::FindChildByKeyword(string Keyword, bool useName=0)
+GameAsset* GameAsset::FindChildByKeyword(String Keyword, bool useName=0)
 {
 	if (!m_pChildren)
     {
@@ -175,16 +175,16 @@ GameAsset* GameAsset::FindChildByKeyword(string Keyword, bool useName=0)
     }
 
     // check valid
-    if(Keyword.empty())
+    if(Keyword.Empty())
     {
         return NULL;
     }
 
-	for (unsigned int i = 0; m_pChildren->size(); i++)
+	for (unsigned int i = 0; m_pChildren->Size(); i++)
     {
-		if (useName == true ? m_pChildren->at(i)->GetName() == Keyword : m_pChildren->at(i)->GetSymbol() == Keyword)
+		if (useName == true ? m_pChildren->At(i)->GetName() == Keyword : m_pChildren->At(i)->GetSymbol() == Keyword)
         {
-			return m_pChildren->at(i);
+			return m_pChildren->At(i);
         }
     }
 
@@ -205,9 +205,9 @@ void GameAsset::RemoveClean(void)
 	if (m_pChildren)
     {
         /// loop through each
-		for (unsigned i = 0; i<m_pChildren->size(); i++)
+		for (unsigned i = 0; i<m_pChildren->Size(); i++)
         {
-			m_pChildren->at(i)->RemoveClean();
+			m_pChildren->At(i)->RemoveClean();
         }
 
 		SAFE_DELETE(m_pChildren);

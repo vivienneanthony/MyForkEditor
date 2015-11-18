@@ -1,8 +1,6 @@
 #ifndef GameAssetManager_GameAssetData_Included
 #define GameAssetManager_GameAssetData_Included
 
-#include <vector>
-#include <string>
 
 using namespace std;
 using namespace Urho3D;
@@ -19,18 +17,21 @@ public:
     ~GameAssetData();
 
     // set assets path
-    void SetGameAssetsPath(string addpath);
-    void SetAddDataFile(string addfile);
+    void SetGameAssetsPath(String addpath);
+    void SetAddDataFile(String addfile);
 
     // serialize output
-    void Serialize(string OutputDataFile, const vector<GameAsset*> & Data) { };
+    void Serialize(String OutputDataFile, const Vector<GameAsset*> & Data) { };
 
     // get resources
-    vector<GameAsset*>* GetGameAssets(void);
+    Vector<GameAsset*>* GetGameAssets(void);
+
+    // new load resources
+    bool LoadGameAssets(Vector<GameAsset*>* AllData);
 
 private:
     // data path and data files
-    string* m_pDataPath;
-    vector<string>* m_pDataFiles;
+    String* m_pDataPath;
+    Vector<String>* m_pDataFiles;
 };
 #endif
