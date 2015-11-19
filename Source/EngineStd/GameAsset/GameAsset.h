@@ -51,7 +51,31 @@ public:
     void SetName(String setName);
     void SetSymbol(String setName);
     void SetTypeState(GameAssetType setType, GameAssetState setState);
-    void SetAttributes(bool setPhysical, bool setPowered, bool setEntity, bool setLinkedGameAsset);
+    void SetAttributes(bool setPhysical, bool setTradeable, bool setPowered, bool setEntity, bool setLinkedGameAsset);
+    void SetPositionRotation(float setXPos, float setYPos, float setZPos, float setRotation);
+    void SetSpecialAttributes(bool setUseAttachments, bool setUseUpgradeSystem, bool setUseRaritySystem);
+
+    void SetQuantity(unsigned int setQuantityAmount)
+    {
+        m_Quantity = setQuantityAmount;
+
+        return;
+    }
+
+    void SetPhysicalModel(String setPhysicalModel)
+    {
+        m_PhysicalModel = setPhysicalModel;
+
+        return;
+    }
+
+    void SetDensity(float setDensity)
+    {
+        m_Density = setDensity;
+
+        return;
+    }
+
 
     // search asset by name
     GameAsset* FindChildByKeyword(String Keyword, bool useName);
@@ -71,7 +95,10 @@ public:
 
     void Dump(void);
 
+    void Serialize(pugi::xml_node & ParentNode);
+
 private:
+
     // Name and Prefix
     String m_Name;
     String m_Symbol;
@@ -81,17 +108,30 @@ private:
     GameAssetState m_State;
 
     // ResourceComponents
-    Vector<GameAsset*>* m_pChildren;
+    Vector <GameAsset *> * m_pChildren;
 
     // Desricptor
     float m_Density;
 
+    // Position
+    float m_XPos;                         // X Xosition
+    float m_YPos;                         // Y Position
+    float m_ZPos;                         // Z Position
+    float m_Rotation;                     // Rotation Quaternion
+
+    // Quantity
+    unsigned int m_Quantity;             // Use for linked assets
+
     // Flags
-	bool m_bIsPhysical;
-	bool m_bIsTradable;
-	bool m_bIsPowered;
-	bool m_bIsEntity;
-	bool m_bIsLinkedGameAsset;       // Should be tier 4
+    bool m_bIsPhysical;
+    bool m_bIsTradeable;
+    bool m_bIsEntity;
+    bool m_bIsPowered;
+    bool m_bIsLinkedGameAsset;
+
+    bool m_bUseAttachmentPoints;          // Future use not implemented
+    bool m_bUseUpgradeSystem;             // Future use not implemented
+    bool m_bUseRaritySystem;              // Future use not implemented
 
     /// Special Attributes = Default null
     String m_PhysicalModel;

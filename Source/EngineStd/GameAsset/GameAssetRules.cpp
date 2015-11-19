@@ -9,7 +9,7 @@ using namespace std;
 
 // constructor - initialize set default
 GameAssetRules::GameAssetRules(Context *context)
-:Object(context)
+    :Object(context)
 {
 }
 

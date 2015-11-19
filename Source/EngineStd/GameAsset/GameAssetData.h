@@ -21,13 +21,17 @@ public:
     void SetAddDataFile(String addfile);
 
     // serialize output
-    void Serialize(String OutputDataFile, const Vector<GameAsset*> & Data) { };
+   // void Serialize(String OutputDataFile, const Vector<GameAsset*> & Data){};
 
     // get resources
     Vector<GameAsset*>* GetGameAssets(void);
 
-    // new load resources
-    bool LoadGameAssets(Vector<GameAsset*>* AllData);
+    // Save all game assets
+    bool SaveGameAssets(Vector<GameAsset *> * m_GameAssetData);
+
+    // load assets and get into memory
+    bool LoadGameAssets(Vector<GameAsset *> * m_GameAssetData);
+    bool Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisChildGameAsset);
 
 private:
     // data path and data files
