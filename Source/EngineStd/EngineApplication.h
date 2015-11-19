@@ -77,6 +77,7 @@ public:
 	inline Renderer* GetRenderer() { return m_pRenderer; }
 	inline Graphics* GetGraphics() { return m_pGraphics; }
 	inline Audio* GetAudio() { return m_pAudio; }
+	inline FileSystem * GetFileSystem() {return m_pFileSystem;}
 	inline ResourceCache* GetConstantResCache() { return m_pConstantResourceCache; }
 	inline BaseGameLogic* GetGameLogic() const { return m_pGameLogic; }
 	inline Time* GetTimer() { return m_pTime; }
@@ -90,6 +91,7 @@ public:
 	inline IntVector2 GetCurrentWindowSize() { return m_CurrentWindowSize; }
 	inline String GetSaveDirectory() { return m_SaveDirectory; }
 	inline GameOptions& GetGameOptions() { return m_GameOptions;  }
+	inline PlatformOS GetCurrentPlatform() { return m_CurrentPlatform;}
 
     // Get OS
     PlatformOS GetOS(String InputString);

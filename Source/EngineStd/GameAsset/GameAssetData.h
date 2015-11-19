@@ -32,6 +32,7 @@ public:
     // load assets and get into memory
     bool LoadGameAssets(Vector<GameAsset *> * m_GameAssetData);
     bool Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisChildGameAsset);
+    bool LoadNewGameAssets(Vector<GameAsset*> * m_GameAssetData);
 
 private:
     // data path and data files

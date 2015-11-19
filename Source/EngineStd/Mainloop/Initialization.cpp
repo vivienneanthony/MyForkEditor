@@ -37,15 +37,7 @@ GameOptions::~GameOptions()
     if (document)
     {
         // if platform is not windows use standard linux conventions
-		// *ITISSCAN* Two branches do the same. 
-        if(m_CurrentPlatform != PlatformWindows)
-        {
-            document->save_file(m_FileName.CString());
-        }
-        else
-        {
-            document->save_file(m_FileName.CString());
-        }
+        document->save_file(m_FileName.CString());
     }
 }
 
@@ -88,7 +80,7 @@ bool GameOptions::InitGameOptions(const char* xmlFilePath)
         node = node.child("Graphics");
         if (node)
         {
-			String attribute;	
+			String attribute;
 
             m_ScreenSize.x_ =node.attribute("width").as_int();
             if (m_ScreenSize.x_ < 800) m_ScreenSize.x_ = 800;
