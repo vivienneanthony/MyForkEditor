@@ -38,11 +38,8 @@ void GameAssetManager::Init(void)
 
     m_pGameAssetResources = new GameAssetData(context_);
 
-    // Sets Path
-    m_pGameAssetResources->SetGameAssetsPath(filesystem->GetProgramDir().CString());
-
     // Set Data filename
-    m_pGameAssetResources->SetAddDataFile("GameAssets.pak");
+    m_pGameAssetResources->SetAddDataFile(String("GameData.pak"));
 
     return;
 }

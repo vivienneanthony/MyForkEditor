@@ -28,6 +28,21 @@ public:
     GameAsset* FindGameAssetByName(String Keyword){ return FindGameAssetByKeyword(Keyword, true); };
     GameAsset* FindGameAssetBySymbol(String Keyword){ return FindGameAssetByKeyword(Keyword, false); };
 
+    // load game assets
+    bool LoadGameAssets(void)
+    {
+        if(m_pGameAssetLibrary == NULL||m_pGameAssetResources==NULL)
+        {
+            return NULL;
+        }
+
+        // load into memory
+        bool returnflag = m_pGameAssetResources->LoadGameAssets(m_pGameAssetLibrary);
+
+        return returnflag;
+    };
+
+
     // find a specific asset
     GameAsset* GetGameAssetByIdx(unsigned int idx);
 

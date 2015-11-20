@@ -20,9 +20,6 @@ public:
     void SetGameAssetsPath(String addpath);
     void SetAddDataFile(String addfile);
 
-    // serialize output
-   // void Serialize(String OutputDataFile, const Vector<GameAsset*> & Data){};
-
     // get resources
     Vector<GameAsset*>* GetGameAssets(void);
 
@@ -30,9 +27,8 @@ public:
     bool SaveGameAssets(Vector<GameAsset *> * m_GameAssetData);
 
     // load assets and get into memory
-    bool LoadGameAssets(Vector<GameAsset *> * m_GameAssetData);
     bool Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisChildGameAsset);
-    bool LoadNewGameAssets(Vector<GameAsset*> * m_GameAssetData);
+    bool LoadGameAssets(Vector<GameAsset*> * m_GameAssetData);
 
 private:
     // data path and data files
