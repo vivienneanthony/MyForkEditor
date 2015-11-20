@@ -8,12 +8,16 @@
 #include "EngineStd/Resources/ResHandle.h"
 #include "EngineStd/Resources/ResourceCache.h"
 
+#include "EngineStd/GameAsset/GameAssetManager.h"
+
 #include "MainMenuUI.h"
+
+#include <iostream>
 
 MainMenuUI::MainMenuUI(Context* context) : BaseUI(context)
 {
-	m_bIsInitialized = false;
-	m_pWindow = nullptr;
+    m_bIsInitialized = false;
+    m_pWindow = nullptr;
 }
 
 MainMenuUI::~MainMenuUI()
@@ -29,36 +33,38 @@ void MainMenuUI::VOnUpdate(float timeStep)
 
 bool MainMenuUI::VOnRestore()
 {
-	if (!m_bIsInitialized)
-	{
-		CreateLoginWindow();
-		m_bIsInitialized = true;
-		return true;
-	}
+    if (!m_bIsInitialized)
+    {
+        TestAssetSystem();
+
+        CreateLoginWindow();
+        m_bIsInitialized = true;
+        return true;
+    }
 
 
-	return false;
+    return false;
 }
 
 bool MainMenuUI::VOnLostDevice()
 {
 
-	return true;
+    return true;
 }
 
 void MainMenuUI::VOnShutdown()
 {
-	m_pMainMenuScene->RemoveChild(m_pMusicNode);
+    m_pMainMenuScene->RemoveChild(m_pMusicNode);
 }
 
 bool MainMenuUI::VOnMsgProc(AppMsg message)
 {
-	return false;
+    return false;
 }
 
 int MainMenuUI::VGetZOrder() const
 {
-	return 1;
+    return 1;
 }
 
 void MainMenuUI::VSetZOrder(int const zOrder)
@@ -69,7 +75,7 @@ void MainMenuUI::VSetZOrder(int const zOrder)
 bool MainMenuUI::VIsVisible() const
 {
 
-	return true;
+    return true;
 }
 
 void MainMenuUI::VSetVisible(bool visible)
@@ -80,61 +86,77 @@ void MainMenuUI::VSetVisible(bool visible)
 
 void MainMenuUI::CreateLoginWindow()
 {
-	m_pWindow = CreateCustomWindow(context_, "LoginWindow", IntVector2(0, -50));
-	
-	Text* textName = new Text(context_);
-	textName->SetText("Enter your login: ");
+    m_pWindow = CreateCustomWindow(context_, "LoginWindow", IntVector2(0, -50));
 
-	textName->SetTextAlignment(HorizontalAlignment::HA_CENTER);
-	textName->SetStyleAuto();
+    Text* textName = new Text(context_);
+    textName->SetText("Enter your login: ");
 
-	m_pWindow->AddChild(textName);
-	m_pWindow->SetFixedHeight(300);
-	m_pWindow->SetPosition(0, -100);
+    textName->SetTextAlignment(HorizontalAlignment::HA_CENTER);
+    textName->SetStyleAuto();
 
-	// Create a LoginEdit
-	m_pLoginEdit = new LineEdit(context_);
-	m_pLoginEdit->SetName("LoginEdit");
-	m_pLoginEdit->SetMinHeight(24);
-	m_pLoginEdit->SetStyleAuto();
-	m_pLoginEdit->SetFixedWidth(350);
-	m_pLoginEdit->SetFixedHeight(20);
-	m_pLoginEdit->SetAlignment(HorizontalAlignment::HA_CENTER, VA_TOP);
-	m_pWindow->AddChild(m_pLoginEdit);
+    m_pWindow->AddChild(textName);
+    m_pWindow->SetFixedHeight(300);
+    m_pWindow->SetPosition(0, -100);
 
-	Text* textPasswordName = new Text(context_);
-	textPasswordName->SetText("Enter your password: ");
+    // Create a LoginEdit
+    m_pLoginEdit = new LineEdit(context_);
+    m_pLoginEdit->SetName("LoginEdit");
+    m_pLoginEdit->SetMinHeight(24);
+    m_pLoginEdit->SetStyleAuto();
+    m_pLoginEdit->SetFixedWidth(350);
+    m_pLoginEdit->SetFixedHeight(20);
+    m_pLoginEdit->SetAlignment(HorizontalAlignment::HA_CENTER, VA_TOP);
+    m_pWindow->AddChild(m_pLoginEdit);
 
-	textPasswordName->SetTextAlignment(HorizontalAlignment::HA_CENTER);
-	textPasswordName->SetStyleAuto();
+    Text* textPasswordName = new Text(context_);
+    textPasswordName->SetText("Enter your password: ");
 
-	m_pWindow->AddChild(textPasswordName);
+    textPasswordName->SetTextAlignment(HorizontalAlignment::HA_CENTER);
+    textPasswordName->SetStyleAuto();
 
-	// Create a LoginEdit
-	m_pPasswordEdit = new LineEdit(context_);
-	m_pPasswordEdit->SetName("PasswordEdit");
-	m_pPasswordEdit->SetMinHeight(24);
-	m_pPasswordEdit->SetStyleAuto();
-	m_pPasswordEdit->SetFixedWidth(350);
-	m_pPasswordEdit->SetFixedHeight(20);
-	m_pPasswordEdit->SetAlignment(HorizontalAlignment::HA_CENTER, VA_TOP);
-	m_pWindow->AddChild(m_pPasswordEdit);
+    m_pWindow->AddChild(textPasswordName);
 
-	Button* enterButton = CreateCustomButton(m_pWindow, "Enter", "Enter");
-	SubscribeToEvent(enterButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleEnterDelegate));
+    // Create a LoginEdit
+    m_pPasswordEdit = new LineEdit(context_);
+    m_pPasswordEdit->SetName("PasswordEdit");
+    m_pPasswordEdit->SetMinHeight(24);
+    m_pPasswordEdit->SetStyleAuto();
+    m_pPasswordEdit->SetFixedWidth(350);
+    m_pPasswordEdit->SetFixedHeight(20);
+    m_pPasswordEdit->SetAlignment(HorizontalAlignment::HA_CENTER, VA_TOP);
+    m_pWindow->AddChild(m_pPasswordEdit);
+
+    Button* enterButton = CreateCustomButton(m_pWindow, "Enter", "Enter");
+    SubscribeToEvent(enterButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleEnterDelegate));
 }
 
 void MainMenuUI::HandleEnterDelegate(StringHash eventType, VariantMap& eventData)
 {
-	String loginName = m_pLoginEdit->GetText();
-	String passwordName = m_pPasswordEdit->GetText();
+    String loginName = m_pLoginEdit->GetText();
+    String passwordName = m_pPasswordEdit->GetText();
 
 }
 
 
 void MainMenuUI::HandleCloseDelegate(StringHash eventType, VariantMap& eventData)
 {
-	GetSubsystem<UI>()->GetRoot()->RemoveChild(m_pWindow);
-	m_pWindow = nullptr;
+    GetSubsystem<UI>()->GetRoot()->RemoveChild(m_pWindow);
+    m_pWindow = nullptr;
 }
 
+void MainMenuUI::TestAssetSystem(void)
+{
+    //  Get the game asset manager
+    GameAssetManager * gameassetmanager_ = GetSubsystem<GameAssetManager>();
+
+    gameassetmanager_->Init();
+
+    gameassetmanager_->LoadGameAssets();
+
+    // Test info string
+    String Message= String("Game Asset Manager Loaded ") +String(gameassetmanager_->GetTotalGameAssets())+ String(" Game Assets");
+
+    URHO3D_LOGINFO (Message);
+
+    return;
+}

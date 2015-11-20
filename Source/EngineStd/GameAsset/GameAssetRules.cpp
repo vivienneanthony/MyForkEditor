@@ -1,7 +1,6 @@
 #include "EngineStd.h"
 
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
@@ -10,7 +9,7 @@ using namespace std;
 
 // constructor - initialize set default
 GameAssetRules::GameAssetRules(Context *context)
-:Object(context)
+    :Object(context)
 {
 }
 

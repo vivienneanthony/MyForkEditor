@@ -1,10 +1,6 @@
 #ifndef GameAssetManager_GameAssetRules_Included
 #define GameAssetManager_GameAssetRules_Included
 
-#include <vector>
-#include <string>
-
-
 using namespace std;
 
 class GameAssetRules : public Object

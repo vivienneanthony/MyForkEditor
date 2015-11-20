@@ -1,8 +1,6 @@
 #ifndef GameAssetManager_GameAsset_Included
 #define GameAssetManager_GameAsset_Included
 
-#include <vector>
-#include <string>
 
 using namespace std;
 
@@ -50,53 +48,93 @@ public:
     ~GameAsset();
 
     // set attributes
-    void SetName(string setName);
-    void SetSymbol(string setName);
+    void SetName(String setName);
+    void SetSymbol(String setName);
     void SetTypeState(GameAssetType setType, GameAssetState setState);
-    void SetAttributes(bool setPhysical, bool setPowered, bool setEntity, bool setLinkedGameAsset);
+    void SetAttributes(bool setPhysical, bool setTradeable, bool setPowered, bool setEntity, bool setLinkedGameAsset);
+    void SetPositionRotation(float setXPos, float setYPos, float setZPos, float setRotation);
+    void SetSpecialAttributes(bool setUseAttachments, bool setUseUpgradeSystem, bool setUseRaritySystem);
+
+    void SetQuantity(unsigned int setQuantityAmount)
+    {
+        m_Quantity = setQuantityAmount;
+
+        return;
+    }
+
+    void SetPhysicalModel(String setPhysicalModel)
+    {
+        m_PhysicalModel = setPhysicalModel;
+
+        return;
+    }
+
+    void SetDensity(float setDensity)
+    {
+        m_Density = setDensity;
+
+        return;
+    }
+
 
     // search asset by name
-    GameAsset* FindChildByKeyword(string Keyword, bool useName);
-    GameAsset* FindChildByName(string Keyword){ return FindChildByKeyword(Keyword, true); };
-    GameAsset* FindChildBySymbol(string Keyword){ return FindChildByKeyword(Keyword, false); };
+    GameAsset* FindChildByKeyword(String Keyword, bool useName);
+    GameAsset* FindChildByName(String Keyword){ return FindChildByKeyword(Keyword, true); };
+    GameAsset* FindChildBySymbol(String Keyword){ return FindChildByKeyword(Keyword, false); };
 
     // add child
-    GameAsset* AddChild(string GA_Name, string GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State);
+    GameAsset* AddChild(String GA_Name, String GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State);
 
     // remove children
     bool DeleteChild(GameAsset* RemoveGameAsset);
     void RemoveClean(void);
 
     // get name and symbol
-    string GetName() {return m_Name;};
-    string GetSymbol() {return m_Symbol;};
+    String GetName() {return m_Name;};
+    String GetSymbol() {return m_Symbol;};
 
     void Dump(void);
 
+    void Serialize(pugi::xml_node & ParentNode);
+
 private:
+
     // Name and Prefix
-    string m_Name;
-    string m_Symbol;
+    String m_Name;
+    String m_Symbol;
 
     // Element
     GameAssetType m_Type;
     GameAssetState m_State;
 
     // ResourceComponents
-    vector<GameAsset*>* m_pChildren;
+    Vector <GameAsset *> * m_pChildren;
 
     // Desricptor
     float m_Density;
 
+    // Position
+    float m_XPos;                         // X Xosition
+    float m_YPos;                         // Y Position
+    float m_ZPos;                         // Z Position
+    float m_Rotation;                     // Rotation Quaternion
+
+    // Quantity
+    unsigned int m_Quantity;             // Use for linked assets
+
     // Flags
-	bool m_bIsPhysical;
-	bool m_bIsTradable;
-	bool m_bIsPowered;
-	bool m_bIsEntity;
-	bool m_bIsLinkedGameAsset;       // Should be tier 4
+    bool m_bIsPhysical;
+    bool m_bIsTradeable;
+    bool m_bIsEntity;
+    bool m_bIsPowered;
+    bool m_bIsLinkedGameAsset;
+
+    bool m_bUseAttachmentPoints;          // Future use not implemented
+    bool m_bUseUpgradeSystem;             // Future use not implemented
+    bool m_bUseRaritySystem;              // Future use not implemented
 
     /// Special Attributes = Default null
-    string m_PhysicalModel;
+    String m_PhysicalModel;
 };
 
 class GameAssetRule

@@ -1,7 +1,7 @@
 #include "EngineStd.h"
 
 #include <iostream>
-#include <vector>
+
 #include "GameAsset.h"
 
 using namespace std;
@@ -10,30 +10,39 @@ using namespace std;
 
 // initialize set default
 GameAsset::GameAsset(Context* context)
-	:m_Type(GAType_None)
-	,m_State(GAState_None)
-	,m_pChildren(NULL)
-	,m_Density(0.0f)
+   :m_Type(GAType_None)
+    ,m_State(GAState_None)
+    ,m_pChildren(NULL)
+    ,m_Density(0.0f)
+    ,m_XPos(0.0f)
+    ,m_YPos(0.0f)
+    ,m_ZPos(0.0f)
+    ,m_Rotation(0.0f)
+    ,m_Quantity(1)
     ,m_bIsPhysical(false)
     ,m_bIsPowered(false)
+    ,m_bIsTradeable(false)
     ,m_bIsEntity(false)
     ,m_bIsLinkedGameAsset(false)
+    ,m_bUseAttachmentPoints(false)
+    ,m_bUseUpgradeSystem(false)
+    ,m_bUseRaritySystem(false)
     ,Object(context)
 {
    // GameAssetLibrary
-    m_pChildren = new vector<GameAsset*>();
+    m_pChildren = new Vector<GameAsset*>();
 
     return;
 }
 
 // set name
-void GameAsset::SetName(string setName)
+void GameAsset::SetName(String setName)
 {
     m_Name = setName;
 }
 
 // set name
-void GameAsset::SetSymbol(string setName)
+void GameAsset::SetSymbol(String setName)
 {
 	m_Symbol = setName;
 }
@@ -43,32 +52,134 @@ void GameAsset::SetTypeState(GameAssetType setType, GameAssetState setState)
 {
 	m_Type = setType;
 	m_State = setState;
+
+	return;
 }
 
 // set attributes
-void GameAsset::SetAttributes(bool setPhysical, bool setPowered, bool setEntity, bool setLinkedGameAsset)
+void GameAsset::SetAttributes(bool setPhysical, bool setTradeable, bool setPowered, bool setEntity, bool setLinkedGameAsset)
 {
     /// set attributes
 	m_bIsPhysical = setPhysical;
 	m_bIsPowered = setPowered;
 	m_bIsEntity = setEntity;
+	m_bIsTradeable = setTradeable;
 	m_bIsLinkedGameAsset = m_bIsLinkedGameAsset;
 
+	return;
 }
+
+// Set Rotation and Position
+void GameAsset::SetPositionRotation(float setXPos, float setYPos, float setZPos, float setRotation)
+{
+    /// set coordinate
+    m_XPos = setXPos;
+    m_YPos = setYPos;
+    m_ZPos = setZPos;
+    m_Rotation = setRotation;
+
+    return;
+}
+
+// special flags
+void GameAsset::SetSpecialAttributes(bool setUseAttachments, bool setUseUpgradeSystem, bool setUseRaritySystem)
+{
+    m_bUseUpgradeSystem = setUseUpgradeSystem;
+    m_bUseAttachmentPoints = setUseAttachments;
+    m_bUseRaritySystem = setUseRaritySystem;
+
+    return;
+}
+
+void GameAsset::Serialize(pugi::xml_node & ParentNode)
+// output
+{
+    // create a asset child
+    pugi::xml_node ThisChild= ParentNode.append_child("Asset");
+
+    /// if its not a linked asset show full details
+    if(m_bIsLinkedGameAsset==false)
+    {
+        // Dump Info
+        ThisChild.append_attribute("Name") = m_Name.CString();
+        ThisChild.append_attribute("Symbol") = m_Symbol.CString();
+        ThisChild.append_attribute("Type") = (unsigned int)m_Type;
+        ThisChild.append_attribute("State") = (unsigned int)m_State;
+        ThisChild.append_attribute("Density") = (float)m_Density;
+        ThisChild.append_attribute("IsPhysical") = (bool)m_bIsPhysical;
+        ThisChild.append_attribute("IsTradable") = (bool)m_bIsTradeable;
+        ThisChild.append_attribute("IsPowered") = (bool)m_bIsPowered;
+        ThisChild.append_attribute("IsEntity") = (bool)m_bIsEntity;
+        ThisChild.append_attribute("IsLinkedGameAsset") = (bool)m_bIsLinkedGameAsset;
+        ThisChild.append_attribute("UseAttachmentPoints") = (bool)m_bUseAttachmentPoints;
+        ThisChild.append_attribute("UseUpgradeSystem") = (bool)m_bUseUpgradeSystem;
+        ThisChild.append_attribute("UseRaritySystem") = (bool)m_bUseRaritySystem;
+    }
+    else
+    {
+        ThisChild.append_attribute("Symbol") = m_Symbol.CString();
+        ThisChild.append_attribute("XPos") = (float)m_XPos;
+        ThisChild.append_attribute("YPos") = (float)m_YPos;
+        ThisChild.append_attribute("ZPos") = (float)m_ZPos;
+        ThisChild.append_attribute("Quantity") = (unsigned int)m_Quantity;
+        ThisChild.append_attribute("Rotation") = (float)m_Rotation;
+        ThisChild.append_attribute("IsLinkedGameAsset") = (bool)m_bIsLinkedGameAsset;
+    }
+
+    // If no m_pChildren return
+    if(m_pChildren==NULL)
+    {
+        return;
+    }
+
+    // get number of m_pChildren
+    unsigned int numberChildren = m_pChildren->Size();
+
+    // if m_pChildren
+    if(numberChildren>0)
+    {
+        for(unsigned int i =0; i<m_pChildren->Size(); i++)
+        {
+            // serialize output
+            m_pChildren->At(i)->Serialize(ThisChild);
+        }
+    }
+
+    return;
+}
+
 
 // output
 void GameAsset::Dump(void)
 {
-    // out data
-    cout << " " << m_Name.c_str();
-    cout << " " << m_Symbol.c_str();
-    cout << " "  << m_Type;
-    cout << " "  << m_State;
-    cout << " "  << m_Density;
-    cout << " "  << m_bIsPhysical;
-	cout << " "  << m_bIsPowered;
-	cout << " "  << m_bIsEntity;
-	cout << " "  << m_bIsLinkedGameAsset;
+     //// if its not a linked asset show full details
+    if(m_bIsLinkedGameAsset==false)
+    {
+        // out data
+        cout << " " << m_Name.CString();
+        cout << " " << m_Symbol.CString();
+        cout << " "  << m_Type;
+        cout << " "  << m_State;
+        cout << " "  << m_Density;
+        cout << " "  << m_bIsPhysical;
+        cout << " "  << m_bIsTradeable;
+        cout << " "  << m_bIsPowered;
+        cout << " "  << m_bIsEntity;
+        cout << " "  << m_bIsLinkedGameAsset;
+        cout << " "  << m_bUseAttachmentPoints;
+        cout << " "  << m_bUseUpgradeSystem;
+        cout << " "  << m_bUseRaritySystem;
+    }
+    else
+    {
+        cout << " " << m_Symbol.CString();
+        cout << " "  << m_XPos;
+        cout << " "  << m_YPos;
+        cout << " "  << m_ZPos;
+        cout << " "  << m_Rotation;
+        cout << " "  << m_Quantity;
+        cout << " "  << m_bIsLinkedGameAsset;
+    }
 
     // if no children
     if(m_pChildren == NULL)
@@ -79,20 +190,20 @@ void GameAsset::Dump(void)
     }
 
     // get number of children
-    unsigned int numberChildren = m_pChildren->size();
+    unsigned int numberChildren = m_pChildren->Size();
 
     cout << " " << numberChildren;
 
     // if children
     if(numberChildren>0)
     {
-        for(unsigned int i =0; i < m_pChildren->size();i++)
+        for(unsigned int i =0; i < m_pChildren->Size();i++)
         {
             // start
             cout << " " << i << " " << "{";
 
             // serialize output
-            m_pChildren->at(i)->Dump();
+            m_pChildren->At(i)->Dump();
 
             // end
             cout << " }";
@@ -101,7 +212,7 @@ void GameAsset::Dump(void)
     }
 }
 // add a child to a game asset
-GameAsset* GameAsset::AddChild(string GA_Name, string GA_Symbol, GameAssetType GA_Type, GameAssetState GA_State)
+GameAsset* GameAsset::AddChild(String GA_Name, String GA_Symbol, GameAssetType GA_Type, GameAssetState GA_State)
 {
     // if asset library is null
     if(!m_pChildren)
@@ -110,7 +221,7 @@ GameAsset* GameAsset::AddChild(string GA_Name, string GA_Symbol, GameAssetType G
     }
 
     // check valid
-    if(GA_Name.empty() || GA_Symbol.empty())
+    if(GA_Name.Empty() || GA_Symbol.Empty())
     {
         return NULL;
     }
@@ -126,37 +237,36 @@ GameAsset* GameAsset::AddChild(string GA_Name, string GA_Symbol, GameAssetType G
 
     newGameAsset = new GameAsset(context_);
 
-    // set symbol
+    // Set symbol name
+    newGameAsset->SetName("n/a");
     newGameAsset->SetSymbol(GA_Symbol);
     newGameAsset->SetTypeState(GA_Type,GA_State);
 
     // add to library
-    m_pChildren->push_back(newGameAsset);
+    m_pChildren->Push(newGameAsset);
 
     return newGameAsset;
 }
-
-// remove child
 
 // wipe game asset from memory
 bool GameAsset::DeleteChild(GameAsset* RemoveGameAsset)
 {
     // if asset library is null
-	if (!m_pChildren || m_pChildren->size() == 0)
+	if (!m_pChildren || m_pChildren->Size() == 0)
     {
         return false;
     }
 
     // loop through library
-	for (unsigned int i = 0; i<m_pChildren->size(); i++)
+	for (unsigned int i = 0; i<m_pChildren->Size(); i++)
     {
-		if (m_pChildren->at(i) == RemoveGameAsset)
+		if (m_pChildren->At(i) == RemoveGameAsset)
         {
             // Remove all Game Assets
-			m_pChildren->at(i)->RemoveClean();
+			m_pChildren->At(i)->RemoveClean();
 
             // remove from library
-			m_pChildren->erase(m_pChildren->begin() + i);
+			m_pChildren->Erase(m_pChildren->Begin() + i);
 
             // remove from memory
             SAFE_DELETE(RemoveGameAsset);
@@ -167,7 +277,7 @@ bool GameAsset::DeleteChild(GameAsset* RemoveGameAsset)
 }
 
 // find a child by keyword
-GameAsset* GameAsset::FindChildByKeyword(string Keyword, bool useName=0)
+GameAsset* GameAsset::FindChildByKeyword(String Keyword, bool useName=0)
 {
 	if (!m_pChildren)
     {
@@ -175,16 +285,16 @@ GameAsset* GameAsset::FindChildByKeyword(string Keyword, bool useName=0)
     }
 
     // check valid
-    if(Keyword.empty())
+    if(Keyword.Empty())
     {
         return NULL;
     }
 
-	for (unsigned int i = 0; m_pChildren->size(); i++)
+	for (unsigned int i = 0; m_pChildren->Size(); i++)
     {
-		if (useName == true ? m_pChildren->at(i)->GetName() == Keyword : m_pChildren->at(i)->GetSymbol() == Keyword)
+		if (useName == true ? m_pChildren->At(i)->GetName() == Keyword : m_pChildren->At(i)->GetSymbol() == Keyword)
         {
-			return m_pChildren->at(i);
+			return m_pChildren->At(i);
         }
     }
 
@@ -205,9 +315,9 @@ void GameAsset::RemoveClean(void)
 	if (m_pChildren)
     {
         /// loop through each
-		for (unsigned i = 0; i<m_pChildren->size(); i++)
+		for (unsigned i = 0; i<m_pChildren->Size(); i++)
         {
-			m_pChildren->at(i)->RemoveClean();
+			m_pChildren->At(i)->RemoveClean();
         }
 
 		SAFE_DELETE(m_pChildren);
@@ -223,7 +333,9 @@ GameAsset::~GameAsset()
         return;
     }
 
+    // Remove clean
     RemoveClean();
 
+    // Add Safe Delete
 	SAFE_DELETE(m_pChildren);
 }

@@ -1,8 +1,6 @@
 #ifndef GameAssetManager_GameAssetManager_Included
 #define GameAssetManager_GameAssetManager_Included
 
-#include <vector>
-#include <string>
 
 #include "GameAssetData.h"
 
@@ -23,12 +21,27 @@ public:
     void Init(void);
 
     // add game asset - base symbol
-    GameAsset* AddGameAsset(string GA_Name, string GA_Symbol, GameAssetType GA_Type, GameAssetState GA_State);
+    GameAsset* AddGameAsset(String GA_Name, String GA_Symbol, GameAssetType GA_Type, GameAssetState GA_State);
 
     // search asset by name
-    GameAsset* FindGameAssetByKeyword(string Keyword, bool useName);
-    GameAsset* FindGameAssetByName(string Keyword){ return FindGameAssetByKeyword(Keyword, true); };
-    GameAsset* FindGameAssetBySymbol(string Keyword){ return FindGameAssetByKeyword(Keyword, false); };
+    GameAsset* FindGameAssetByKeyword(String Keyword, bool useName);
+    GameAsset* FindGameAssetByName(String Keyword){ return FindGameAssetByKeyword(Keyword, true); };
+    GameAsset* FindGameAssetBySymbol(String Keyword){ return FindGameAssetByKeyword(Keyword, false); };
+
+    // load game assets
+    bool LoadGameAssets(void)
+    {
+        if(m_pGameAssetLibrary == NULL||m_pGameAssetResources==NULL)
+        {
+            return NULL;
+        }
+
+        // load into memory
+        bool returnflag = m_pGameAssetResources->LoadGameAssets(m_pGameAssetLibrary);
+
+        return returnflag;
+    };
+
 
     // find a specific asset
     GameAsset* GetGameAssetByIdx(unsigned int idx);
@@ -41,8 +54,8 @@ public:
 
 private:
     // Game Asset Library - Actual data
-    vector<GameAsset*>*		m_pGameAssetLibrary;
-    vector<GameAssetRule*>* m_pGameAssetRuleLibrary;
+    Vector<GameAsset*>*		m_pGameAssetLibrary;
+    Vector<GameAssetRule*>* m_pGameAssetRuleLibrary;
 
     GameAssetData*			m_pGameAssetResources;
 
