@@ -170,6 +170,18 @@ bool GameAssetManager::DeleteGameAsset(GameAsset * RemoveGameAsset)
 GameAssetManager::~GameAssetManager()
 {
     // delete game assets from memory
+	Vector<GameAsset*>::Iterator it = m_pGameAssetLibrary->Begin();
+
+	// loop through each game asset pointer
+	for (; it != m_pGameAssetLibrary->End(); it++)
+	{
+		// delete game asset's children
+		(*it)->RemoveClean();
+
+		// delete game asset
+		SAFE_DELETE(*it);
+	}
+
 	SAFE_DELETE(m_pGameAssetLibrary);
 	SAFE_DELETE(m_pGameAssetRuleLibrary);
 

@@ -123,31 +123,31 @@ bool GameAssetData::Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisCh
 }
 
 // Save all game assets
-bool GameAssetData::SaveGameAssets(Vector<GameAsset *> * m_GameAssetData)
+bool GameAssetData::SaveGameAssets(Vector<GameAsset *>* gameAssetData)
 {
     // If GameAssetData is Null or size is empty exit
-    if(m_GameAssetData==NULL||m_GameAssetData->Size()==0)
+    if(gameAssetData == NULL || gameAssetData->Size() == 0)
     {
         return false;
     }
 
     // create xml document
-    pugi::xml_document * doc;
-
-    doc = new pugi::xml_document ();
+	pugi::xml_document* doc = new pugi::xml_document();
 
     // create a child node
-    pugi::xml_node Root = doc->append_child();
-    Root.set_name("GameAssets");
+    pugi::xml_node root = doc->append_child();
+    root.set_name("GameAssets");
 
     // loop through all game assets
-    for(unsigned i=0; i<=m_GameAssetData->Size(); ++i)
+    for(unsigned i = 0; i <= gameAssetData->Size(); ++i)
     {
-        m_GameAssetData->At(i)->Serialize(Root);
+		gameAssetData->At(i)->Serialize(root);
     }
 
     // write to file
     doc->save_file("GameAssetData.xml");
+
+	SAFE_DELETE(doc);
 
     return true;
 }
@@ -162,48 +162,48 @@ GameAssetData::~GameAssetData()
 }
 
 // load game assets
-bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
+bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * gameAssetData)
 {
     // Get Resource
     ResourceCache* resCache = g_pApp->GetConstantResCache();
-    FileSystem * filesystem = g_pApp->GetFileSystem();
+    FileSystem* filesystem = g_pApp->GetFileSystem();
 
     // Create a empty
-    Vector<String> m_datafiles;
+    Vector<String> datafiles;
 
     // Use package file
-    String m_UsePackageFile;
+    String usePackageFile;
 
     // Package found bool;
-    bool m_bPackageFileFound=false;
+    bool bPackageFileFound = false;
 
-    PackageFile * m_pPackageFile = new PackageFile(context_);
+    PackageFile * pPackageFile = new PackageFile(context_);
 
     // Setup base path
     String BasePath;
     BasePath.Append(filesystem->GetProgramDir());
 
     // Search files
-    for(unsigned int i=0; i<m_pDataFiles->Size(); i++)
+    for(unsigned int i = 0; i < m_pDataFiles->Size(); i++)
     {
         // Clear Package Path
-        String PackagePathName;
+        String packagePathName;
 
         // Create temporary file path with resource
-        PackagePathName.Append(BasePath);
-        PackagePathName.Append(m_pDataFiles->At(i));
+        packagePathName.Append(BasePath);
+        packagePathName.Append(m_pDataFiles->At(i));
 
         // Open a packaged file
-        m_bPackageFileFound = m_pPackageFile->Open(PackagePathName);
+        bPackageFileFound = pPackageFile->Open(packagePathName);
 
         // If packaged file is found continue
-        if(m_bPackageFileFound==true)
+        if(bPackageFileFound == true)
         {
             // Use this package if found and matches
-            if(m_pPackageFile->Exists("GameAssets/GameAssetsData.xml"))
+            if(pPackageFile->Exists("GameAssets/GameAssetsData.xml"))
             {
-                m_UsePackageFile.Append(m_pDataFiles->At(i));
-                m_bPackageFileFound=true;
+                usePackageFile.Append(m_pDataFiles->At(i));
+                bPackageFileFound = true;
 
                 break;
             }
@@ -211,7 +211,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
     }
 
     // If datafiles is 0 or empty return - meaning nothing was found
-    if(m_bPackageFileFound==false)
+    if(bPackageFileFound == false)
     {
         URHO3D_LOGERROR ("Error Game Asset File Not Found");
 
@@ -219,32 +219,32 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
     }
 
     // Package Entry
-    const PackageEntry * m_GameAssetsDataEntry = m_pPackageFile->GetEntry("GameAssets/GameAssetsData.xml");
+    const PackageEntry* pGameAssetsDataEntry = pPackageFile->GetEntry("GameAssets/GameAssetsData.xml");
 
     // Set package
-    File * m_PackageData = new File(context_, m_pPackageFile, String("GameAssets/GameAssetsData.xml"));
+    File * pPackageData = new File(context_, pPackageFile, String("GameAssets/GameAssetsData.xml"));
 
     // Read content to memory
-    unsigned char *retrievedsource=NULL;
+    unsigned char* retrievedsource = NULL;
 
-    retrievedsource = new unsigned char[m_GameAssetsDataEntry->size_];
+    retrievedsource = new unsigned char[pGameAssetsDataEntry->size_];
 
     // Read data from file
-    m_PackageData->Read(&retrievedsource[0], m_GameAssetsDataEntry->size_);
+    pPackageData->Read(&retrievedsource[0], pGameAssetsDataEntry->size_);
 
     // Create new xml document - Pugixml friendly
     pugi::xml_document doc;
 
-    char* buffer = static_cast<char*>(pugi::get_memory_allocation_function()(m_GameAssetsDataEntry->size_));
-    memcpy(buffer, retrievedsource, m_GameAssetsDataEntry->size_);
+    char* buffer = static_cast<char*>(pugi::get_memory_allocation_function()(pGameAssetsDataEntry->size_));
+    memcpy(buffer, retrievedsource, pGameAssetsDataEntry->size_);
 
-    pugi::xml_parse_result result = doc.load_buffer_inplace_own(buffer, m_GameAssetsDataEntry->size_);
+    pugi::xml_parse_result result = doc.load_buffer_inplace_own(buffer, pGameAssetsDataEntry->size_);
 
     // Safe delete memory not in use
     delete [] retrievedsource;
 
     // Exit if error
-    if (result.status!=pugi::status_ok)
+    if (result.status != pugi::status_ok)
     {
         URHO3D_LOGERROR ("Problem occured reading game assets");
 
@@ -252,7 +252,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
     }
 
     // Get XML root if it exist, if not exit
-    pugi::xml_node GameAssetRoot=doc.first_child();
+    pugi::xml_node GameAssetRoot = doc.first_child();
 
     if(!GameAssetRoot)
     {
@@ -263,59 +263,59 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
     for(pugi::xml_node NewGameAsset =  GameAssetRoot.first_child(); NewGameAsset; NewGameAsset =  NewGameAsset.next_sibling())
     {
         // create a game asset
-        GameAsset * m_NewGameAsset = new GameAsset(context_);
-        m_GameAssetData->Push(m_NewGameAsset);
+        GameAsset * newGameAsset = new GameAsset(context_);
+        gameAssetData->Push(newGameAsset);
 
         // Get attributes from xml
-        const char * m_Name = NewGameAsset.attribute("Name").as_string();
-        const char * m_Symbol = NewGameAsset.attribute("Symbol").as_string();
-        unsigned int m_Type = NewGameAsset.attribute("Type").as_uint();
-        unsigned int m_State = NewGameAsset.attribute("State").as_uint();
-        float m_Density  = NewGameAsset.attribute("Density").as_float();
-        float m_XPos = NewGameAsset.attribute("XPos").as_float();
-        float m_YPos = NewGameAsset.attribute("YPos").as_float();
-        float m_ZPos = NewGameAsset.attribute("ZPos").as_float();
-        float m_Rotation = NewGameAsset.attribute("Rotation").as_float();
-        unsigned int m_Quantity = NewGameAsset.attribute("Quantity").as_uint();
-        bool m_IsPhysical = NewGameAsset.attribute("IsPhysical").as_bool();
-        bool m_IsTradeable= NewGameAsset.attribute("IsTradeable").as_bool();
-        bool m_IsPowered= NewGameAsset.attribute("IsPowered").as_bool();
-        bool m_IsEntity = NewGameAsset.attribute("IsEntity").as_bool();
-        const char * m_PhysicalModel =  NewGameAsset.attribute("PhysicalModel").as_string();
-        bool m_IsLinkedGameAsset = NewGameAsset.attribute("IsLinkedGameAsset").as_bool();
-        bool m_UseAttachmentPoints = NewGameAsset.attribute("UseAttachmentPoints").as_bool();
-        bool m_UseUpgradeSystem = NewGameAsset.attribute("UseUpgradeSystem").as_bool();
-        bool m_UseRaritySystem = NewGameAsset.attribute("UseRaritySystem").as_bool();
+        const char * name = NewGameAsset.attribute("Name").as_string();
+        const char * symbol = NewGameAsset.attribute("Symbol").as_string();
+        unsigned int type = NewGameAsset.attribute("Type").as_uint();
+        unsigned int state = NewGameAsset.attribute("State").as_uint();
+        float density  = NewGameAsset.attribute("Density").as_float();
+        float XPos = NewGameAsset.attribute("XPos").as_float();
+        float YPos = NewGameAsset.attribute("YPos").as_float();
+        float ZPos = NewGameAsset.attribute("ZPos").as_float();
+        float rotation = NewGameAsset.attribute("Rotation").as_float();
+        unsigned int quantity = NewGameAsset.attribute("Quantity").as_uint();
+        bool isPhysical = NewGameAsset.attribute("IsPhysical").as_bool();
+        bool isTradeable= NewGameAsset.attribute("IsTradeable").as_bool();
+        bool isPowered= NewGameAsset.attribute("IsPowered").as_bool();
+        bool isEntity = NewGameAsset.attribute("IsEntity").as_bool();
+        const char* physicalModel =  NewGameAsset.attribute("PhysicalModel").as_string();
+        bool isLinkedGameAsset = NewGameAsset.attribute("IsLinkedGameAsset").as_bool();
+        bool useAttachmentPoints = NewGameAsset.attribute("UseAttachmentPoints").as_bool();
+        bool useUpgradeSystem = NewGameAsset.attribute("UseUpgradeSystem").as_bool();
+        bool useRaritySystem = NewGameAsset.attribute("UseRaritySystem").as_bool();
 
         // Set attributes from xml to new game asset
-        m_NewGameAsset->SetName(m_Name);
-        m_NewGameAsset->SetSymbol(m_Symbol);
-        m_NewGameAsset->SetAttributes(m_IsPhysical,  m_IsTradeable, m_IsPowered, m_IsEntity, m_IsLinkedGameAsset);
-        m_NewGameAsset->SetTypeState((GameAssetType)m_Type, (GameAssetState)m_State);
-        m_NewGameAsset->SetQuantity(m_Quantity);
-        m_NewGameAsset->SetPositionRotation(m_XPos, m_YPos, m_ZPos, m_Rotation);
-        m_NewGameAsset->SetSpecialAttributes(m_UseAttachmentPoints,m_UseUpgradeSystem,m_UseRaritySystem);
-        m_NewGameAsset->SetDensity(m_Density);
-        m_NewGameAsset->SetPhysicalModel(String(m_PhysicalModel));
+        newGameAsset->SetName(name);
+        newGameAsset->SetSymbol(symbol);
+        newGameAsset->SetAttributes(isPhysical, isTradeable, isPowered, isEntity, isLinkedGameAsset);
+        newGameAsset->SetTypeState((GameAssetType)type, (GameAssetState)state);
+        newGameAsset->SetQuantity(quantity);
+        newGameAsset->SetPositionRotation(XPos, YPos, ZPos, rotation);
+        newGameAsset->SetSpecialAttributes(useAttachmentPoints, useUpgradeSystem, useRaritySystem);
+        newGameAsset->SetDensity(density);
+        newGameAsset->SetPhysicalModel(String(physicalModel));
 
         // create a new game asset
-        GameAsset * m_GameAsset_NewChild;
+        GameAsset* gameAsset_NewChild;
 
         // For ... loop through each child
-        for (pugi::xml_node NewGameAssetChild: NewGameAsset.children())
+        for (pugi::xml_node newGameAssetChild : NewGameAsset.children())
         {
             // Create a default child
-            m_GameAsset_NewChild = m_NewGameAsset->AddChild("n/a","n/a",GAType_NotApplicable,GAState_NotApplicable);
-
-            Deserialize(NewGameAssetChild,m_GameAsset_NewChild);
+            gameAsset_NewChild = newGameAsset->AddChild("n/a","n/a", GAType_NotApplicable, GAState_NotApplicable);
+            Deserialize(newGameAssetChild, gameAsset_NewChild);
         }
     }
 
     // Safe delete
     //  SAFE_DELETE(retrievedsource);
     //  SAFE_DELETE(buffer);
-    SAFE_DELETE(m_PackageData);
-    SAFE_DELETE(m_pPackageFile);
+
+    SAFE_DELETE(pPackageData);
+    SAFE_DELETE(pPackageFile);
 
     return true;
 }

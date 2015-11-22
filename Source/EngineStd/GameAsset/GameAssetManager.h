@@ -31,15 +31,13 @@ public:
     // load game assets
     bool LoadGameAssets(void)
     {
-        if(m_pGameAssetLibrary == NULL||m_pGameAssetResources==NULL)
+        if(m_pGameAssetLibrary == NULL || m_pGameAssetResources == NULL)
         {
             return NULL;
         }
 
         // load into memory
-        bool returnflag = m_pGameAssetResources->LoadGameAssets(m_pGameAssetLibrary);
-
-        return returnflag;
+        return m_pGameAssetResources->LoadGameAssets(m_pGameAssetLibrary);
     };
 
 
