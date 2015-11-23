@@ -24,11 +24,11 @@ public:
     Vector<GameAsset*>* GetGameAssets(void);
 
     // Save all game assets
-    bool SaveGameAssets(String PathFile, Vector<GameAsset *> * m_GameAssetData);
+    bool SaveGameAssets(Vector<GameAsset *>* gameAssetData);
 
     // load assets and get into memory
-    bool Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisChildGameAsset);
-    bool LoadGameAssets(Vector<GameAsset*> * m_GameAssetData);
+    bool Deserialize(pugi::xml_node & ThisChild, GameAsset* thisChildGameAsset);
+    bool LoadGameAssets(Vector<GameAsset*>* gameAssetData);
 
 private:
     // data path and data files
