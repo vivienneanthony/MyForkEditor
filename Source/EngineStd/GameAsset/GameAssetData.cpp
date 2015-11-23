@@ -15,16 +15,17 @@ GameAssetData::GameAssetData(Context *context)
     m_pDataFiles(NULL)
 {
 
+    // Create a pointer and allocate it
     m_pDataPath = new String();
     m_pDataFiles = new Vector<String>();
 
     return;
 }
 
-
-// a resource path
+// Set Game Assets Path
 void GameAssetData::SetGameAssetsPath(String addpath)
 {
+    // If path is NULL return
     if(!m_pDataPath)
     {
         return;
@@ -40,11 +41,13 @@ void GameAssetData::SetGameAssetsPath(String addpath)
 // Add resource file
 void GameAssetData::SetAddDataFile(String addfile)
 {
+    // If Data files is NULL return
     if (!m_pDataFiles)
     {
         return;
     }
 
+    // Add path
     m_pDataFiles->Push(addfile);
 
     return;
@@ -71,7 +74,7 @@ Vector<GameAsset*>* GameAssetData::GetGameAssets(void)
     return alldata;
 }
 
-// Deserialize
+// Deserialize data
 bool GameAssetData::Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisChildGameAsset)
 {
     // Get attributes from xml to flags to set
@@ -123,8 +126,11 @@ bool GameAssetData::Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisCh
 }
 
 // Save all game assets
-bool GameAssetData::SaveGameAssets(Vector<GameAsset *> * m_GameAssetData)
+bool GameAssetData::SaveGameAssets(String PathFile, Vector<GameAsset *> * m_GameAssetData)
 {
+    // Get filesystem resource
+    FileSystem * filesystem = g_pApp->GetFileSystem();
+
     // If GameAssetData is Null or size is empty exit
     if(m_GameAssetData==NULL||m_GameAssetData->Size()==0)
     {
@@ -146,8 +152,15 @@ bool GameAssetData::SaveGameAssets(Vector<GameAsset *> * m_GameAssetData)
         m_GameAssetData->At(i)->Serialize(Root);
     }
 
+    // Clear Package Path
+    String PackagePathName;
+
+    // Create temporary file path with resource
+    PackagePathName.Append(filesystem->GetProgramDir());
+    PackagePathName.Append(PathFile);
+
     // write to file
-    doc->save_file("GameAssetData.xml");
+    doc->save_file(PackagePathName.CString());
 
     return true;
 }
@@ -179,10 +192,6 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
 
     PackageFile * m_pPackageFile = new PackageFile(context_);
 
-    // Setup base path
-    String BasePath;
-    BasePath.Append(filesystem->GetProgramDir());
-
     // Search files
     for(unsigned int i=0; i<m_pDataFiles->Size(); i++)
     {
@@ -190,7 +199,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
         String PackagePathName;
 
         // Create temporary file path with resource
-        PackagePathName.Append(BasePath);
+        PackagePathName.Append(filesystem->GetProgramDir());
         PackagePathName.Append(m_pDataFiles->At(i));
 
         // Open a packaged file
@@ -213,7 +222,8 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
     // If datafiles is 0 or empty return - meaning nothing was found
     if(m_bPackageFileFound==false)
     {
-        URHO3D_LOGERROR ("Error Game Asset File Not Found");
+        // Display log error
+        URHO3D_LOGERROR ("Game Asset Manager - Error GameAssetData file not found in package.");
 
         return false;
     }
@@ -246,7 +256,8 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
     // Exit if error
     if (result.status!=pugi::status_ok)
     {
-        URHO3D_LOGERROR ("Problem occured reading game assets");
+        // Display error log
+        URHO3D_LOGERROR ("Game Asset Manager -  Problem occured reading game assets from package");
 
         return false;
     }
@@ -254,6 +265,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
     // Get XML root if it exist, if not exit
     pugi::xml_node GameAssetRoot=doc.first_child();
 
+    // If no first child - avoid blank xml files
     if(!GameAssetRoot)
     {
         return false;
@@ -302,7 +314,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
         GameAsset * m_GameAsset_NewChild;
 
         // For ... loop through each child
-        for (pugi::xml_node NewGameAssetChild: NewGameAsset.children())
+for (pugi::xml_node NewGameAssetChild: NewGameAsset.children())
         {
             // Create a default child
             m_GameAsset_NewChild = m_NewGameAsset->AddChild("n/a","n/a",GAType_NotApplicable,GAState_NotApplicable);
@@ -312,8 +324,6 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * m_GameAssetData)
     }
 
     // Safe delete
-    //  SAFE_DELETE(retrievedsource);
-    //  SAFE_DELETE(buffer);
     SAFE_DELETE(m_PackageData);
     SAFE_DELETE(m_pPackageFile);
 
