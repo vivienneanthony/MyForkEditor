@@ -108,7 +108,7 @@ private:
     GameAssetState m_State;
 
     // ResourceComponents
-    Vector <GameAsset *> * m_pChildren;
+    Vector <GameAsset *> * m_pChildrens;
 
     // Desricptor
     float m_Density;
