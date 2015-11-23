@@ -191,7 +191,7 @@ using namespace Urho3D;
 #include "Interfaces/Interfaces.h"
 
 // Game assets
-#include "GameAsset/GameAssetManager.h"
+//nclude "GameAssetManager/GameAssetManager.h"
 
 #include "EngineApplication.h"
 

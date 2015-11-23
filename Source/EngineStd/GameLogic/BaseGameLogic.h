@@ -4,6 +4,7 @@
 class ActivityManager;
 class AwesomiumCore;
 class LevelManager;
+class GameAssetManager;
 
 enum BaseGameState : int
 {
@@ -76,6 +77,8 @@ protected:
 	SharedPtr<Scene> m_pScene;									// Game scene
 
 	LevelManager* m_pLevelManager;						// Manages loading and chaining levels
+
+	GameAssetManager * m_pGameAssetManager;             // Manages and loads game assets data
 
 	bool m_bIsRenderDiagnostic;							// Are we rendering diagnostics?
 

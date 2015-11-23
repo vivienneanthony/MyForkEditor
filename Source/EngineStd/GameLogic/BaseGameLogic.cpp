@@ -9,6 +9,8 @@
 #include "Actors/CharacterComponent/Character.h"
 
 #include "LevelManager/LevelManager.h"
+#include "GameAssetManager/GameAssetManager.h"
+
 #include "BaseGameLogic.h"
 
 // ----------------------------------------------------------
@@ -51,9 +53,26 @@ bool BaseGameLogic::VInitialize()
 	Vector<String> levels = SWResourceCache::Match(g_pApp->GetConstantResCache(), "GameData.pak", "Scenes/*.xml");
 	m_pLevelManager->Initialize(levels);
 
+    // New Game Asset Manager
+	m_pGameAssetManager = new GameAssetManager(context_);
+
+    m_pGameAssetManager->Init();
+
+    URHO3D_LOGINFO ("Game Asset Manager Initialized");
+
+    // load game assets temporary
+    m_pGameAssetManager->LoadGameAssets();
+
+    // Test info string
+    String Message= String("Game Asset Manager Loaded ") +String(m_pGameAssetManager->GetTotalGameAssets())+ String(" Game Assets");
+
+    URHO3D_LOGINFO (Message);
+
+    // Rest of code
 	InitializeComponents();
 
 	InitializeAllDelegates();
+
 	return true;
 }
 
@@ -135,6 +154,10 @@ void BaseGameLogic::VShutdown()
 	}
 
 	m_pLevelManager->Shutdown();
+
+    // delete
+    SAFE_DELETE(m_pGameAssetManager);
+
 	SAFE_DELETE(m_pLevelManager);
 	SAFE_DELETE(m_pActivityManager);
 
