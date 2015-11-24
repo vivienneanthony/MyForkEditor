@@ -18,7 +18,6 @@ GameObject::GameObject(Context *context)
     return;
 }
 
-
 // Initialization
 void GameObject::Initialize()
 {
