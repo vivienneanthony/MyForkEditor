@@ -6,7 +6,7 @@
 
 #include "Resources/ResourceCache.h"
 
-#include "GameAsset/Factory/GameAssetFactory.h"
+#include "GameAssetManager/Factory/GameAssetFactory.h"
 
 #include "LevelManager/LevelManager.h"
 #include "GameAssetManager/GameAssetManager.h"
@@ -287,7 +287,7 @@ void BaseGameLogic::VRemoveView(SharedPtr<IGameView> pView)
 
 void BaseGameLogic::InitializeComponents()
 {
-	
+
 }
 
 

@@ -11,7 +11,7 @@ public:
 	GameAssetFactory(Context* context_);
 	~GameAssetFactory();
 
-	// Node can be created on client side and server side. 
+	// Node can be created on client side and server side.
 	// On client side we get event from server, where is contained serversId.
 	StrongNodePtr CreateNode(GameAsset* gameAsset, GameNodeId serversId);
 	void ModifyNode(StrongNodePtr node, GameAsset* gameAsset);

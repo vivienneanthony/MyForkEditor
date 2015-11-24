@@ -5,6 +5,7 @@ class ActivityManager;
 class AwesomiumCore;
 class LevelManager;
 class GameAssetFactory;
+class GameAssetManager;
 
 enum BaseGameState : int
 {
