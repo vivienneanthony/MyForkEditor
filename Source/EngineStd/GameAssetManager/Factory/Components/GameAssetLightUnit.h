@@ -1,5 +1,5 @@
-#ifndef GameAssetReplicationPrinterUnit_H
-#define GameAssetReplicationPrinterUnit_H
+#ifndef GameAssetLightUnit_H
+#define GameAssetLightUnit_H
 
 // include engine headers
 #include "EngineStd.h"
@@ -8,20 +8,25 @@
 #include "EngineStd/GameAssetManager/GameAsset.h"
 
 // Base game object
-#include "GameAssetObject.h"
-#include "GameAssetReplicationPrinterUnit.h"
+#include "../BaseComponent.h"
+
+#include "GameAssetLightUnit.h"
 
 class GameAssetObject;
 
 // Game Asset
-class GameAssetReplicationPrinterUnit : public GameAssetObject
+class GameAssetLightUnit : public BaseComponent
 {
-    URHO3D_OBJECT(GameAssetReplicationPrinterUnit, GameAssetObject);
+    URHO3D_OBJECT(GameAssetLightUnit, BaseComponent);
 
     public:
     // Construct.
-    GameAssetReplicationPrinterUnit(Context* context);
-    virtual ~GameAssetReplicationPrinterUnit(void);
+    GameAssetLightUnit(Context* context);
+    virtual ~GameAssetLightUnit(void);
+
+    // Override - Virtuals
+    bool VInit(GameAsset* pGameAsset){};
+
 
     // Register object factory and attributes.
     static void RegisterObject(Context* context);
