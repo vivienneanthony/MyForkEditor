@@ -110,8 +110,10 @@ void MainMenuUI::CreateServerWindow()
 void MainMenuUI::HandleStartServerDelegate(StringHash eventType, VariantMap& eventData)
 {
 	int port = ToInt(m_pPortEdit->GetText());
-
-
+	g_pApp->GetGameOptions().m_ListenPort = port;
+	g_pApp->GetGameOptions().m_GameHost = "localhost";
+	
+	//SendEvent(String("Request_Start_Game"));
 }
 
 

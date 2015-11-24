@@ -15,6 +15,7 @@ public:
 	
 	void Init(unsigned short portNum);
 	void Shutdown();
+	
 
 protected:
 	virtual void VInitializeDelegates();	// Subsribe to events to this net socket.

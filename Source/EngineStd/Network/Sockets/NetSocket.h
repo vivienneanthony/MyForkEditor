@@ -11,8 +11,8 @@ class NetSocket : public Object
 	typedef List<SharedPtr<BasePacket>> PacketList;
 
 public:
-	NetSocket(Context* context);				// Handle by client
-	NetSocket(Context* context, String hostIP);	// Handle by server
+	NetSocket(Context* context);				// Handled by client
+	NetSocket(Context* context, String hostIP);	// Handled by server
 	virtual ~NetSocket();
 
 	// Connect to the server. 

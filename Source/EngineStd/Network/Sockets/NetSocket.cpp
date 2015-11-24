@@ -11,6 +11,7 @@ NetSocket::NetSocket(Context* context) : Object(context)
 	m_TimeOut = 0;
 	m_IpAddr = "remote";
 	m_bIsInternal = false;
+	m_pConnection = NULL;
 
 	VInitializeDelegates();
 }
@@ -143,8 +144,6 @@ void NetSocket::HandleNetworkMessage(StringHash eventType, VariantMap& eventData
 		binarypacket = SharedPtr<BasePacket>(new BinaryPacket(context_, packetId, buffer));
 		m_InList.Push(binarypacket);
 	}
-
-	VHandleInput();
 }
 
 void NetSocket::HandleRemoteEventNetworkMessage(StringHash eventType, VariantMap& eventData)
@@ -171,6 +170,4 @@ void NetSocket::HandleRemoteEventNetworkMessage(StringHash eventType, VariantMap
 			m_OutList.Push(eventpacket);
 		}
 	}
-
-	VHandleInput();
 }

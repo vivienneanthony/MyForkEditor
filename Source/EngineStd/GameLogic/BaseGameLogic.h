@@ -4,6 +4,7 @@
 class ActivityManager;
 class AwesomiumCore;
 class LevelManager;
+class GameAssetFactory;
 
 enum BaseGameState : int
 {
@@ -34,20 +35,21 @@ public:
 	virtual void VShutdown();
 
 	// Manipulation with actors
-	virtual void VDestroyActor(const ActorId actorId);
+	virtual void VDestroyGameNode(const GameNodeId gameNodeId);
 
 	// Handle game state
 	virtual void VChangeState(enum BaseGameState newState);
 	virtual bool VLoadGame(String levelResource);
 
 	// Manage game views
-	virtual void VAddView(SharedPtr<IGameView> pView, ActorId actorId = INVALID_ACTOR_ID);
+	virtual void VAddView(SharedPtr<IGameView> pView, GameNodeId gameNodeId = INVALID_GAME_NODE_ID);
 	virtual void VRemoveView(SharedPtr<IGameView> pView);
 
 	// Getter/Setters
 	inline ActivityManager* GetActivityManager() { return m_pActivityManager; }
 	inline GameViewList& GetGameViews() { return m_GameViews; }
 	inline LevelManager* GetLevelManager() { return m_pLevelManager; }
+	inline SharedPtr<Scene> GetScene() { return m_pScene; }
 
 protected:
 	// Override this function to do any game-specific loading.
@@ -73,9 +75,11 @@ protected:
 	BaseGameState m_State;								// Game state: loading, running, etc.
 	GameViewList m_GameViews;							// Views that are attached to our game
 
-	SharedPtr<Scene> m_pScene;									// Game scene
+	SharedPtr<Scene> m_pScene;							// Game scene
 
 	LevelManager* m_pLevelManager;						// Manages loading and chaining levels
+
+	GameAssetFactory* m_pGameAssetFactory;				// Game Asset Factory. GameAsset -> Node.
 
 	bool m_bIsRenderDiagnostic;							// Are we rendering diagnostics?
 

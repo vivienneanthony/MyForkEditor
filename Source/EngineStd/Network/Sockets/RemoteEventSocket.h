@@ -10,5 +10,4 @@ public:
 	RemoteEventSocket(Context* context);
 	virtual ~RemoteEventSocket();
 
-
 };

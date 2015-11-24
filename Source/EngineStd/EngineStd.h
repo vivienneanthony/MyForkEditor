@@ -185,6 +185,8 @@ using namespace Urho3D;
 
 // Some Engine utilities
 #include "Utility/ApplicationMessage.h"
+#include "Utility/Templates.h"
+
 #include "UserInterface/Urho3D/Utilities.h"
 
 #include "Debugging/Debugging.h"

@@ -1,6 +1,10 @@
 #ifndef HANGARS_SERVER_APPLICATION_H
 #define HANGARS_SERVER_APPLICATION_H
 
+
+
+class BaseSocketManager;
+
 class HangarsServerApp : public EngineApp
 {
 public:
@@ -26,7 +30,10 @@ protected:
 
 
 	virtual void VInitializeAllDelegates();				// Register all delegates
-	virtual void VDestroyAllDelegates();					// Unsubscribe from all events to game logic
+	virtual void VDestroyAllDelegates();				// Unsubscribe from all events to game logic
+
+
+
 };
 
 #endif //HANGARS_SERVER_APPLICATION_H

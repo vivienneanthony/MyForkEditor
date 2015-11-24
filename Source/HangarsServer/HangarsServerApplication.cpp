@@ -14,6 +14,7 @@ HangarsServerApp::HangarsServerApp(Context* context) : EngineApp(context)
 	g_pApp = this;
 	m_bIsInit = false;
 	m_pCurrentCursor = nullptr;
+	m_pBaseSocketManager = nullptr;
 }
 
 HangarsServerApp::~HangarsServerApp()

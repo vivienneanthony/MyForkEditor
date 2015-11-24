@@ -20,7 +20,7 @@ public:
 	IGameView(Context* context);
 	virtual ~IGameView();
 
-	virtual void VOnAttach(GameViewId vid, ActorId aid) = 0;
+	virtual void VOnAttach(GameViewId vid, GameNodeId aid) = 0;
 	virtual bool VOnRestore() = 0;
 	virtual bool VOnLostDevice() = 0;
 	virtual void VOnUpdate(float timeStep) = 0;

@@ -6,7 +6,7 @@
 
 #include "Resources/ResourceCache.h"
 
-#include "Actors/CharacterComponent/Character.h"
+#include "GameAsset/Factory/GameAssetFactory.h"
 
 #include "LevelManager/LevelManager.h"
 #include "BaseGameLogic.h"
@@ -17,14 +17,17 @@
 
 BaseGameLogic::BaseGameLogic(Context *context) : IGameLogic(context)
 {
-	m_pActivityManager = nullptr;
-	m_pLevelManager = nullptr;
+	m_pActivityManager = NULL;
+	m_pLevelManager = NULL;
+	m_pGameAssetFactory = NULL;
 
 	m_bIsRenderDiagnostic = false;
 
 	m_HumanPlayersAttached = 0;
 	m_ExpectedPlayers = 0;
 	m_HumanGamesLoaded = 0;
+
+
 
 	m_State = BGS_Invalid;
 }
@@ -48,8 +51,10 @@ bool BaseGameLogic::VInitialize()
 	m_pActivityManager = new ActivityManager(context_);
 
 	m_pLevelManager = new LevelManager(context_);
-	Vector<String> levels = SWResourceCache::Match(g_pApp->GetConstantResCache(), "GameData.pak", "Scenes/*.xml");
-	m_pLevelManager->Initialize(levels);
+	//Vector<String> levels = SWResourceCache::Match(g_pApp->GetConstantResCache(), "GameData.pak", "Scenes/*.xml");
+	//m_pLevelManager->Initialize(levels);
+
+	m_pGameAssetFactory = new GameAssetFactory(context_);
 
 	InitializeComponents();
 
@@ -134,6 +139,8 @@ void BaseGameLogic::VShutdown()
 		m_GameViews.PopFront();
 	}
 
+	SAFE_DELETE(m_pGameAssetFactory);
+
 	m_pLevelManager->Shutdown();
 	SAFE_DELETE(m_pLevelManager);
 	SAFE_DELETE(m_pActivityManager);
@@ -154,9 +161,9 @@ void BaseGameLogic::VShutdown()
 // Actor manipulations
 // ----------------------------------------------------------
 
-void BaseGameLogic::VDestroyActor(const ActorId actorId)
+void BaseGameLogic::VDestroyGameNode(const GameNodeId gameAssetId)
 {
-	Node* node = m_pScene->GetNode(actorId);
+	Node* node = m_pScene->GetNode(gameAssetId);
 	if (node)
 	{
 		m_pScene->RemoveChild(node);
@@ -233,7 +240,7 @@ bool BaseGameLogic::VLoadGame(String levelResource)
 // Manage game views
 // ----------------------------------------------------------
 
-void BaseGameLogic::VAddView(SharedPtr<IGameView> pView, ActorId actorId)
+void BaseGameLogic::VAddView(SharedPtr<IGameView> pView, GameNodeId actorId)
 {
 	// This makes sure that all views have a non-zero view id.
 	int viewId = static_cast<int>(m_GameViews.Size());
@@ -256,7 +263,7 @@ void BaseGameLogic::VRemoveView(SharedPtr<IGameView> pView)
 
 void BaseGameLogic::InitializeComponents()
 {
-	Character::RegisterObject(context_);
+	
 }
 
 
@@ -279,8 +286,8 @@ void BaseGameLogic::DestroyAllDelegates()
 
 void BaseGameLogic::RequestDestroyActorDelegate(StringHash eventType, VariantMap& eventData)
 {
-	ActorId actorId = eventData["ActorId"].Get<ActorId>();
-	VDestroyActor(actorId);
+	GameNodeId actorId = eventData["ActorId"].Get<GameNodeId>();
+	VDestroyGameNode(actorId);
 }
 
 void BaseGameLogic::RequestStartGameDelegate(StringHash eventType, VariantMap& eventData)

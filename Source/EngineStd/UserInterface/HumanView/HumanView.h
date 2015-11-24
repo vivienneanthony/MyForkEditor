@@ -15,7 +15,7 @@ public:
 	// Attach view id and actor id. If it has controlled actor.
 	// Ex. Human view must have the actor, that is controlled by player.
 	// Ex. Main menu view doesn't have any actors.
-	virtual void VOnAttach(GameViewId vid, ActorId aid);
+	virtual void VOnAttach(GameViewId vid, GameNodeId aid);
 	// Initialize humam view.
 	virtual bool VOnRestore();
 	// Lost device/input.
@@ -56,7 +56,7 @@ protected:
 
 protected:
 	GameViewId m_ViewId;							// Unique game view id.
-	ActorId m_ActorId;								// Controlled actor.
+	GameNodeId m_GameNodeId;						// Controlled game node id.
 
 	ActivityManager* m_pActivityManager;			// Strictly for things like button animations, particles, etc.
 													// Where we do not have rapid communication with game logic.

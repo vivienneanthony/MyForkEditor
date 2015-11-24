@@ -222,7 +222,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * gameAssetData)
     const PackageEntry* pGameAssetsDataEntry = pPackageFile->GetEntry("GameAssets/GameAssetsData.xml");
 
     // Set package
-    File * pPackageData = new File(context_, pPackageFile, String("GameAssets/GameAssetsData.xml"));
+    File* pPackageData = new File(context_, pPackageFile, String("GameAssets/GameAssetsData.xml"));
 
     // Read content to memory
     unsigned char* retrievedsource = NULL;

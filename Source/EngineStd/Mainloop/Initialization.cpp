@@ -16,6 +16,8 @@ GameOptions::GameOptions()
 
     m_ListenPort = 1234;
     m_GameHost = "localhost";
+	m_Login = String::EMPTY;
+	m_Password = String::EMPTY;
 	m_IsEnableMultipayer = true;
 
     m_ScreenSize = IntVector2(1024, 768);
