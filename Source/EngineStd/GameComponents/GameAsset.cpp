@@ -2,15 +2,15 @@
 #include "EngineStd.h"
 
 // interactive specific header
-#include "Interactive.h"
+#include "GameAsset.h"
 
-Interactive::Interactive(Context * context)
+GameAsset::GameAsset(Context * context)
     :GameObject(context)
 {
     //ctor
 }
 
-Interactive::~Interactive()
+GameAsset::~GameAsset()
 {
     //dtor
 }
