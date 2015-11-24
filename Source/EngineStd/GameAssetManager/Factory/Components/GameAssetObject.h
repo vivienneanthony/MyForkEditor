@@ -36,38 +36,6 @@ public:
     // Handle update. Called by LogicComponent base class.
     virtual void FixedUpdate(float timeStep);
 
-    // return lifetime
-    inline float GetLifetime(void)
-    {
-        return m_Lifetime;
-    };
-
-    // set Game Asset State
-    inline GameAssetType GetGameAssetType(void)
-    {
-        return m_GameAssetType;
-    }
-
-    inline void SetGameAssetType(GameAssetType setType)
-    {
-        m_GameAssetType=setType;
-
-        return;
-    }
-
-    // set Game Asset State
-    inline GameAssetState GetGameAssetState(void)
-    {
-        return m_GameAssetState;
-    }
-
-    inline void SetGameAssetState(GameAssetState setState)
-    {
-        m_GameAssetState=setState;
-
-        return;
-    }
-
 protected:
     float m_Lifetime;                    // lifetime
     GameAssetType m_GameAssetType;       // game asset type
