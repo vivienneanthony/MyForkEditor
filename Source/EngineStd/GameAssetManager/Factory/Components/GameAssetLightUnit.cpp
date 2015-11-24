@@ -11,10 +11,7 @@ class GameAssetObject;
 
 // Game Asset Component - Type
 GameAssetLightUnit::GameAssetLightUnit(Context * context)
-    :GameAssetObject(context)
-     // m_Lifetime(0.0f)                            // inherited from base class
-     // m_GameAssetType(GAType_None)                // inherited from base class
-     // m_GameAssetState(GAState_None)              // inherited from base class
+    :BaseComponent()
 {
      // Set lifetime to 0
     m_Lifetime=0.0f;

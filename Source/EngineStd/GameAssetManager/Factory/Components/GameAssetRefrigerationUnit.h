@@ -1,5 +1,5 @@
-#ifndef GameAssetPowerSourceUnit_H
-#define GameAssetPowerSourceUnit_H
+#ifndef GameAssetRefrigerationUnit_H
+#define GameAssetRefrigerationUnit_H
 
 // include engine headers
 #include "EngineStd.h"
@@ -8,20 +8,25 @@
 #include "EngineStd/GameAssetManager/GameAsset.h"
 
 // Base game object
-#include "GameAssetObject.h"
-#include "GameAssetPowerSourceUnit.h"
+#include "../BaseComponent.h"
+
+#include "GameAssetRefrigerationUnit.h"
 
 class GameAssetObject;
 
 // Game Asset
-class GameAssetPowerSourceUnit : public GameAssetObject
+class GameAssetRefrigerationUnit : public BaseComponent
 {
-    URHO3D_OBJECT(GameAssetPowerSourceUnit, GameAssetObject);
+    URHO3D_OBJECT(GameAssetRefrigerationUnit, BaseComponent);
 
     public:
     // Construct.
-    GameAssetPowerSourceUnit(Context* context);
-    virtual ~GameAssetPowerSourceUnit(void);
+    GameAssetRefrigerationUnit(Context* context);
+    virtual ~GameAssetRefrigerationUnit(void);
+
+   // Override - Virtuals
+    bool VInit(GameAsset* pGameAsset){};
+
 
     // Register object factory and attributes.
     static void RegisterObject(Context* context);

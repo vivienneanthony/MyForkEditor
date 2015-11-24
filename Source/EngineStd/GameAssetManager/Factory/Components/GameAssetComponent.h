@@ -8,20 +8,24 @@
 #include "EngineStd/GameAssetManager/GameAsset.h"
 
 // Base game object
-#include "GameAssetObject.h"
+#include "../BaseComponent.h"
+
 #include "GameAssetComponent.h"
 
 class GameAssetObject;
 
 // Game Asset
-class GameAssetComponent : public GameAssetObject
+class GameAssetComponent : public BaseComponent
 {
-    URHO3D_OBJECT(GameAssetComponent, GameAssetObject);
+    URHO3D_OBJECT(GameAssetComponent, BaseComponent);
 
     public:
     // Construct.
     GameAssetComponent(Context* context);
     virtual ~GameAssetComponent(void);
+
+// Override - Virtuals
+    bool VInit(GameAsset* pGameAsset){};
 
     // Register object factory and attributes.
     static void RegisterObject(Context* context);

@@ -1,5 +1,5 @@
-#ifndef GameAssetForceFieldGeneratorUnit_H
-#define GameAssetForceFieldGeneratorUnit_H
+#ifndef GameAssetStorageUnit_H
+#define GameAssetStorageUnit_H
 
 // include engine headers
 #include "EngineStd.h"
@@ -8,20 +8,24 @@
 #include "EngineStd/GameAssetManager/GameAsset.h"
 
 // Base game object
-#include "GameAssetObject.h"
-#include "GameAssetForceFieldGeneratorUnit.h"
+#include "../BaseComponent.h"
+
+#include "GameAssetStorageUnit.h"
 
 class GameAssetObject;
 
 // Game Asset
-class GameAssetForceFieldGeneratorUnit : public GameAssetObject
+class GameAssetStorageUnit : public BaseComponent
 {
-    URHO3D_OBJECT(GameAssetForceFieldGeneratorUnit, GameAssetObject);
+    URHO3D_OBJECT(GameAssetStorageUnit, BaseComponent);
 
     public:
     // Construct.
-    GameAssetForceFieldGeneratorUnit(Context* context);
-    virtual ~GameAssetForceFieldGeneratorUnit(void);
+    GameAssetStorageUnit(Context* context);
+    virtual ~GameAssetStorageUnit(void);
+
+    // Override - Virtuals
+    bool VInit(GameAsset* pGameAsset){};
 
     // Register object factory and attributes.
     static void RegisterObject(Context* context);
