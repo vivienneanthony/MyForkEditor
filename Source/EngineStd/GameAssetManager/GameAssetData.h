@@ -27,7 +27,7 @@ public:
     bool SaveGameAssets(Vector<GameAsset *>* gameAssetData);
 
     // load assets and get into memory
-    bool Deserialize(pugi::xml_node & ThisChild, GameAsset* thisChildGameAsset);
+    bool Deserialize(pugi::xml_node& ThisChild, GameAsset* thisChildGameAsset);
     bool LoadGameAssets(Vector<GameAsset*>* gameAssetData);
 
 private:

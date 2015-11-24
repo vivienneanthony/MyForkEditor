@@ -33,6 +33,8 @@ struct GameOptions
 	// Multiplayer options
 	int m_ListenPort;
 	String m_GameHost;
+	String m_Login;
+	String m_Password;
 	bool m_IsEnableMultipayer;;
 
 	// Platform

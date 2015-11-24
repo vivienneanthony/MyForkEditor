@@ -44,10 +44,10 @@ HumanView::~HumanView()
 // Initializtion, update, shutdown.
 // ----------------------------------------------------------
 
-void HumanView::VOnAttach(GameViewId vid, ActorId aid)
+void HumanView::VOnAttach(GameViewId vid, GameNodeId aid)
 {
 	m_ViewId = vid;
-	m_ActorId = aid;
+	m_GameNodeId= aid;
 }
 
 bool HumanView::VOnRestore()

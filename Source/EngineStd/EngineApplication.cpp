@@ -7,10 +7,12 @@
 
 #include "EnginePlatform.h"
 
+#include "Network/Managers/ClientSocketManager.h"
+
 #include "EngineApplication.h"
 
 
-EngineApp* g_pApp = nullptr;
+EngineApp* g_pApp = NULL;
 
 // Application entry-point
 
@@ -19,7 +21,8 @@ EngineApp::EngineApp(Context* context) : Application(context)
 {
     g_pApp = this;
     m_bIsInit = false;
-    m_pCurrentCursor = nullptr;
+	m_pCurrentCursor = NULL;
+	m_pBaseSocketManager = NULL;
 }
 
 EngineApp::~EngineApp()
@@ -82,6 +85,7 @@ void EngineApp::Start()
     m_pRenderer = GetSubsystem<Renderer>();
     m_pUI = GetSubsystem<UI>();
     m_pAudio = GetSubsystem<Audio>();
+	m_pNetwork = GetSubsystem<Network>();
 
     m_pConstantResourceCache = GetSubsystem<ResourceCache>();
     m_pFileSystem = GetSubsystem<FileSystem>();
@@ -126,18 +130,22 @@ void EngineApp::Start()
     m_pAudio->SetMasterGain(SOUND_MUSIC, m_GameOptions.m_MusicVolume / 100.0f);
     m_pAudio->SetMasterGain(SOUND_VOICE, m_GameOptions.m_SpeechVolume / 100.0f);
 
-
 	CreateConsole(style);
 
 	CreateDebugHud(style);
-
-
     m_bIsInit = true;
     URHO3D_LOGINFO("Game can be started");
 }
 
 void EngineApp::Stop()
 {
+
+	if (m_pBaseSocketManager)
+	{
+		m_pBaseSocketManager->Shutdown();
+		SAFE_DELETE(m_pBaseSocketManager);
+	}
+	
     m_pGameLogic->VShutdown();
 
     VDestroyAllDelegates();
@@ -210,7 +218,6 @@ bool EngineApp::OnMessageProc(AppMsg message)
     // Always allow dialog resource manager calls to handle global messages
     // so GUI state is updated correctly
 
-
     switch (message.uEvent)
     {
     case APP_EVENT::KEY_DOWN:
@@ -239,6 +246,25 @@ bool EngineApp::OnMessageProc(AppMsg message)
 
     return result;
 }
+
+bool EngineApp::AttachAsClient()
+{
+	VariantMap identify;
+	identify["CLIENT_LOGIN"] = m_GameOptions.m_Login;
+	identify["CLIENT_PASSWORD"] = m_GameOptions.m_Password;
+
+	ClientSocketManager* clientManager = new ClientSocketManager(context_, m_GameOptions.m_GameHost, m_GameOptions.m_ListenPort, identify);
+	if (clientManager->Connect())
+	{
+		URHO3D_LOGDEBUG(String("Client connection failed."));
+		SAFE_DELETE(clientManager);
+		return false;
+	}
+
+	m_pBaseSocketManager = clientManager;
+	return true;
+}
+
 
 void EngineApp::CreateConsole(XMLFile* style)
 {
@@ -291,9 +317,16 @@ void EngineApp::UpdateDelegate(StringHash eventType, VariantMap& eventData)
 {
     float timeStep = eventData[Update::P_TIMESTEP].GetFloat();
 
+	if (m_pGameLogic)
+	{
+		if (m_pBaseSocketManager)
+		{
+			// Send/Recieve/Delete network messages
+			m_pBaseSocketManager->DoSelect();
+		}
 
-
-    m_pGameLogic->VOnUpdate(timeStep);
+		m_pGameLogic->VOnUpdate(timeStep);
+	}
 }
 
 void EngineApp::KeyDownDelegate(StringHash eventType, VariantMap& eventData)

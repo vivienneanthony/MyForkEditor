@@ -97,7 +97,6 @@ void BaseSocketManager::DoSelect(bool handleInput)
 		{
 			(*it)->VHandleInput();
 		}
-		
 	}
 
 	SocketList::Iterator it = m_SocketsList.Begin();

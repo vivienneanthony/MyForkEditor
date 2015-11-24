@@ -12,6 +12,7 @@
 using namespace Urho3D;
 
 class BaseGameLogic;
+class BaseSocketManager;
 
 class EngineApp : public Application
 {
@@ -34,6 +35,9 @@ public:
 	// It can be different loading steps for one game depend on platform. (pc, mobile, ...)
 	bool VLoadGame();
 
+	// Network
+	bool AttachAsClient();
+
 protected:
 	// Initialize instance. Set startup parameters for window and
 	// other subsystems
@@ -54,8 +58,8 @@ protected:
 	// Message handling
 	bool OnMessageProc(AppMsg msg);
 
-	// Utility function
 private:
+	// Utility function
 	void CreateConsole(XMLFile* style);
 	void CreateDebugHud(XMLFile* style);
 
@@ -81,6 +85,9 @@ public:
 	inline ResourceCache* GetConstantResCache() { return m_pConstantResourceCache; }
 	inline BaseGameLogic* GetGameLogic() const { return m_pGameLogic; }
 	inline Time* GetTimer() { return m_pTime; }
+
+	inline BaseSocketManager* GetSocketManager() { return m_pBaseSocketManager; }
+	inline void SetSocketManager(BaseSocketManager* manager) { m_pBaseSocketManager = manager; }
 
 	// Game specific getters/setters
 	virtual String GetWindowIcon() = 0;
@@ -113,6 +120,12 @@ protected:
 												// and controls the frequency of the OS low-resolution timer
 
 	WorkQueue* m_pWorkQueue;					// Executes background tasks in worker threads
+
+// Network
+
+	Network* m_pNetwork;
+
+	BaseSocketManager* m_pBaseSocketManager;    // Can be server/client
 
 // Game specific
 	Cursor* m_pCurrentCursor;					// Current cursor, that handle UI system.

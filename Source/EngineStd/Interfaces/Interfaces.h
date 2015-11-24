@@ -1,19 +1,25 @@
 #ifndef INTERFACES_H
 #define INTERFACES_H
 
-class Actor;
-class ActorComponent;
+class BaseComponent;
 
-typedef unsigned int ActorId;
+typedef unsigned int GameNodeId;
+typedef unsigned int ComponentId;
 
-const ActorId INVALID_ACTOR_ID = 0;
+typedef SharedPtr<Node> StrongNodePtr;
+typedef WeakPtr<Node> WeakNodePtr;
+typedef SharedPtr<BaseComponent> StrongComponentPtr;
+typedef WeakPtr<BaseComponent> WeakComponentPtr;
+
+const GameNodeId INVALID_GAME_NODE_ID = 0;
+const ComponentId INVALID_COMPONENT_ID = 0;
 
 #include "IGameLogic.h"
 
 #include "IGameView.h"
 
 typedef Urho3D::List<Urho3D::SharedPtr<IGameView>> GameViewList;
-typedef HashMap<ActorId, SharedPtr<Node>> ActorsMap;
+typedef HashMap<GameNodeId, SharedPtr<Node>> GameNodesMap;
 
 #include "IScreenElement.h"
 

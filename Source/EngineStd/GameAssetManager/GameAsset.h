@@ -24,6 +24,8 @@ enum GameAssetType
     GAType_DroneEntity,
     GAType_NPCEntity,
     GAType_PlayerEntity,
+	GAType_AmmoPickup,
+	GAType_HealthPickup,
     GAType_NotApplicable=99999
 };
 
@@ -84,14 +86,16 @@ public:
 
     // add child
     GameAsset* AddChild(String GA_Name, String GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State);
-
-    // remove children
+	Vector<GameAsset*>& GetChilds() { return (*m_pChildrens); }
+	
+	// remove children
     bool DeleteChild(GameAsset* RemoveGameAsset);
     void RemoveClean(void);
 
-    // get name and symbol
-    String GetName() {return m_Name;};
-    String GetSymbol() {return m_Symbol;};
+    // Getters
+	inline String GetName() { return m_Name; };
+	inline String GetSymbol() { return m_Symbol; };
+	inline GameAssetType GetType() { return m_Type; }
 
     void Dump(void);
 

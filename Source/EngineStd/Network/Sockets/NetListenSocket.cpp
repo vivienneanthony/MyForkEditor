@@ -6,9 +6,9 @@ NetListenSocket::NetListenSocket(Context* context) : NetSocket(context)
 	m_PortNum = 0;
 }
 
-NetListenSocket::NetListenSocket(Context* context, unsigned short portNum) : NetSocket(context_, String("80.233.186.234"))
+NetListenSocket::NetListenSocket(Context* context, unsigned short portNum) : NetSocket(context_, String("localhost"))
 {
-	m_PortNum = 0;
+	m_PortNum = portNum;
 	Init(portNum);
 }
 
@@ -43,12 +43,12 @@ NetListenSocket::~NetListenSocket()
 // ----------------------- DELEGATES ----------------------
 void NetListenSocket::VInitializeDelegates()
 {
-	NetSocket::VInitializeDelegates();
+	
 
 }
 
 void NetListenSocket::VDestroyAllDelegates()
 {
-	NetSocket::VDestroyAllDelegates();
+	
 
 }
