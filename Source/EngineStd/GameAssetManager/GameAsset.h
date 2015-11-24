@@ -5,22 +5,22 @@
 using namespace std;
 
 // Game Asset Type
+
 enum GameAssetType
 {
-    /// Resource list
     GAType_None,
     GAType_PeriodicUnidentified,
     GAType_PeriodicElement,
     GAType_RawMaterial,
     GAType_Component,
     GAType_Tool,
-    GAType_ForcefieldGenerator,
     GAType_Structural,
-    GAType_Light,
-    GAType_PowerSource,
-    GAType_ReplicationPrinter,
+    GAType_PowerSourceUnit,
+    GAType_LightUnit,
+    GAType_ForcefieldGenerator,
+    GAType_ReplicationPrinterUnit,
     GAType_RefrigerationUnit,
-    GAType_StorageContainer,
+    GAType_StorageUnit,
     GAType_DroneEntity,
     GAType_NPCEntity,
     GAType_PlayerEntity,

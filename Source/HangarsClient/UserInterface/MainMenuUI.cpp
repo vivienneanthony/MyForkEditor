@@ -8,7 +8,7 @@
 #include "EngineStd/Resources/ResHandle.h"
 #include "EngineStd/Resources/ResourceCache.h"
 
-#include "EngineStd/GameAsset/GameAssetManager.h"
+#include "EngineStd/GameAssetManager/GameAssetManager.h"
 
 #include "MainMenuUI.h"
 
@@ -146,7 +146,7 @@ void MainMenuUI::HandleCloseDelegate(StringHash eventType, VariantMap& eventData
 
 void MainMenuUI::TestAssetSystem(void)
 {
-    //  Get the game asset manager
+   /* //  Get the game asset manager
     GameAssetManager * gameassetmanager_ = GetSubsystem<GameAssetManager>();
 
     gameassetmanager_->Init();
@@ -156,7 +156,7 @@ void MainMenuUI::TestAssetSystem(void)
     // Test info string
     String Message= String("Game Asset Manager Loaded ") +String(gameassetmanager_->GetTotalGameAssets())+ String(" Game Assets");
 
-    URHO3D_LOGINFO (Message);
+    URHO3D_LOGINFO (Message);*/
 
     return;
 }

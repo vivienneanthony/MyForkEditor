@@ -147,6 +147,7 @@ bool GameAssetData::SaveGameAssets(Vector<GameAsset *>* gameAssetData)
     // write to file
     doc->save_file("GameAssetData.xml");
 
+    // safe delete
 	SAFE_DELETE(doc);
 
     return true;
@@ -213,7 +214,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * gameAssetData)
     // If datafiles is 0 or empty return - meaning nothing was found
     if(bPackageFileFound == false)
     {
-        URHO3D_LOGERROR ("Error Game Asset File Not Found");
+        URHO3D_LOGERROR ("Game Asset Manager Data - Error Game Asset File Not Found");
 
         return false;
     }
@@ -246,7 +247,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * gameAssetData)
     // Exit if error
     if (result.status != pugi::status_ok)
     {
-        URHO3D_LOGERROR ("Problem occured reading game assets");
+        URHO3D_LOGERROR ("Game Asset Manager Data - Problem occured reading game assets");
 
         return false;
     }
@@ -311,9 +312,6 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * gameAssetData)
     }
 
     // Safe delete
-    //  SAFE_DELETE(retrievedsource);
-    //  SAFE_DELETE(buffer);
-
     SAFE_DELETE(pPackageData);
     SAFE_DELETE(pPackageFile);
 

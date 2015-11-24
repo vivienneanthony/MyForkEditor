@@ -81,12 +81,6 @@ void EngineApp::Start()
     // Save all necessary subsystems in Game Application Layer
     context_->RegisterSubsystem(new Script(context_));
 
-    // Add resource manager
-    GameAssetManager::RegisterNewSubsystem(context_);
-
-    /*context_->RegisterSubsystem(new Audio(context_));
-    */
-
     m_pGraphics = GetSubsystem<Graphics>();
     m_pRenderer = GetSubsystem<Renderer>();
     m_pUI = GetSubsystem<UI>();
@@ -139,7 +133,6 @@ void EngineApp::Start()
 	CreateConsole(style);
 
 	CreateDebugHud(style);
-  
     m_bIsInit = true;
     URHO3D_LOGINFO("Game can be started");
 }
@@ -277,9 +270,9 @@ void EngineApp::CreateConsole(XMLFile* style)
 {
 	// Create console
 	context_->RegisterSubsystem(new Console(context_));
-	
+
 	// Show the console by default, make it large. Console will show the text edit field when there is at least one
-	// subscriber for the console command event	
+	// subscriber for the console command event
 	Console* console = GetSubsystem<Console>();
 	console->SetNumRows(GetSubsystem<Graphics>()->GetHeight() / 16);
 	console->SetNumBufferedRows(2 * console->GetNumRows());
