@@ -87,7 +87,7 @@ public:
     // add child
     GameAsset* AddChild(String GA_Name, String GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State);
 	Vector<GameAsset*>& GetChilds() { return (*m_pChildrens); }
-	
+
 	// remove children
     bool DeleteChild(GameAsset* RemoveGameAsset);
     void RemoveClean(void);
@@ -95,7 +95,8 @@ public:
     // Getters
 	inline String GetName() { return m_Name; };
 	inline String GetSymbol() { return m_Symbol; };
-	inline GameAssetType GetType() { return m_Type; }
+	inline GameAssetType GetType() { return m_Type; };
+	inline bool IsLinkedGameAsset() {return m_bIsLinkedGameAsset;};
 
     void Dump(void);
 
