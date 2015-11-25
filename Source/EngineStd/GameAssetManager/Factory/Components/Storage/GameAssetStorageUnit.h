@@ -1,18 +1,19 @@
-#ifndef GameAssetComponent_H
-#define GameAssetComponent_H
+#ifndef GameAssetStorageUnit_H
+#define GameAssetStorageUnit_H
 
 // Base game asset component
-#include "../BaseComponent.h"
+#include "../../BaseComponent.h"
 
 // Game Asset
-class GameAssetComponent : public BaseComponent
+class GameAssetStorageUnit : public BaseComponent
 {
-    URHO3D_OBJECT(GameAssetComponent, BaseComponent);
+    URHO3D_OBJECT(GameAssetStorageUnit, BaseComponent);
 
 public:
-	GameAssetComponent(Context* context);
-    GameAssetComponent();
-    virtual ~GameAssetComponent();
+    // Construct.
+	GameAssetStorageUnit(Context* context);
+    GameAssetStorageUnit();
+    virtual ~GameAssetStorageUnit();
 
 	static const GameAssetType g_Type;
 
@@ -22,6 +23,8 @@ public:
 	virtual void VInitializeDelegate() { }
 
 	virtual GameAssetType VGetGameAssetType(void) const { return g_Type; }
+
+private:
 
 };
 

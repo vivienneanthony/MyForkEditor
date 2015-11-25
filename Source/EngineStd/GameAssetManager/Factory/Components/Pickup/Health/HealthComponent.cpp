@@ -3,6 +3,17 @@
 
 const GameAssetType HealthPickup::g_Type = GAType_HealthPickup;
 
+HealthPickup::HealthPickup(Context* context) : PickupInterface(context)
+{
+
+}
+
+HealthPickup::HealthPickup() : PickupInterface()
+{
+
+}
+
+
 bool HealthPickup::VInit(GameAsset* pGameAsset)
 {
 	return true;

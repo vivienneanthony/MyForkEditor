@@ -5,6 +5,8 @@
 #include "GameView/MainMenuView.h"
 #include "IntroActivity.h"
 
+#include "EngineStd/GameAssetManager/GameAssetManager.h"
+
 
 IntroActivity::IntroActivity(Context* context) : Activity(context)
 {
@@ -25,13 +27,13 @@ void IntroActivity::VOnInit()
 	m_IntroTime = 3.0f;
 
 	ResourceCache* resCache = g_pApp->GetConstantResCache();
-	
+
 	// Construct new Text object
 	m_Text = SharedPtr<Text>(new Text(context_));
 
 	// Set String to display
 	m_Text->SetText("GarageProduction Inc.");
-	
+
 	// Set font and text color
 	m_Text->SetFont(resCache->GetResource<Font>("UI/Fonts/scarabeo.ttf"), 60);
 	m_Text->SetColor(Color(0.6f, 0.6f, 0.6f));
@@ -39,9 +41,10 @@ void IntroActivity::VOnInit()
 	// Align Text center-screen
 	m_Text->SetHorizontalAlignment(HA_CENTER);
 	m_Text->SetVerticalAlignment(VA_CENTER);
-	
+
 	// Add Text instance to the UI root element
 	GetSubsystem<UI>()->GetRoot()->AddChild(m_Text);
+
 }
 
 void IntroActivity::VOnUpdate(float timeStep)

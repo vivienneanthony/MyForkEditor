@@ -35,7 +35,6 @@ bool MainMenuUI::VOnRestore()
 {
     if (!m_bIsInitialized)
     {
-        TestAssetSystem();
 
         CreateLoginWindow();
         m_bIsInitialized = true;
@@ -142,21 +141,4 @@ void MainMenuUI::HandleCloseDelegate(StringHash eventType, VariantMap& eventData
 {
     GetSubsystem<UI>()->GetRoot()->RemoveChild(m_pWindow);
     m_pWindow = nullptr;
-}
-
-void MainMenuUI::TestAssetSystem(void)
-{
-   /* //  Get the game asset manager
-    GameAssetManager * gameassetmanager_ = GetSubsystem<GameAssetManager>();
-
-    gameassetmanager_->Init();
-
-    gameassetmanager_->LoadGameAssets();
-
-    // Test info string
-    String Message= String("Game Asset Manager Loaded ") +String(gameassetmanager_->GetTotalGameAssets())+ String(" Game Assets");
-
-    URHO3D_LOGINFO (Message);*/
-
-    return;
 }
