@@ -9,6 +9,10 @@
 #include "Components/Source/GameAssetPowerSourceUnit.h"
 #include "Components/LightUnit/GameAssetLightUnit.h"
 
+// Engine specific assets
+#include "Components/EngineCamera/GameAssetEngineCamera.h"
+#include "Components/EngineLight/GameAssetEngineLight.h"
+
 #include "GameAssetFactory.h"
 
 
@@ -33,9 +37,14 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
     m_ComponentFactory.Register<GameAssetObject>((unsigned int)GameAssetObject::g_Type);
 	context_->RegisterFactory<GameAssetObject>();
 
+	// Game Assets Engine Specific
+    m_ComponentFactory.Register<GameAssetEngineLight>((unsigned int)GameAssetEngineLight::g_Type);
+	context_->RegisterFactory<GameAssetEngineLight>();
 
+    m_ComponentFactory.Register<GameAssetEngineCamera>((unsigned int)GameAssetEngineCamera::g_Type);
+	context_->RegisterFactory<GameAssetEngineCamera>();
 
-
+    return;
 }
 
 GameAssetFactory::~GameAssetFactory()
@@ -66,6 +75,9 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
         pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), Urho3D::CreateMode::LOCAL);
+
+        // Initialize after it's added
+        component->Initialize();
 
     }
     else
@@ -173,6 +185,9 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int... Maybe in future better to make StringHash instead?
         pGameNode->AddComponent(component, component->GetID(), component->GetCreateMode());
+
+        // Initialize after it's added
+        component->Initialize();
     }
     else
     {
@@ -181,14 +196,6 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         // will fall out of scope with nothing else pointing to it.
         return StrongNodePtr();
     }
-
-    // if physical model
-    if(gameAsset->IsPhysical())
-    {
-        StaticModel* sphereTest = pGameNode->CreateComponent<StaticModel>();
-        sphereTest->SetModel(cache->GetResource<Model>("Data/Models/SphereTest.mdl"));
-    }
-
 
     // Recursive is always default to true - Makes sure first run of the function
     if(recursive)

@@ -11,9 +11,9 @@ using namespace std;
 // constructor - initialize set default
 GameAssetManager::GameAssetManager(Context* context)
     :LogicComponent(context)
-	,m_pGameAssetLibrary(NULL)
-	,m_pGameAssetRuleLibrary(NULL)
-	,m_pGameAssetResources(NULL)
+    ,m_pGameAssetLibrary(NULL)
+    ,m_pGameAssetRuleLibrary(NULL)
+    ,m_pGameAssetResources(NULL)
 
 {
     // GameAssetLibrary
@@ -40,6 +40,9 @@ void GameAssetManager::Init(void)
 
     // Set Data filename
     m_pGameAssetResources->SetAddDataFile(String("GameData.pak"));
+
+    // initalize base assets
+    InitializeBaseGameAssets();
 
     return;
 }
@@ -74,7 +77,7 @@ GameAsset * GameAssetManager::AddGameAsset(String GA_Name, String GA_Symbol,Game
     newGameAsset ->SetTypeState(GA_Type, GA_State);
 
     // add to library
-   m_pGameAssetLibrary->Push(newGameAsset);
+    m_pGameAssetLibrary->Push(newGameAsset);
 
 
     return newGameAsset;
@@ -148,15 +151,15 @@ bool GameAssetManager::DeleteGameAsset(GameAsset * RemoveGameAsset)
     }
 
     // loop through library
-	for (unsigned int i = 0; i < m_pGameAssetLibrary->Size(); i++)
+    for (unsigned int i = 0; i < m_pGameAssetLibrary->Size(); i++)
     {
-		if (m_pGameAssetLibrary->At(i) == RemoveGameAsset)
+        if (m_pGameAssetLibrary->At(i) == RemoveGameAsset)
         {
             // Remove all Game Assets
-			m_pGameAssetLibrary->At(i)->RemoveClean();
+            m_pGameAssetLibrary->At(i)->RemoveClean();
 
             // remove from library
-			m_pGameAssetLibrary->Erase(m_pGameAssetLibrary->Begin() + i);
+            m_pGameAssetLibrary->Erase(m_pGameAssetLibrary->Begin() + i);
 
             // remove from memory
             //delete RemoveGameAsset;
@@ -170,22 +173,62 @@ bool GameAssetManager::DeleteGameAsset(GameAsset * RemoveGameAsset)
 GameAssetManager::~GameAssetManager()
 {
     // delete game assets from memory
-	Vector<GameAsset*>::Iterator it = m_pGameAssetLibrary->Begin();
+    Vector<GameAsset*>::Iterator it = m_pGameAssetLibrary->Begin();
 
-	// loop through each game asset pointer
-	for (; it != m_pGameAssetLibrary->End(); it++)
-	{
-		// delete game asset's children
-		(*it)->RemoveClean();
+    // loop through each game asset pointer
+    for (; it != m_pGameAssetLibrary->End(); it++)
+    {
+        // delete game asset's children
+        (*it)->RemoveClean();
 
-		// delete game asset
-		SAFE_DELETE(*it);
-	}
+        // delete game asset
+        SAFE_DELETE(*it);
+    }
 
-	SAFE_DELETE(m_pGameAssetLibrary);
-	SAFE_DELETE(m_pGameAssetRuleLibrary);
+    SAFE_DELETE(m_pGameAssetLibrary);
+    SAFE_DELETE(m_pGameAssetRuleLibrary);
 
     // delete rest
-	SAFE_DELETE(m_pGameAssetResources);
+    SAFE_DELETE(m_pGameAssetResources);
 
 }
+
+void GameAssetManager::InitializeBaseGameAssets(void)
+{
+    // Vector for base game assets
+    Vector<String>          EngineGameAssetsName;
+    Vector<GameAssetType>   EngineGameAssetsType;
+
+    // Predefined game assets
+    EngineGameAssetsName.Push("EngineLight");
+    EngineGameAssetsName.Push("EngineCamera");
+
+    EngineGameAssetsType.Push(GAType_EngineLight);
+    EngineGameAssetsType.Push(GAType_EngineCamera);
+
+    if((EngineGameAssetsName.Size()!=EngineGameAssetsType.Size())||m_pGameAssetLibrary==NULL)
+    {
+        URHO3D_LOGERROR("Game Asset Manager - Error loading base game assets");
+
+        return;
+    }
+
+    // loop through each one
+    for(unsigned int i=0; i<EngineGameAssetsName.Size(); i++)
+    {
+        // create a new asset
+        GameAsset * m_pNewGameAsset = new GameAsset(context_);
+
+        // Set attributes from xml to new game asset
+        m_pNewGameAsset->SetName(EngineGameAssetsName.At(i));
+        m_pNewGameAsset->SetSymbol(EngineGameAssetsName.At(i));
+        m_pNewGameAsset->SetTypeState(EngineGameAssetsType.At(i), GAState_None);
+
+        // Push  Game Asset
+        m_pGameAssetLibrary->Push(m_pNewGameAsset);
+    }
+
+
+    return;
+}
+

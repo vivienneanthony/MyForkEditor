@@ -28,6 +28,9 @@ public:
     GameAsset* FindGameAssetByName(String Keyword){ return FindGameAssetByKeyword(Keyword, true); };
     GameAsset* FindGameAssetBySymbol(String Keyword){ return FindGameAssetByKeyword(Keyword, false); };
 
+    // load initialial assets
+    void InitializeBaseGameAssets(void);
+
     // load game assets
     bool LoadGameAssets(void)
     {

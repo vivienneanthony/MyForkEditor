@@ -132,7 +132,7 @@ bool GameAssetData::SaveGameAssets(Vector<GameAsset *>* gameAssetData)
     }
 
     // create xml document
-	pugi::xml_document* doc = new pugi::xml_document();
+    pugi::xml_document* doc = new pugi::xml_document();
 
     // create a child node
     pugi::xml_node root = doc->append_child();
@@ -141,14 +141,14 @@ bool GameAssetData::SaveGameAssets(Vector<GameAsset *>* gameAssetData)
     // loop through all game assets
     for(unsigned i = 0; i <= gameAssetData->Size(); ++i)
     {
-		gameAssetData->At(i)->Serialize(root);
+        gameAssetData->At(i)->Serialize(root);
     }
 
     // write to file
     doc->save_file("GameAssetData.xml");
 
     // safe delete
-	SAFE_DELETE(doc);
+    SAFE_DELETE(doc);
 
     return true;
 }
@@ -315,5 +315,7 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * gameAssetData)
     SAFE_DELETE(pPackageData);
     SAFE_DELETE(pPackageFile);
 
+    // Add addtional
     return true;
 }
+

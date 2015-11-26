@@ -20,9 +20,6 @@ bool RemoteGameLogic::VInitialize()
 {
     BaseGameLogic::VInitialize();
 
-
-    // temporary remove so code will compile
-
     return true;
 }
 
