@@ -27,6 +27,7 @@ protected:
 
 public:
 	SharedPtr<IScreenElement> m_pMainMenu;
+
 };
 
 #endif

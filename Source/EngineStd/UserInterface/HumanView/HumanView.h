@@ -74,7 +74,7 @@ protected:
 	int m_PointerRadius;
 	SharedPtr<IKeyboardHandler> m_pKeyboardHandler;
 
-
+    SharedPtr<Viewport> m_pViewport;
 };
 
 #endif //HUMAN_VIEW_H
