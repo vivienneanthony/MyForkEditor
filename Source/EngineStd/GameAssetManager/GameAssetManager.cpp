@@ -199,12 +199,15 @@ void GameAssetManager::InitializeBaseGameAssets(void)
     Vector<String>          EngineGameAssetsName;
     Vector<GameAssetType>   EngineGameAssetsType;
 
-    // Predefined game assets
+    // Predefined Game Assets Names - Default
     EngineGameAssetsName.Push("EngineLight");
     EngineGameAssetsName.Push("EngineCamera");
+    EngineGameAssetsName.Push("EngineObject");
 
+    // Predefined Game Assets Types - Default
     EngineGameAssetsType.Push(GAType_EngineLight);
     EngineGameAssetsType.Push(GAType_EngineCamera);
+    EngineGameAssetsType.Push(GAType_EngineObject);
 
     if((EngineGameAssetsName.Size()!=EngineGameAssetsType.Size())||m_pGameAssetLibrary==NULL)
     {

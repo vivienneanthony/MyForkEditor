@@ -5,7 +5,7 @@
 #include "Components/Pickup/Health/HealthComponent.h"
 
 // GameAssets components
-#include "Components/GameAssetObject.h"
+#include "Components/EngineObject/GameAssetEngineObject.h"
 #include "Components/Source/GameAssetPowerSourceUnit.h"
 #include "Components/LightUnit/GameAssetLightUnit.h"
 
@@ -34,8 +34,8 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
 	context_->RegisterFactory<HealthPickup>();
 
 	// Game Assets Components
-    m_ComponentFactory.Register<GameAssetObject>((unsigned int)GameAssetObject::g_Type);
-	context_->RegisterFactory<GameAssetObject>();
+    m_ComponentFactory.Register<GameAssetEngineObject>((unsigned int)GameAssetEngineObject::g_Type);
+	context_->RegisterFactory<GameAssetEngineObject>();
 
 	// Game Assets Engine Specific
     m_ComponentFactory.Register<GameAssetEngineLight>((unsigned int)GameAssetEngineLight::g_Type);
