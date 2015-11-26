@@ -2,6 +2,7 @@
 #define GameAssetManager_GameAsset_Included
 
 
+
 using namespace std;
 
 // Game Asset Type
@@ -101,6 +102,7 @@ public:
 
 	inline bool IsPhysical() {return m_bIsPhysical;};
 	inline String GetPhysicalModel() {return m_PhysicalModel;};
+
 
     void Dump(void);
 

@@ -26,6 +26,7 @@ public:
     // Set the game asset manager
 	void SetGameAssetManager (GameAssetManager* setGameAssetManager) { m_pGameAssetManager = setGameAssetManager; }
 
+
 protected:
 	GenericObjectFactory<BaseComponent, ComponentId> m_ComponentFactory;
 

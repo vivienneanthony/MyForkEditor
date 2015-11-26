@@ -57,6 +57,7 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
 
     // Create root component
     // Loop through each game asset child element and load the component
+
     StrongComponentPtr component = VCreateComponent(gameAsset);
 
     if (component.NotNull())
@@ -65,6 +66,7 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
         pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), Urho3D::CreateMode::LOCAL);
+
     }
     else
     {
@@ -80,12 +82,14 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
     for (; it != childs.End(); it++)
     {
 		StrongComponentPtr component = VCreateComponent(gameAsset);
+
         if (component)
         {
             // *ITISSCAN* 23.11.2015.
             // Not to good cast from GameAssetType structure to unsigned int...
             // Maybe in future better to make StringHash instead?
             pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), component->GetCreateMode());
+
         }
         else
         {
@@ -117,13 +121,11 @@ StrongComponentPtr GameAssetFactory::VCreateComponent(GameAsset* gameAsset)
 {
     GameAssetType GA_Type = gameAsset->GetType();
 
-
     StrongComponentPtr pComponent(m_ComponentFactory.Create((unsigned int)GA_Type));
 
     // initialize the component if we found one
     if (pComponent)
     {
-
         if (!pComponent->VInit(gameAsset))
         {
             URHO3D_LOGDEBUG("Component failed to initialize: " + String((unsigned int)GA_Type));
@@ -151,6 +153,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
 
     GameNodeId nextGameNodeId = serversId;
 
+
     if (nextGameNodeId == INVALID_GAME_NODE_ID)
     {
         nextGameNodeId = GetNextGameNodeId();
@@ -165,6 +168,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
 
     // If component creation failed exit
 	if (component.NotNull())
+
     {
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int... Maybe in future better to make StringHash instead?
@@ -184,6 +188,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         StaticModel* sphereTest = pGameNode->CreateComponent<StaticModel>();
         sphereTest->SetModel(cache->GetResource<Model>("Models/SphereTest.mdl"));
     }
+
 
     // Recursive is always default to true - Makes sure first run of the function
     if(recursive)
@@ -205,6 +210,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
                     // Not to good cast from GameAssetType structure to unsigned int...
                     // Maybe in future better to make StringHash instead?
                     pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), component->GetCreateMode());
+
                 }
                 else
                 {
@@ -237,6 +243,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
 
 							// *ITISSCAN* may be add it to the root node as child ? 
 							pGameNode->AddChild(childNode);
+
                         }
                         else
                         {

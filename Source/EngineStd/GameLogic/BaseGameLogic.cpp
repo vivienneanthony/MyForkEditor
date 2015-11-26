@@ -1,3 +1,4 @@
+
 #include "EngineStd.h"
 
 #include "UserInterface/HumanView/HumanView.h"
@@ -327,3 +328,4 @@ void BaseGameLogic::EnvironmentLoadedDelegate(StringHash eventType, VariantMap& 
 {
     m_HumanGamesLoaded++;
 }
+
