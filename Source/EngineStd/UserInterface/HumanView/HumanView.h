@@ -69,12 +69,11 @@ protected:
 	SharedPtr<Scene> m_pScene;
 	Node* m_pCameraNode;							// Camera node
 
+
 	// Interface sensitive objects
 	SharedPtr<IPointerHandler> m_pPointerHandler;   // Generic pointer handler
 	int m_PointerRadius;
 	SharedPtr<IKeyboardHandler> m_pKeyboardHandler;
-
-    SharedPtr<Viewport> m_pViewport;
 };
 
 #endif //HUMAN_VIEW_H
