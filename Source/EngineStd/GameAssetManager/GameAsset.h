@@ -27,7 +27,7 @@ enum GameAssetType
     GAType_PlayerEntity,
 	GAType_AmmoPickup,
 	GAType_HealthPickup,
-	GAType_Object=90000,
+	GAType_EngineObject=90000,
 	GAType_EngineLight,
 	GAType_EngineCamera,
     GAType_NotApplicable=99999

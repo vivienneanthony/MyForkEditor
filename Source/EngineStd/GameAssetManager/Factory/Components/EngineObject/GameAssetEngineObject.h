@@ -1,19 +1,19 @@
-#ifndef GameAssetObject_H
-#define GameAssetObject_H
+#ifndef GameAssetEngineObject_H
+#define GameAssetEngineObject_H
 
-// Base game object
-#include "../BaseComponent.h"
+// Base game asset component
+#include "../../BaseComponent.h"
 
 // Game Asset
-class GameAssetObject : public BaseComponent
+class GameAssetEngineObject : public BaseComponent
 {
-    URHO3D_OBJECT(GameAssetObject, BaseComponent);
+    URHO3D_OBJECT(GameAssetEngineObject, BaseComponent);
 public:
     static const GameAssetType g_Type;
 
-	GameAssetObject(Context* context);
-	GameAssetObject();
-	virtual ~GameAssetObject();
+	GameAssetEngineObject(Context* context);
+	GameAssetEngineObject();
+	virtual ~GameAssetEngineObject();
 
 	// Base component overrided functions
 	virtual bool VInit(GameAsset* pGameAsset);

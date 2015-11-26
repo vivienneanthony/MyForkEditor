@@ -2,7 +2,7 @@
 #define GameAssetComponent_H
 
 // Base game asset component
-#include "../BaseComponent.h"
+#include "../../BaseComponent.h"
 
 // Game Asset
 class GameAssetComponent : public BaseComponent
