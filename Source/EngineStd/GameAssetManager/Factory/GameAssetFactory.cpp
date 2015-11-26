@@ -4,6 +4,11 @@
 #include "Components/Pickup/Ammo/AmmoComponent.h"
 #include "Components/Pickup/Health/HealthComponent.h"
 
+// GameAssets components
+#include "Components/GameAssetObject.h"
+#include "Components/Source/GameAssetPowerSourceUnit.h"
+#include "Components/LightUnit/GameAssetLightUnit.h"
+
 #include "GameAssetFactory.h"
 
 
@@ -16,10 +21,21 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
     // needed
     m_pGameAssetManager = NULL;
 
-    // There should be registered game asset components
-    m_ComponentFactory.Register<AmmoPickup>((unsigned int)AmmoPickup::g_Type);
-    m_ComponentFactory.Register<HealthPickup>((unsigned int)HealthPickup::g_Type);
+    // There should be registered game asset components for GameAssetFactory and Urho3D Factory. 
+    // Pickup
+	m_ComponentFactory.Register<AmmoPickup>((unsigned int)AmmoPickup::g_Type);
+	context_->RegisterFactory<AmmoPickup>();
 
+	m_ComponentFactory.Register<HealthPickup>((unsigned int)HealthPickup::g_Type);
+	context_->RegisterFactory<HealthPickup>();
+
+	// Game Assets Components
+    m_ComponentFactory.Register<GameAssetObject>((unsigned int)GameAssetObject::g_Type);
+	context_->RegisterFactory<GameAssetObject>();
+	
+	
+
+	
 }
 
 GameAssetFactory::~GameAssetFactory()
@@ -41,13 +57,16 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
 
     // Create root component
     // Loop through each game asset child element and load the component
-    BaseComponent* component = VCreateComponent(gameAsset);
-    if (component)
+
+    StrongComponentPtr component = VCreateComponent(gameAsset);
+
+    if (component.NotNull())
     {
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
-        pGameNode->AddComponent(component, component->GetID(), component->GetCreateMode());
+        pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), Urho3D::CreateMode::LOCAL);
+
     }
     else
     {
@@ -57,19 +76,20 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         return StrongNodePtr();
     }
 
-
     // Create childs components
     Vector<GameAsset*> childs = gameAsset->GetChilds();
     Vector<GameAsset*>::Iterator it = childs.Begin();
     for (; it != childs.End(); it++)
     {
-        BaseComponent* component = VCreateComponent(gameAsset);
+		StrongComponentPtr component = VCreateComponent(gameAsset);
+
         if (component)
         {
             // *ITISSCAN* 23.11.2015.
             // Not to good cast from GameAssetType structure to unsigned int...
             // Maybe in future better to make StringHash instead?
-            pGameNode->AddComponent(component, (unsigned int)component->VGetGameAssetType(), component->GetCreateMode());
+            pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), component->GetCreateMode());
+
         }
         else
         {
@@ -100,6 +120,7 @@ void GameAssetFactory::ModifyNode(StrongNodePtr node, GameAsset* gameAsset)
 StrongComponentPtr GameAssetFactory::VCreateComponent(GameAsset* gameAsset)
 {
     GameAssetType GA_Type = gameAsset->GetType();
+
     StrongComponentPtr pComponent(m_ComponentFactory.Create((unsigned int)GA_Type));
 
     // initialize the component if we found one
@@ -128,7 +149,11 @@ StrongComponentPtr GameAssetFactory::VCreateComponent(GameAsset* gameAsset)
 // createnode
 StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNodeId serversId, Node * node=NULL, bool recursive=true)
 {
+    ResourceCache* cache = g_pApp->GetConstantResCache();
+
     GameNodeId nextGameNodeId = serversId;
+
+
     if (nextGameNodeId == INVALID_GAME_NODE_ID)
     {
         nextGameNodeId = GetNextGameNodeId();
@@ -139,12 +164,11 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
     pGameNode->SetID(nextGameNodeId);
 
     // Create root component then create a component type
-
-    // Loop through each game asset child element and load the component
-    BaseComponent* component = VCreateComponent(gameAsset);
+	StrongComponentPtr component = VCreateComponent(gameAsset);
 
     // If component creation failed exit
-    if (component)
+	if (component.NotNull())
+
     {
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int... Maybe in future better to make StringHash instead?
@@ -158,6 +182,14 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         return StrongNodePtr();
     }
 
+    // if physical model
+    if(gameAsset->IsPhysical())
+    {
+        StaticModel* sphereTest = pGameNode->CreateComponent<StaticModel>();
+        sphereTest->SetModel(cache->GetResource<Model>("Models/SphereTest.mdl"));
+    }
+
+
     // Recursive is always default to true - Makes sure first run of the function
     if(recursive)
     {
@@ -165,19 +197,20 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         Vector<GameAsset*> childs = gameAsset->GetChilds();
         Vector<GameAsset*>::Iterator it = childs.Begin();
 
-        // Loop through each child - Each game asset
-        for (Vector<GameAsset*>::Iterator it = childs.Begin(); it != childs.End(); ++it)
+		// Loop through each game asset child element and load the component
+        for (Vector<GameAsset*>::Iterator it = childs.Begin(); it != childs.End(); it++)
         {
             // if it isn't a linked asset
-            if((*it)->IsLinkedGameAsset()==false)
+            if((*it)->IsLinkedGameAsset() == false)
             {
-                BaseComponent* component = VCreateComponent((*it));
-                if (component)
+				StrongComponentPtr component = VCreateComponent((*it));
+				if (component.NotNull())
                 {
                     // *ITISSCAN* 23.11.2015.
                     // Not to good cast from GameAssetType structure to unsigned int...
                     // Maybe in future better to make StringHash instead?
-                    pGameNode->AddComponent(component, (unsigned int)component->VGetGameAssetType(), component->GetCreateMode());
+                    pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), component->GetCreateMode());
+
                 }
                 else
                 {
@@ -194,14 +227,23 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
                 {
                     // If linked game asset is found using the symbol
                     // The create a child node for it
-                    if(GameAsset * m_pLinkedGameAsset =m_pGameAssetManager->FindGameAssetBySymbol((*it)->GetSymbol()))
+					GameAsset* pLinkedGameAsset = NULL;
+					pLinkedGameAsset = m_pGameAssetManager->FindGameAssetBySymbol((*it)->GetSymbol());
+		
+                    if(pLinkedGameAsset)
                     {
                         // Build a new child using game asset linked
                         // make recursive to false stopping a child creation
-                        if(CreateNodeRecursive(m_pLinkedGameAsset, serversId, pGameNode, false))
+						StrongNodePtr childNode = CreateNodeRecursive(pLinkedGameAsset, serversId, pGameNode, false);
+                        if(childNode.NotNull())
                         {
-                            // Make any adjustments to created node
+							
+							// Make any adjustments to created node
                             // For example positioning
+
+							// *ITISSCAN* may be add it to the root node as child ? 
+							pGameNode->AddChild(childNode);
+
                         }
                         else
                         {

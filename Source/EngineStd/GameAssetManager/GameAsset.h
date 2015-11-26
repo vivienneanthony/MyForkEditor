@@ -1,4 +1,3 @@
-#ifndef GameAssetManager_GameAsset_Included
 #define GameAssetManager_GameAsset_Included
 
 
@@ -26,6 +25,7 @@ enum GameAssetType
     GAType_PlayerEntity,
 	GAType_AmmoPickup,
 	GAType_HealthPickup,
+	GAType_Object=90000,
     GAType_NotApplicable=99999
 };
 
@@ -97,6 +97,10 @@ public:
 	inline String GetSymbol() { return m_Symbol; };
 	inline GameAssetType GetType() { return m_Type; };
 	inline bool IsLinkedGameAsset() {return m_bIsLinkedGameAsset;};
+
+	inline bool IsPhysical() {return m_bIsPhysical;};
+	inline String GetPhysicalModel() {return m_PhysicalModel;};
+
 
     void Dump(void);
 

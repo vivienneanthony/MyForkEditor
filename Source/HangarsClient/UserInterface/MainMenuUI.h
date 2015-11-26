@@ -28,9 +28,6 @@ public:
 
 	// Helper functions
 	void CreateLoginWindow();
-	//void PlaySelectSound();
-	void TestAssetSystem();
-
 
 	// UI Login delegates
 	void HandleEnterDelegate(StringHash eventType, VariantMap& eventData);

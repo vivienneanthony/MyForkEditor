@@ -268,8 +268,8 @@ bool GameAssetData::LoadGameAssets(Vector<GameAsset*> * gameAssetData)
         gameAssetData->Push(newGameAsset);
 
         // Get attributes from xml
-        const char * name = NewGameAsset.attribute("Name").as_string();
-        const char * symbol = NewGameAsset.attribute("Symbol").as_string();
+        const char* name = NewGameAsset.attribute("Name").as_string();
+        const char* symbol = NewGameAsset.attribute("Symbol").as_string();
         unsigned int type = NewGameAsset.attribute("Type").as_uint();
         unsigned int state = NewGameAsset.attribute("State").as_uint();
         float density  = NewGameAsset.attribute("Density").as_float();

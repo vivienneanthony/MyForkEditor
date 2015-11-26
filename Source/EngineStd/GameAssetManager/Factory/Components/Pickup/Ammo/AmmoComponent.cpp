@@ -3,6 +3,17 @@
 
 const GameAssetType AmmoPickup::g_Type = GAType_AmmoPickup;
 
+AmmoPickup::AmmoPickup(Context* context) : PickupInterface(context)
+{
+
+}
+
+AmmoPickup::AmmoPickup() : PickupInterface()
+{
+
+}
+
+
 bool AmmoPickup::VInit(GameAsset* pGameAsset)
 {
 	return true;

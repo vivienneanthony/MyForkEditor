@@ -21,26 +21,20 @@ public:
 
 	virtual StrongComponentPtr VCreateComponent(GameAsset* gameAsset);
 
-	StrongNodePtr CreateNodeRecursive(GameAsset* gameAsset, GameNodeId serversId, Node * node, bool recursive);
+	StrongNodePtr CreateNodeRecursive(GameAsset* gameAsset, GameNodeId serversId, Node* node, bool recursive);
 
     // Set the game asset manager
-	void SetGameAssetManager (GameAssetManager * setGameAssetManager)
-	{
-	    m_pGameAssetManager = setGameAssetManager;
+	void SetGameAssetManager (GameAssetManager* setGameAssetManager) { m_pGameAssetManager = setGameAssetManager; }
 
-	    return;
-	}
 
 protected:
 	GenericObjectFactory<BaseComponent, ComponentId> m_ComponentFactory;
 
 private:
 	GameNodeId GetNextGameNodeId() { ++m_LastGameNodeId; return m_LastGameNodeId; }
+	String* GameAssetTypeToString(GameAssetType inputType);
 
 private:
 	GameNodeId m_LastGameNodeId;
-
-	String * GameAssetTypeToString(GameAssetType inputType);
-
 	GameAssetManager * m_pGameAssetManager;
 };
