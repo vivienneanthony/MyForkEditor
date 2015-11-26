@@ -227,6 +227,7 @@ void GameAssetManager::InitializeBaseGameAssets(void)
         m_pNewGameAsset->SetSymbol(EngineGameAssetsName.At(i));
         m_pNewGameAsset->SetTypeState(EngineGameAssetsType.At(i), GAState_None);
 
+
         // Push  Game Asset
         m_pGameAssetLibrary->Push(m_pNewGameAsset);
     }

@@ -279,6 +279,9 @@ void BaseGameLogic::VAddView(SharedPtr<IGameView> pView, GameNodeId actorId)
     {
         URHO3D_LOGERROR("Failed to initialize game view");
     }
+
+    // attach gameasset manager and asset factory
+    pView->VAttachGameAssetManager(m_pGameAssetManager,m_pGameAssetFactory);
 }
 
 void BaseGameLogic::VRemoveView(SharedPtr<IGameView> pView)
