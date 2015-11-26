@@ -24,6 +24,7 @@ class BaseGameLogic : public IGameLogic
 	// This is neccessary, in order that get access to GameViews.
 	friend class EngineApp;
 
+
 	URHO3D_OBJECT(BaseGameLogic, Object)
 public:
 	// Constructors
@@ -52,8 +53,9 @@ public:
 	inline LevelManager* GetLevelManager() { return m_pLevelManager; }
 	inline SharedPtr<Scene> GetScene() { return m_pScene; }
 
-    inline GameAssetManager * GetGameAssetManager()  {return m_pGameAssetManager;} ;
-	inline GameAssetFactory * GetGameAssetFactory()  {return m_pGameAssetFactory;} ;
+    // Game Assets Getters/Setters
+    inline GameAssetManager * GetGameAssetManager()  {return m_pGameAssetManager;}
+	inline GameAssetFactory * GetGameAssetFactory()  {return m_pGameAssetFactory;}
 
 protected:
 	// Override this function to do any game-specific loading.

@@ -22,6 +22,9 @@ protected:
 	// Delegates
 	void FinishIntroductionPartDelegate(StringHash eventType, VariantMap& eventData);
 
+	// Test
+	void CreateManualScene(void);
+
 public:
 	SharedPtr<IScreenElement> m_pMainMenu;
 };
