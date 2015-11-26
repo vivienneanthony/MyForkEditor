@@ -287,6 +287,7 @@ void BaseGameLogic::VRemoveView(SharedPtr<IGameView> pView)
     if (it->NotNull())
     {
         m_GameViews.Erase(it);
+
     }
 }
 

@@ -29,6 +29,12 @@ public:
 
 	virtual GameViewType VGetType() = 0;
 	virtual GameViewId VGetId() const = 0;
+
+
+protected:
+    GameAssetManager * m_pGameAssetManager;                    // Game Asset Manager
+    GameAssetFactory * m_pGameAssetFactory;                    // Game Asset Factory
+
 };
 
 #endif
