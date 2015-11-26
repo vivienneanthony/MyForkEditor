@@ -27,22 +27,22 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
 
     // There should be registered game asset components for GameAssetFactory and Urho3D Factory.
     // Pickup
-	m_ComponentFactory.Register<AmmoPickup>((unsigned int)AmmoPickup::g_Type);
-	context_->RegisterFactory<AmmoPickup>();
+    m_ComponentFactory.Register<AmmoPickup>((unsigned int)AmmoPickup::g_Type);
+    context_->RegisterFactory<AmmoPickup>();
 
-	m_ComponentFactory.Register<HealthPickup>((unsigned int)HealthPickup::g_Type);
-	context_->RegisterFactory<HealthPickup>();
+    m_ComponentFactory.Register<HealthPickup>((unsigned int)HealthPickup::g_Type);
+    context_->RegisterFactory<HealthPickup>();
 
-	// Game Assets Components
+    // Game Assets Components
     m_ComponentFactory.Register<GameAssetEngineObject>((unsigned int)GameAssetEngineObject::g_Type);
-	context_->RegisterFactory<GameAssetEngineObject>();
+    context_->RegisterFactory<GameAssetEngineObject>();
 
-	// Game Assets Engine Specific
+    // Game Assets Engine Specific
     m_ComponentFactory.Register<GameAssetEngineLight>((unsigned int)GameAssetEngineLight::g_Type);
-	context_->RegisterFactory<GameAssetEngineLight>();
+    context_->RegisterFactory<GameAssetEngineLight>();
 
     m_ComponentFactory.Register<GameAssetEngineCamera>((unsigned int)GameAssetEngineCamera::g_Type);
-	context_->RegisterFactory<GameAssetEngineCamera>();
+    context_->RegisterFactory<GameAssetEngineCamera>();
 
     return;
 }
@@ -64,6 +64,8 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
 
     pGameNode->SetID(nextGameNodeId);
 
+    ResourceCache* cache = g_pApp->GetConstantResCache();
+
     // Create root component
     // Loop through each game asset child element and load the component
 
@@ -79,6 +81,17 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         // Initialize after it's added
         component->Initialize();
 
+        // Is Physical
+        if(gameAsset->IsPhysical())
+        {
+            // Create a model and string
+            String ModelFile = String("GameData/Models/")+gameAsset->GetPhysicalModel()+String(".mdl");
+
+            // create a static model
+            StaticModel* m_pGameNodeModel = pGameNode->CreateComponent<StaticModel>();
+            m_pGameNodeModel->SetModel(cache->GetResource<Model>(ModelFile));
+        }
+
     }
     else
     {
@@ -93,7 +106,7 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
     Vector<GameAsset*>::Iterator it = childs.Begin();
     for (; it != childs.End(); it++)
     {
-		StrongComponentPtr component = VCreateComponent(gameAsset);
+        StrongComponentPtr component = VCreateComponent(gameAsset);
 
         if (component)
         {
@@ -176,10 +189,10 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
     pGameNode->SetID(nextGameNodeId);
 
     // Create root component then create a component type
-	StrongComponentPtr component = VCreateComponent(gameAsset);
+    StrongComponentPtr component = VCreateComponent(gameAsset);
 
     // If component creation failed exit
-	if (component.NotNull())
+    if (component.NotNull())
 
     {
         // *ITISSCAN* 23.11.2015.
@@ -188,6 +201,17 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
 
         // Initialize after it's added
         component->Initialize();
+
+        // Is Physical
+        if(gameAsset->IsPhysical())
+        {
+            // Create a model and string
+            String ModelFile = String("GameData/Models/")+gameAsset->GetPhysicalModel()+String(".mdl");
+
+            // create a static model
+            StaticModel* m_pGameNodeModel = pGameNode->CreateComponent<StaticModel>();
+            m_pGameNodeModel->SetModel(cache->GetResource<Model>(ModelFile));
+        }
     }
     else
     {
@@ -204,20 +228,20 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         Vector<GameAsset*> childs = gameAsset->GetChilds();
         Vector<GameAsset*>::Iterator it = childs.Begin();
 
-		// Loop through each game asset child element and load the component
+        // Loop through each game asset child element and load the component
         for (Vector<GameAsset*>::Iterator it = childs.Begin(); it != childs.End(); it++)
         {
             // if it isn't a linked asset
             if((*it)->IsLinkedGameAsset() == false)
             {
-				StrongComponentPtr component = VCreateComponent((*it));
-				if (component.NotNull())
+                StrongComponentPtr component = VCreateComponent((*it));
+
+                if (component.NotNull())
                 {
                     // *ITISSCAN* 23.11.2015.
                     // Not to good cast from GameAssetType structure to unsigned int...
                     // Maybe in future better to make StringHash instead?
                     pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), component->GetCreateMode());
-
                 }
                 else
                 {
@@ -234,22 +258,22 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
                 {
                     // If linked game asset is found using the symbol
                     // The create a child node for it
-					GameAsset* pLinkedGameAsset = NULL;
-					pLinkedGameAsset = m_pGameAssetManager->FindGameAssetBySymbol((*it)->GetSymbol());
+                    GameAsset* pLinkedGameAsset = NULL;
+                    pLinkedGameAsset = m_pGameAssetManager->FindGameAssetBySymbol((*it)->GetSymbol());
 
                     if(pLinkedGameAsset)
                     {
                         // Build a new child using game asset linked
                         // make recursive to false stopping a child creation
-						StrongNodePtr childNode = CreateNodeRecursive(pLinkedGameAsset, serversId, pGameNode, false);
+                        StrongNodePtr childNode = CreateNodeRecursive(pLinkedGameAsset, serversId, pGameNode, false);
                         if(childNode.NotNull())
                         {
 
-							// Make any adjustments to created node
-                            // For example positioning
+                            // *ITISSCAN* may be add it to the root node as child ?
+                            pGameNode->AddChild(childNode);
 
-							// *ITISSCAN* may be add it to the root node as child ?
-							pGameNode->AddChild(childNode);
+                            // Make any adjustments to created node
+                            // For example positioning
 
                         }
                         else
