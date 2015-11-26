@@ -1,4 +1,6 @@
+#ifndef GameAssetManager_GameAsset_Included
 #define GameAssetManager_GameAsset_Included
+
 
 
 using namespace std;
