@@ -20,19 +20,8 @@ bool RemoteGameLogic::VInitialize()
 {
     BaseGameLogic::VInitialize();
 
-    GameAsset * SphereTest = m_pGameAssetManager->FindGameAssetBySymbol("SphereTest");
 
-    // Test if sphere was loaded
-    if(SphereTest)
-    {
-        URHO3D_LOGINFO("A sphere loaded");
-    }
-
-    // Attempt to load a test sphere
-    m_pGameAssetFactory->CreateNode(SphereTest, 0);
-
-    // attempt to add child to scene
-    //m_pScene ->AddChild(SphereTestNode);
+    // temporary remove so code will compile
 
     return true;
 }

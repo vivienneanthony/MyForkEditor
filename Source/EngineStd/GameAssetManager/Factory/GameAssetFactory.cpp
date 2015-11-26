@@ -21,7 +21,7 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
     // needed
     m_pGameAssetManager = NULL;
 
-    // There should be registered game asset components for GameAssetFactory and Urho3D Factory. 
+    // There should be registered game asset components for GameAssetFactory and Urho3D Factory.
     // Pickup
 	m_ComponentFactory.Register<AmmoPickup>((unsigned int)AmmoPickup::g_Type);
 	context_->RegisterFactory<AmmoPickup>();
@@ -32,10 +32,10 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
 	// Game Assets Components
     m_ComponentFactory.Register<GameAssetObject>((unsigned int)GameAssetObject::g_Type);
 	context_->RegisterFactory<GameAssetObject>();
-	
-	
 
-	
+
+
+
 }
 
 GameAssetFactory::~GameAssetFactory()
@@ -186,7 +186,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
     if(gameAsset->IsPhysical())
     {
         StaticModel* sphereTest = pGameNode->CreateComponent<StaticModel>();
-        sphereTest->SetModel(cache->GetResource<Model>("Models/SphereTest.mdl"));
+        sphereTest->SetModel(cache->GetResource<Model>("Data/Models/SphereTest.mdl"));
     }
 
 
@@ -229,7 +229,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
                     // The create a child node for it
 					GameAsset* pLinkedGameAsset = NULL;
 					pLinkedGameAsset = m_pGameAssetManager->FindGameAssetBySymbol((*it)->GetSymbol());
-		
+
                     if(pLinkedGameAsset)
                     {
                         // Build a new child using game asset linked
@@ -237,11 +237,11 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
 						StrongNodePtr childNode = CreateNodeRecursive(pLinkedGameAsset, serversId, pGameNode, false);
                         if(childNode.NotNull())
                         {
-							
+
 							// Make any adjustments to created node
                             // For example positioning
 
-							// *ITISSCAN* may be add it to the root node as child ? 
+							// *ITISSCAN* may be add it to the root node as child ?
 							pGameNode->AddChild(childNode);
 
                         }
