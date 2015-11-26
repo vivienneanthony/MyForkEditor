@@ -4,6 +4,9 @@
 class IGamePhysics;
 enum BaseGameState : int;
 
+class GameAssetManager;
+class GameAssetFactory;
+
 class IGameLogic : public Object
 {
 public:
@@ -18,6 +21,7 @@ public:
 
 	virtual void VChangeState(BaseGameState newState) = 0;
 	virtual bool VLoadGame(String levelResource) = 0;
+
 };
 
 #endif //IGAME_LOGIC_H
