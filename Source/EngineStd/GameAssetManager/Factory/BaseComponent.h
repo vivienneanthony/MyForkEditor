@@ -24,7 +24,7 @@ public:
 	virtual void Initialize(void);
 	// Handle update. Called by LogicComponent base class.
 	virtual void FixedUpdate(float timeStep);
-	
+
 	// There are could be overrided by subclasses.
 	// Handle Urho3D::Logic component update and initialize calls.
 	virtual void VUpdateDelegate(float timeStep) { }

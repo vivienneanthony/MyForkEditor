@@ -1,18 +1,18 @@
-#ifndef GameAssetLightUnit_H
-#define GameAssetLightUnit_H
+#ifndef GameAssetEngineLight_H
+#define GameAssetEngineLight_H
 
 // Base game asset component
 #include "../../BaseComponent.h"
 
 // Game Asset
-class GameAssetLightUnit : public BaseComponent
+class GameAssetEngineLight : public BaseComponent
 {
-    URHO3D_OBJECT(GameAssetLightUnit, BaseComponent);
+    URHO3D_OBJECT(GameAssetEngineLight, BaseComponent);
 public:
     // Construct.
-	GameAssetLightUnit(Context* context);
-    GameAssetLightUnit();
-    virtual ~GameAssetLightUnit();
+	GameAssetEngineLight(Context* context);
+    GameAssetEngineLight();
+    virtual ~GameAssetEngineLight();
 
 	static const GameAssetType g_Type;
 
@@ -22,6 +22,9 @@ public:
 	virtual void VInitializeDelegate() { }
 
 	virtual GameAssetType VGetGameAssetType(void) const { return g_Type; }
+
+	// Base component
+	virtual void Initialize(void);
 
 private:
 

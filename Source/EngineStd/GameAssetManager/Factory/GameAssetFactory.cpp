@@ -9,6 +9,10 @@
 #include "Components/Source/GameAssetPowerSourceUnit.h"
 #include "Components/LightUnit/GameAssetLightUnit.h"
 
+// Engine specific assets
+#include "Components/EngineCamera/GameAssetEngineCamera.h"
+#include "Components/EngineLight/GameAssetEngineLight.h"
+
 #include "GameAssetFactory.h"
 
 
@@ -21,7 +25,7 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
     // needed
     m_pGameAssetManager = NULL;
 
-    // There should be registered game asset components for GameAssetFactory and Urho3D Factory. 
+    // There should be registered game asset components for GameAssetFactory and Urho3D Factory.
     // Pickup
 	m_ComponentFactory.Register<AmmoPickup>((unsigned int)AmmoPickup::g_Type);
 	context_->RegisterFactory<AmmoPickup>();
@@ -32,10 +36,15 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
 	// Game Assets Components
     m_ComponentFactory.Register<GameAssetObject>((unsigned int)GameAssetObject::g_Type);
 	context_->RegisterFactory<GameAssetObject>();
-	
-	
 
-	
+	// Game Assets Engine Specific
+    m_ComponentFactory.Register<GameAssetEngineLight>((unsigned int)GameAssetEngineLight::g_Type);
+	context_->RegisterFactory<GameAssetEngineLight>();
+
+    m_ComponentFactory.Register<GameAssetEngineCamera>((unsigned int)GameAssetEngineCamera::g_Type);
+	context_->RegisterFactory<GameAssetEngineCamera>();
+
+    return;
 }
 
 GameAssetFactory::~GameAssetFactory()
@@ -66,6 +75,9 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
         pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), Urho3D::CreateMode::LOCAL);
+
+        // Initialize after it's added
+        component->Initialize();
 
     }
     else
@@ -173,6 +185,9 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int... Maybe in future better to make StringHash instead?
         pGameNode->AddComponent(component, component->GetID(), component->GetCreateMode());
+
+        // Initialize after it's added
+        component->Initialize();
     }
     else
     {
@@ -181,14 +196,6 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         // will fall out of scope with nothing else pointing to it.
         return StrongNodePtr();
     }
-
-    // if physical model
-    if(gameAsset->IsPhysical())
-    {
-        StaticModel* sphereTest = pGameNode->CreateComponent<StaticModel>();
-        sphereTest->SetModel(cache->GetResource<Model>("Models/SphereTest.mdl"));
-    }
-
 
     // Recursive is always default to true - Makes sure first run of the function
     if(recursive)
@@ -229,7 +236,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
                     // The create a child node for it
 					GameAsset* pLinkedGameAsset = NULL;
 					pLinkedGameAsset = m_pGameAssetManager->FindGameAssetBySymbol((*it)->GetSymbol());
-		
+
                     if(pLinkedGameAsset)
                     {
                         // Build a new child using game asset linked
@@ -237,11 +244,11 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
 						StrongNodePtr childNode = CreateNodeRecursive(pLinkedGameAsset, serversId, pGameNode, false);
                         if(childNode.NotNull())
                         {
-							
+
 							// Make any adjustments to created node
                             // For example positioning
 
-							// *ITISSCAN* may be add it to the root node as child ? 
+							// *ITISSCAN* may be add it to the root node as child ?
 							pGameNode->AddChild(childNode);
 
                         }
