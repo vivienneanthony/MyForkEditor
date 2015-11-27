@@ -86,10 +86,12 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         {
             // Create a model and string
             String ModelFile = String("GameData/Models/")+gameAsset->GetPhysicalModel()+String(".mdl");
+            String ModelTextureFile = String("GameData/Models/")+gameAsset->GetPhysicalModel()+String(".txt");
 
             // create a static model
             StaticModel* m_pGameNodeModel = pGameNode->CreateComponent<StaticModel>();
             m_pGameNodeModel->SetModel(cache->GetResource<Model>(ModelFile));
+            m_pGameNodeModel->ApplyMaterialList(ModelTextureFile);                  // Load material list
         }
 
     }
@@ -207,10 +209,13 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
         {
             // Create a model and string
             String ModelFile = String("GameData/Models/")+gameAsset->GetPhysicalModel()+String(".mdl");
+            String ModelTextureFile = String("GameData/Models/")+gameAsset->GetPhysicalModel()+String(".txt");
 
             // create a static model
             StaticModel* m_pGameNodeModel = pGameNode->CreateComponent<StaticModel>();
             m_pGameNodeModel->SetModel(cache->GetResource<Model>(ModelFile));
+            m_pGameNodeModel->ApplyMaterialList(ModelTextureFile);                                  // Loading matching material list
+
         }
     }
     else
