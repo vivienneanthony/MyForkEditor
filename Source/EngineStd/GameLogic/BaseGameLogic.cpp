@@ -25,6 +25,7 @@ BaseGameLogic::BaseGameLogic(Context *context) : IGameLogic(context)
     m_pGameAssetFactory = NULL;
 
     m_bIsRenderDiagnostic = false;
+	m_bIsProxy = false;
 
     m_HumanPlayersAttached = 0;
     m_ExpectedPlayers = 0;
@@ -187,8 +188,38 @@ void BaseGameLogic::VShutdown()
 
 
 // ----------------------------------------------------------
-// Actor manipulations
+// GameNode manipulations
 // ----------------------------------------------------------
+
+StrongNodePtr BaseGameLogic::VCreateGameNode(GameAsset* gameAsset, Matrix4* initialTransform, const GameNodeId serversGameNodeId)
+{
+	assert(m_pGameAssetFactory && m_pGameAssetManager);
+
+	if (!m_bIsProxy && serversGameNodeId != INVALID_GAME_NODE_ID)
+		return StrongNodePtr();
+
+	if (m_bIsProxy && serversGameNodeId == INVALID_GAME_NODE_ID)
+		return StrongNodePtr();
+
+	StrongNodePtr pGameNode = m_pGameAssetFactory->CreateNode(gameAsset, serversGameNodeId);
+	if (pGameNode)
+	{
+		m_pScene->AddChild(pGameNode, pGameNode->GetID());
+		if (!m_bIsProxy && (m_State == BGS_SpawningPlayersActors || m_State == BGS_Running))
+		{
+			SharedPtr<Event_Data_Request_New_Game_Asset> pNewGameAsset(new Event_Data_Request_New_Game_Asset(gameAsset->GetName(), initialTransform, pGameNode->GetID()));
+			VariantMap map = pNewGameAsset->VSerialize();
+			SendEvent(Event_Data_Request_New_Game_Asset::g_EventType, map);
+		}
+	}
+	return pGameNode;
+}
+
+WeakNodePtr BaseGameLogic::VGetGameNode(const GameNodeId gameNodeId)
+{
+	Node* node = m_pScene->GetNode(gameNodeId);
+	return WeakNodePtr(node);
+}
 
 void BaseGameLogic::VDestroyGameNode(const GameNodeId gameAssetId)
 {
@@ -238,6 +269,12 @@ void BaseGameLogic::VChangeState(enum BaseGameState newState)
     m_State = newState;
 }
 
+void BaseGameLogic::VSetProxy()
+{
+	m_bIsProxy = true;
+
+	
+}
 
 bool BaseGameLogic::VLoadGame(String levelResource)
 {
@@ -280,8 +317,6 @@ void BaseGameLogic::VAddView(SharedPtr<IGameView> pView, GameNodeId actorId)
         URHO3D_LOGERROR("Failed to initialize game view");
     }
 
-    // attach gameasset manager and asset factory
-    pView->VAttachGameAssetManager(m_pGameAssetManager,m_pGameAssetFactory);
 }
 
 void BaseGameLogic::VRemoveView(SharedPtr<IGameView> pView)

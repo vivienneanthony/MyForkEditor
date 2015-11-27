@@ -15,8 +15,8 @@ GameAssetEngineLight::GameAssetEngineLight(Context* context) : BaseComponent(con
 GameAssetEngineLight::GameAssetEngineLight() : BaseComponent()
 {
     // Set type and state to nothing for now
-    m_GameAssetType=GAType_EngineLight;
-    m_GameAssetState=GAState_None;
+    m_GameAssetType = GAType_EngineLight;
+    m_GameAssetState = GAState_None;
 }
 
 // Destructor

@@ -1,13 +1,14 @@
 #include "HangarsClientStd.h"
 
 #include "EngineStd/Mainloop/Activity/ActivityManager.h"
+#include "EngineStd/GameLogic/BaseGameLogic.h"
+#include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
+#include "EngineStd/GameAssetManager/GameAssetManager.h"
+
 
 #include "MainMenuView.h"
 #include "UserInterface/MainMenuUI.h"
 #include "Activities/Intro/IntroActivity.h"
-
-#include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
-#include "EngineStd/GameAssetManager/GameAssetManager.h"
 
 MainMenuView::MainMenuView(Context* context, Renderer* renderer, bool intro) : HumanView(context, renderer)
 {
@@ -70,8 +71,11 @@ void MainMenuView::CreateManualScene(void)
     // Add octree
     m_pScene-> CreateComponent<Octree>();
 
+	GameAssetManager* pAssetManager = g_pApp->GetGameLogic()->GetGameAssetManager();
+	GameAssetFactory* pAssetFactory = g_pApp->GetGameLogic()->GetGameAssetFactory();
+
     // Load a game asset
-    GameAsset * SphereTest = m_pGameAssetManager->FindGameAssetBySymbol("SphereTest");
+	GameAsset* SphereTest = pAssetManager->FindGameAssetBySymbol("SphereTest");
 
     // Load a sphere
     if(SphereTest)
@@ -79,7 +83,7 @@ void MainMenuView::CreateManualScene(void)
         URHO3D_LOGINFO("Sphere created manually.");
 
         // create a sphere node
-        StrongNodePtr SphereNode = m_pGameAssetFactory->CreateNode(SphereTest, 2);
+		StrongNodePtr SphereNode = pAssetFactory->CreateNode(SphereTest, 2);
 
         if(SphereNode)
         {
@@ -88,14 +92,14 @@ void MainMenuView::CreateManualScene(void)
     }
 
     // Load a light
-    GameAsset * EngineLight = m_pGameAssetManager->FindGameAssetBySymbol("EngineLight");
+	GameAsset * EngineLight = pAssetManager->FindGameAssetBySymbol("EngineLight");
 
     if(EngineLight)
     {
         URHO3D_LOGINFO("Engine Light created manually.");
 
         // create a sphere node
-        StrongNodePtr EngineLightNode = m_pGameAssetFactory->CreateNode(EngineLight, 3);
+		StrongNodePtr EngineLightNode = pAssetFactory->CreateNode(EngineLight, 3);
 
         if(EngineLightNode)
         {

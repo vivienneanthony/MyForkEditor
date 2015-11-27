@@ -4,6 +4,7 @@
 class ActivityManager;
 class AwesomiumCore;
 class LevelManager;
+class GameAsset;
 class GameAssetFactory;
 class GameAssetManager;
 
@@ -37,6 +38,8 @@ public:
 	virtual void VShutdown();
 
 	// Manipulation with actors
+	virtual StrongNodePtr VCreateGameNode(GameAsset* gameAsset, Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
+	virtual WeakNodePtr VGetGameNode(const GameNodeId gameNodeId);
 	virtual void VDestroyGameNode(const GameNodeId gameNodeId);
 
 	// Handle game state
@@ -58,6 +61,9 @@ public:
 	inline GameAssetFactory * GetGameAssetFactory()  {return m_pGameAssetFactory;}
 
 protected:
+	// Network
+	virtual void VSetProxy();
+
 	// Override this function to do any game-specific loading.
 	virtual bool VLoadGameDelegate(String pLevelData) { return true; }
 
@@ -86,7 +92,6 @@ protected:
 	LevelManager* m_pLevelManager;						// Manages loading and chaining levels
 
 	GameAssetManager * m_pGameAssetManager;             // Manages and loads game assets data
-
 	GameAssetFactory* m_pGameAssetFactory;				// Game Asset Factory. GameAsset -> Node.
 
 	bool m_bIsRenderDiagnostic;							// Are we rendering diagnostics?
@@ -94,6 +99,8 @@ protected:
 	int m_HumanGamesLoaded;
 	int m_ExpectedPlayers;								// How many players will play with us ?
 	int m_HumanPlayersAttached;							// How many players actually play with us
+
+	bool m_bIsProxy;									// Is it client(proxy) connection, not real one.
 };
 
 #endif // BASE_GAME_LOGIC_H

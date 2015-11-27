@@ -85,7 +85,7 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         if(gameAsset->IsPhysical())
         {
             // Create a model and string
-            String ModelFile = String("GameData/Models/")+gameAsset->GetPhysicalModel()+String(".mdl");
+            String ModelFile = String("Models/")+gameAsset->GetPhysicalModel()+String(".mdl");
 
             // create a static model
             StaticModel* m_pGameNodeModel = pGameNode->CreateComponent<StaticModel>();

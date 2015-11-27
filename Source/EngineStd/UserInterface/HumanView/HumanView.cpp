@@ -9,6 +9,8 @@
 // Constructors.
 // ----------------------------------------------------------
 
+const GameViewId INVALID_GAME_VIEW_ID = -1;
+
 HumanView::HumanView(Context *context, Renderer* renderer) : IGameView(context)
 {
 
