@@ -106,14 +106,18 @@ void MainMenuView::CreateManualScene(void)
     // Create a scene node for the camera, which we will move around
     // The camera will use default settings (1000 far clip distance, 45 degrees FOV, set aspect ratio automatically)
     m_pCameraNode = m_pScene->CreateChild("Camera");
-
-    // Attempt to change render
     m_pCameraNode->CreateComponent<Camera>();
 
-    // Following code hidden line 116 cause crash
+    m_pCameraNode->SetPosition(Vector3(5.0f,3.0f,1.0f));
 
-    //SharedPtr<Viewport> viewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
-    //m_pRenderer->SetViewport(0, viewport);
+    // Following code hidden line 116 cause crash
+    SharedPtr<Viewport> viewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
+
+    // Set Viewport
+    m_pRenderer->SetViewport(1, viewport);
+
+    // Test Look at
+    m_pCameraNode->LookAt(Vector3(0.0f,1.0f,0.0f));
 
     return;
 }
