@@ -192,10 +192,9 @@ using namespace Urho3D;
 #include "Debugging/Debugging.h"
 #include "Interfaces/Interfaces.h"
 
-// Game assets
-//nclude "GameAssetManager/GameAssetManager.h"
-
 #include "EngineApplication.h"
+
+#include "EventManager/Events.h"
 
 #include <exception>
 

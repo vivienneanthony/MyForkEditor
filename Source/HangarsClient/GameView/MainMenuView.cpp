@@ -1,13 +1,14 @@
 #include "HangarsClientStd.h"
 
 #include "EngineStd/Mainloop/Activity/ActivityManager.h"
+#include "EngineStd/GameLogic/BaseGameLogic.h"
+#include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
+#include "EngineStd/GameAssetManager/GameAssetManager.h"
+
 
 #include "MainMenuView.h"
 #include "UserInterface/MainMenuUI.h"
 #include "Activities/Intro/IntroActivity.h"
-
-#include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
-#include "EngineStd/GameAssetManager/GameAssetManager.h"
 
 MainMenuView::MainMenuView(Context* context, Renderer* renderer, bool intro) : HumanView(context, renderer)
 {
@@ -70,8 +71,11 @@ void MainMenuView::CreateManualScene(void)
     // Add octree
     m_pScene-> CreateComponent<Octree>();
 
+	GameAssetManager* pAssetManager = g_pApp->GetGameLogic()->GetGameAssetManager();
+	GameAssetFactory* pAssetFactory = g_pApp->GetGameLogic()->GetGameAssetFactory();
+
     // Load a game asset
-    GameAsset * SphereTest = m_pGameAssetManager->FindGameAssetBySymbol("SphereTest");
+	GameAsset* SphereTest = pAssetManager->FindGameAssetBySymbol("SphereTest");
 
     // Load a sphere
     if(SphereTest)
@@ -79,7 +83,7 @@ void MainMenuView::CreateManualScene(void)
         URHO3D_LOGINFO("Sphere created manually.");
 
         // create a sphere node
-        StrongNodePtr SphereNode = m_pGameAssetFactory->CreateNode(SphereTest, 2);
+		StrongNodePtr SphereNode = pAssetFactory->CreateNode(SphereTest, 2);
 
         if(SphereNode)
         {
@@ -88,20 +92,36 @@ void MainMenuView::CreateManualScene(void)
     }
 
     // Load a light
-    GameAsset * EngineLight = m_pGameAssetManager->FindGameAssetBySymbol("EngineLight");
+	GameAsset * EngineLight = pAssetManager->FindGameAssetBySymbol("EngineLight");
 
     if(EngineLight)
     {
         URHO3D_LOGINFO("Engine Light created manually.");
 
         // create a sphere node
-        StrongNodePtr EngineLightNode = m_pGameAssetFactory->CreateNode(EngineLight, 3);
+		StrongNodePtr EngineLightNode = pAssetFactory->CreateNode(EngineLight, 3);
 
         if(EngineLightNode)
         {
             m_pScene->AddChild(EngineLightNode);
         }
     }
+
+    // Create a scene node for the camera, which we will move around
+    // The camera will use default settings (1000 far clip distance, 45 degrees FOV, set aspect ratio automatically)
+    m_pCameraNode = m_pScene->CreateChild("Camera");
+    m_pCameraNode->CreateComponent<Camera>();
+
+    m_pCameraNode->SetPosition(Vector3(5.0f,3.0f,1.0f));
+
+    // Following code hidden line 116 cause crash
+    SharedPtr<Viewport> viewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
+
+    // Set Viewport
+    m_pRenderer->SetViewport(1, viewport);
+
+    // Test Look at
+    m_pCameraNode->LookAt(Vector3(0.0f,1.0f,0.0f));
 
     return;
 }

@@ -35,4 +35,9 @@ typedef List<IAudioBuffer *> AudioBufferList;
 
 #include "Network/IPacket.h"
 
+// Identifier for our custom remote event 
+typedef StringHash EventType;
+
+#include "Events/IEventData.h"
+
 #endif
