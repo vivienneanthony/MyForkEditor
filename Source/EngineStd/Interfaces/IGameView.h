@@ -15,7 +15,6 @@ enum GameViewType
 
 class IGameView : public Object
 {
-    friend class BasicGameLogic;
 
 public:
 	IGameView(Context* context);
@@ -31,14 +30,11 @@ public:
 	virtual GameViewType VGetType() = 0;
 	virtual GameViewId VGetId() const = 0;
 
-
 	inline void VAttachGameAssetManager(GameAssetManager * m_pAttachGameAssetManager, GameAssetFactory *m_pAttachGameAssetFactory)
 	{
 	    m_pGameAssetManager=m_pAttachGameAssetManager;
 	    m_pGameAssetFactory=m_pAttachGameAssetFactory;
 	}
-
-
 
 protected:
     GameAssetManager * m_pGameAssetManager;                    // Game Asset Manager

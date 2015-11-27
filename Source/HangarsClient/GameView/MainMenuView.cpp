@@ -108,13 +108,12 @@ void MainMenuView::CreateManualScene(void)
     m_pCameraNode = m_pScene->CreateChild("Camera");
 
     // Attempt to change render
-    m_pViewport = SharedPtr<Viewport> (new Viewport(context_, m_pScene, m_pCameraNode->CreateComponent<Camera>()));
+    m_pCameraNode->CreateComponent<Camera>();
 
-    if(m_pViewport)
-    {
-        //m_pRenderer->SetViewport(1, m_pViewport); Fails here
-    }
+    // Following code hidden line 116 cause crash
 
+    //SharedPtr<Viewport> viewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
+    //m_pRenderer->SetViewport(0, viewport);
 
     return;
 }
