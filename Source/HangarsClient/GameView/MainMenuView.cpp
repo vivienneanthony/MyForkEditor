@@ -179,8 +179,7 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
         return false;
     }
 
-
-
+    unsigned int i=0;
 
     // For ... loop through each child
     for(pugi::xml_node NewGameAsset =  GameAssetRoot.first_child(); NewGameAsset; NewGameAsset =  NewGameAsset.next_sibling())
@@ -200,14 +199,17 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
         if(LoadedGameAsset)
         {
             // create a sphere node
-            StrongNodePtr LoadedGameAssetNode = pAssetFactory->CreateNode(LoadedGameAsset, 1);
+            StrongNodePtr LoadedGameAssetNode = pAssetFactory->CreateNode(LoadedGameAsset, i);
 
             if(LoadedGameAssetNode)
             {
                 m_pScene->AddChild(LoadedGameAssetNode);
 
                 LoadedGameAssetNode->SetPosition(Vector3(XPos,YPos,ZPos));
+
+                i++;
             }
+
 
         }
     }
