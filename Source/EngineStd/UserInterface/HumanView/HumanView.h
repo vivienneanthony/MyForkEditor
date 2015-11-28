@@ -38,6 +38,7 @@ public:
 
 	bool LoadGame(SharedPtr<File> file, SharedPtr<Scene> level);
 
+
 protected:
 	virtual bool VLoadGameDelegate(SharedPtr<File> file, SharedPtr<Scene> level);
 

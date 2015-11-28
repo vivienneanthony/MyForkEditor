@@ -25,6 +25,9 @@ protected:
 	// Test
 	void CreateManualScene(void);
 
+	// Load a specific file
+	bool LoadDemoScene(String Demofile);
+
 public:
 	SharedPtr<IScreenElement> m_pMainMenu;
 
