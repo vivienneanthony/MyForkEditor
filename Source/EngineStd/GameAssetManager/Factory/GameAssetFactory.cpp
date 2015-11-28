@@ -78,6 +78,7 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         // Maybe in future better to make StringHash instead?
         pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), Urho3D::CreateMode::LOCAL);
 
+
         // Initialize after it's added
         component->Initialize();
 
