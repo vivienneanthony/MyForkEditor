@@ -57,27 +57,29 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
     GameNodeId nextGameNodeId = serversId;
     if (nextGameNodeId == INVALID_GAME_NODE_ID)
     {
-        nextGameNodeId = GetNextGameNodeId();
+        nextGameNodeId = GetNextGameNodeId()+10;
     }
 
     StrongNodePtr pGameNode(new Node(context_));
 
+    // Set Game Node id
     pGameNode->SetID(nextGameNodeId);
 
     ResourceCache* cache = g_pApp->GetConstantResCache();
 
-    // Create root component
     // Loop through each game asset child element and load the component
-
     StrongComponentPtr component = VCreateComponent(gameAsset);
+
+    // Change id to new forced
+    component->SetID(nextGameNodeId);                   // Manually update component to use the Node Id
 
     if (component.NotNull())
     {
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
-        pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), Urho3D::CreateMode::LOCAL);
-
+        //pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), Urho3D::CreateMode::LOCAL);
+        pGameNode->AddComponent(component, (unsigned int)nextGameNodeId, Urho3D::CreateMode::LOCAL);                     // Manually update component to use the Node Id
 
         // Initialize after it's added
         component->Initialize();
@@ -109,12 +111,15 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
     {
         StrongComponentPtr component = VCreateComponent(gameAsset);
 
+        // Change id to new forced
+        component->SetID(nextGameNodeId);                         // Manually update component to use the Node Id
+
         if (component)
         {
             // *ITISSCAN* 23.11.2015.
             // Not to good cast from GameAssetType structure to unsigned int...
             // Maybe in future better to make StringHash instead?
-            pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), component->GetCreateMode());
+            pGameNode->AddComponent(component, (unsigned int)nextGameNodeId, component->GetCreateMode());                     // Manually update component to use the Node Id
 
         }
         else
