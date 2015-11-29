@@ -13,6 +13,6 @@ public:
 
 	virtual GameAssetType VGetGameAssetType(void) const { return g_Type; }
 
-	virtual bool VInit(GameAsset* pData);
+	virtual bool VInit(const GameAsset* pData);
 	virtual void VApply(WeakNodePtr pGameNode);
 };

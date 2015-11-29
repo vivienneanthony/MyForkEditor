@@ -12,7 +12,7 @@ public:
 	NetListenSocket(Context* context);
 	NetListenSocket(Context* context, unsigned short portNum);
 	virtual ~NetListenSocket();
-	
+
 	void Init(unsigned short portNum);
 	void Shutdown();
 	

@@ -27,7 +27,7 @@ GameAssetStorageUnit::~GameAssetStorageUnit()
 
 }
 
-bool GameAssetStorageUnit::VInit(GameAsset* pGameAsset)
+bool GameAssetStorageUnit::VInit(const GameAsset* pGameAsset)
 {
 	// Set type and state to nothing for now
 	m_GameAssetType = GAType_StorageUnit;

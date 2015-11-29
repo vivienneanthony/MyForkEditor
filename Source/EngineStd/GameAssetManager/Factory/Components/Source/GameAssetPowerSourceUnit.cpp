@@ -25,7 +25,7 @@ GameAssetPowerSourceUnit::~GameAssetPowerSourceUnit(void)
     return;
 }
 
-bool GameAssetPowerSourceUnit::VInit(GameAsset* pGameAsset)
+bool GameAssetPowerSourceUnit::VInit(const GameAsset* pGameAsset)
 {
 	// Set type and state to nothing for now
 	m_GameAssetType = GAType_PowerSourceUnit;

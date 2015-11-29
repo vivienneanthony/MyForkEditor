@@ -6,6 +6,7 @@
 #include "EngineStd/GameAssetManager/GameAssetManager.h"
 
 
+
 #include "MainMenuView.h"
 #include "UserInterface/MainMenuUI.h"
 #include "Activities/Intro/IntroActivity.h"
@@ -75,7 +76,7 @@ void MainMenuView::CreateManualScene(void)
 
     // Create a scene node for the camera, which we will move around
     // The camera will use default settings (1000 far clip distance, 45 degrees FOV, set aspect ratio automatically)
-    m_pCameraNode = m_pScene->CreateChild("Camera");
+    m_pCameraNode = m_pScene->CreateChild(String("Camera").ToHash(), CreateMode::LOCAL);
     m_pCameraNode->CreateComponent<Camera>();
 
     m_pCameraNode->SetPosition(Vector3(30.0f,10.0f,30.0f));
@@ -94,14 +95,13 @@ void MainMenuView::CreateManualScene(void)
 
 
 // load specific file
-bool MainMenuView::LoadDemoScene(String DemoFile)
+bool MainMenuView::LoadDemoScene(String demoFile)
 {
     // Get Resource
     ResourceCache* resCache = g_pApp->GetConstantResCache();
     FileSystem* filesystem = g_pApp->GetFileSystem();
     GameAssetManager* pAssetManager = g_pApp->GetGameLogic()->GetGameAssetManager();
     GameAssetFactory* pAssetFactory = g_pApp->GetGameLogic()->GetGameAssetFactory();
-
 
     // Create a empty
     Vector<String> datafiles;
@@ -119,15 +119,15 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
     if(bPackageFileFound == true)
     {
         // Use this package if found and matches
-        if(pPackageFile->Exists(String("GameDemos/")+DemoFile+String(".xml")))
+        if(pPackageFile->Exists(String("GameDemos/") + demoFile + String(".xml")))
         {
             // Set found Demo
-            bDemoFileFound=true;
+            bDemoFileFound = true;
         }
     }
 
     // If package is not found or Demo is not found
-    if(bPackageFileFound==false||bDemoFileFound==false)
+    if(bPackageFileFound == false || bDemoFileFound==false)
     {
 
         URHO3D_LOGERROR ("Game Demo Loader - Error loading demo file..");
@@ -136,10 +136,10 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
     }
 
     // Package Entry
-    const PackageEntry* pGameAssetsDemoEntry = pPackageFile->GetEntry(String("GameDemos/")+DemoFile+String(".xml"));
+    const PackageEntry* pGameAssetsDemoEntry = pPackageFile->GetEntry(String("GameDemos/") + demoFile + String(".xml"));
 
     // Set package
-    File* pPackageData = new File(context_, pPackageFile, String("GameDemos/")+DemoFile+String(".xml"));
+    File* pPackageData = new File(context_, pPackageFile, String("GameDemos/") + demoFile + String(".xml"));
 
     // Read content to memory
     unsigned char* RetrievedDemoFile = NULL;
@@ -163,8 +163,7 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
     // Exit if error
     if (result.status != pugi::status_ok)
     {
-        URHO3D_LOGERROR ("Game Demo Loader - Problem loading oading demo scene file");
-
+        URHO3D_LOGERROR ("Game Demo Loader - Problem loading demo scene file");
         return false;
     }
 
@@ -174,14 +173,15 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
     // If no root is found
     if(!GameAssetRoot)
     {
-        URHO3D_LOGERROR ("Game Demo Loader - Problem loading oading demo scene file");
+        URHO3D_LOGERROR ("Game Demo Loader - Problem loading demo scene file");
 
         return false;
     }
 
+    unsigned int i = 0;
 
     // For ... loop through each child
-    for(pugi::xml_node NewGameAsset =  GameAssetRoot.first_child(); NewGameAsset; NewGameAsset =  NewGameAsset.next_sibling())
+    for(pugi::xml_node NewGameAsset =  GameAssetRoot.first_child(); NewGameAsset; NewGameAsset = NewGameAsset.next_sibling())
     {
 
         // Get attributes from xml
@@ -189,7 +189,7 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
         float XPos = NewGameAsset.attribute("XPos").as_float();
         float YPos = NewGameAsset.attribute("YPos").as_float();
         float ZPos = NewGameAsset.attribute("ZPos").as_float();
-        Quaternion rotation = Quaternion( NewGameAsset.attribute("Rotation").as_float());
+        Quaternion rotation = Quaternion(NewGameAsset.attribute("Rotation").as_float());
 
         // Load a game asset
         GameAsset* LoadedGameAsset =  pAssetManager->FindGameAssetBySymbol(symbol);
@@ -198,7 +198,7 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
         if(LoadedGameAsset)
         {
             // create a sphere node
-            StrongNodePtr LoadedGameAssetNode = pAssetFactory->CreateNode(LoadedGameAsset, 0);
+            StrongNodePtr LoadedGameAssetNode = pAssetFactory->CreateNode(LoadedGameAsset, INVALID_GAME_NODE_ID);
 
             if(LoadedGameAssetNode)
             {
@@ -206,8 +206,10 @@ bool MainMenuView::LoadDemoScene(String DemoFile)
 
                 LoadedGameAssetNode->SetPosition(Vector3(XPos,YPos,ZPos));
 
+                i++;
             }
 
+		
 
         }
     }

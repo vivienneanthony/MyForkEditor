@@ -11,6 +11,6 @@ public:
 	AmmoPickup(Context* context);
 	AmmoPickup();
 
-	virtual bool VInit(GameAsset* pGameAsset);
+	virtual bool VInit(const GameAsset* pGameAsset);
 	virtual void VApply(WeakNodePtr pGameNode);
 };

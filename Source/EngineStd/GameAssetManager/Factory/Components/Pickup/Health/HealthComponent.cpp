@@ -14,7 +14,7 @@ HealthPickup::HealthPickup() : PickupInterface()
 }
 
 
-bool HealthPickup::VInit(GameAsset* pGameAsset)
+bool HealthPickup::VInit(const GameAsset* pGameAsset)
 {
 	return true;
 }

@@ -25,7 +25,7 @@ GameAssetEngineLight::~GameAssetEngineLight(void)
     return;
 }
 
-bool GameAssetEngineLight::VInit(GameAsset* pGameAsset)
+bool GameAssetEngineLight::VInit(const GameAsset* pGameAsset)
 {
     // Set type and state to nothing for now
     m_GameAssetType = GAType_EngineLight;

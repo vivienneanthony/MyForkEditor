@@ -134,6 +134,8 @@ void MainMenuUI::HandleEnterDelegate(StringHash eventType, VariantMap& eventData
     String loginName = m_pLoginEdit->GetText();
     String passwordName = m_pPasswordEdit->GetText();
 
+	SendEvent("Request_Start_Game");
+
 }
 
 

@@ -34,6 +34,17 @@ void RemoteGameLogic::VShutdown()
 void RemoteGameLogic::VChangeState(enum BaseGameState newState)
 {
     BaseGameLogic::VChangeState(newState);
+
+
+	if (m_State == BGS_WaitingForPlayer)
+	{
+		VSetProxy();
+
+		g_pApp->AttachAsClient();
+
+
+	}
+
 }
 
 bool RemoteGameLogic::VLoadGameDelegate(String pLevelData)

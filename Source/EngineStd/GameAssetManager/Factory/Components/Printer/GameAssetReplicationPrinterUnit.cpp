@@ -24,7 +24,7 @@ GameAssetReplicationPrinterUnit::~GameAssetReplicationPrinterUnit(void)
     return;
 }
 
-bool GameAssetReplicationPrinterUnit::VInit(GameAsset* pGameAsset)
+bool GameAssetReplicationPrinterUnit::VInit(const GameAsset* pGameAsset)
 {
 	// Set type and state to nothing for now
 	m_GameAssetType = GAType_ReplicationPrinterUnit;

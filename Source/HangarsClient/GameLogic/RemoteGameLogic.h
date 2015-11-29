@@ -22,6 +22,7 @@ public:
 
 protected:
 
+
 };
 
 #endif // REMOTE_GAME_LOGIC_H

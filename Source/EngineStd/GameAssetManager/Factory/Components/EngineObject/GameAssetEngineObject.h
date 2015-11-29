@@ -16,7 +16,7 @@ public:
 	virtual ~GameAssetEngineObject();
 
 	// Base component overrided functions
-	virtual bool VInit(GameAsset* pGameAsset);
+	virtual bool VInit(const GameAsset* pGameAsset);
 	virtual void VUpdateDelegate(float timeStep) { }
 	virtual void VInitializeDelegate() { }
 

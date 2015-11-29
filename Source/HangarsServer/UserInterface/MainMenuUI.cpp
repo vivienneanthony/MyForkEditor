@@ -113,7 +113,14 @@ void MainMenuUI::HandleStartServerDelegate(StringHash eventType, VariantMap& eve
 	g_pApp->GetGameOptions().m_ListenPort = port;
 	g_pApp->GetGameOptions().m_GameHost = "localhost";
 	
-	//SendEvent(String("Request_Start_Game"));
+	if (!g_pApp->GetGameLogic()->IsServerCreated())
+	{
+		SendEvent(String("Request_Start_Server"));
+	}
+	else
+	{
+		URHO3D_LOGINFO("Could not create new server. Server has already created.");
+	}
 }
 
 

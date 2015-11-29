@@ -29,7 +29,7 @@ GameAssetRefrigerationUnit::~GameAssetRefrigerationUnit(void)
     return;
 }
 
-bool GameAssetRefrigerationUnit::VInit(GameAsset* pGameAsset)
+bool GameAssetRefrigerationUnit::VInit(const GameAsset* pGameAsset)
 {
 	// Set type and state to nothing for now
 	m_GameAssetType = GAType_RefrigerationUnit;

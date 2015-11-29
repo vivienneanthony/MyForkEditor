@@ -12,7 +12,10 @@
 using namespace Urho3D;
 
 class BaseGameLogic;
+
+// Network
 class BaseSocketManager;
+class NetworkEventForwarder;
 
 class EngineApp : public Application
 {
@@ -86,8 +89,11 @@ public:
 	inline BaseGameLogic* GetGameLogic() const { return m_pGameLogic; }
 	inline Time* GetTimer() { return m_pTime; }
 
+	inline Network* GetNetwork() { return m_pNetwork; }
 	inline BaseSocketManager* GetSocketManager() { return m_pBaseSocketManager; }
 	inline void SetSocketManager(BaseSocketManager* manager) { m_pBaseSocketManager = manager; }
+	inline NetworkEventForwarder* GetEventForwarder() { return m_pNetworkEventer;  }
+
 
 	// Game specific getters/setters
 	virtual String GetWindowIcon() = 0;
@@ -124,8 +130,8 @@ protected:
 // Network
 
 	Network* m_pNetwork;
-
 	BaseSocketManager* m_pBaseSocketManager;    // Can be server/client
+	NetworkEventForwarder* m_pNetworkEventer;	// Read events from server
 
 // Game specific
 	Cursor* m_pCurrentCursor;					// Current cursor, that handle UI system.

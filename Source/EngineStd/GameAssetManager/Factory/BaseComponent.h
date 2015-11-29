@@ -16,7 +16,7 @@ public:
 
 	// These functions are meant to be overridden by the implementation classes of the components.
 	// Handled by GameAsset factory
-	virtual bool VInit(GameAsset* pGameAsset) = 0;
+	virtual bool VInit(const GameAsset* pGameAsset) = 0;
 	virtual void VPostInit(void) { m_bIsPostInit = true; }
 	virtual void VOnChanged(void) { }
 
@@ -32,7 +32,6 @@ public:
 
 	// Delegates
 	void ComponentPostInitDelegate(StringHash eventType, VariantMap& eventData);
-
 
 	// Getters/Setters
 	// Added sense it something shared among all base components for now

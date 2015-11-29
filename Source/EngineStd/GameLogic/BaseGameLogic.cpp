@@ -31,7 +31,8 @@ BaseGameLogic::BaseGameLogic(Context *context) : IGameLogic(context)
     m_ExpectedPlayers = 0;
     m_HumanGamesLoaded = 0;
 
-
+	m_bIsServerCreated = false;
+	m_bIsPlayerLoggedIn = false;
 
     m_State = BGS_Invalid;
 }
@@ -78,9 +79,8 @@ bool BaseGameLogic::VInitialize()
 
     URHO3D_LOGINFO (Message);
 
-    InitializeComponents();
-
-    InitializeAllDelegates();
+    
+    VInitializeAllDelegates();
 
     return true;
 }
@@ -92,7 +92,6 @@ void BaseGameLogic::VOnUpdate(float timeStep)
     {
     case BGS_Initializing:
     {
-        // If we get to here we're ready to attach players
         VChangeState(BGS_MainMenu);
         break;
     }
@@ -103,32 +102,22 @@ void BaseGameLogic::VOnUpdate(float timeStep)
         break;
     }
 
-
-    case BGS_WaitingForPlayers:
+    case BGS_WaitingForPlayer:
     {
-        if (m_ExpectedPlayers == m_HumanPlayersAttached)
+        if (m_bIsPlayerLoggedIn)
         {
-            // The server sends us the level name as a part of the login message.
-            // We have to wait until it arrives before loading the level
-            if (!g_pApp->GetGameOptions().m_Level.Empty())
-            {
-                VChangeState(BGS_LoadingGameEnvironment);
-            }
+			VChangeState(BGS_LoadingPlayerLobby);
         }
         break;
     }
 
-    case BGS_WaitingForPlayersToLoadEnvironment:
-    {
-        if (m_ExpectedPlayers <= m_HumanGamesLoaded)
-        {
-            VChangeState(BGS_SpawningPlayersActors);
-        }
+	case BGS_LoadingPlayerLobby:
+	{	
 
-        break;
-    }
-
-    case BGS_SpawningPlayersActors:
+		break;
+	}
+    
+    case BGS_SpawningPlayerGameNode:
     {
         VChangeState(BGS_Running);
         break;
@@ -175,7 +164,7 @@ void BaseGameLogic::VShutdown()
     SAFE_DELETE(m_pLevelManager);
     SAFE_DELETE(m_pActivityManager);
 
-    DestroyAllDelegates();
+    VDestroyAllDelegates();
 
     URHO3D_LOGINFO(String("Game logic life time is - ")
                    + String(m_Lifetime / 3600.0f) + String(" hours ")
@@ -191,13 +180,17 @@ void BaseGameLogic::VShutdown()
 // GameNode manipulations
 // ----------------------------------------------------------
 
-StrongNodePtr BaseGameLogic::VCreateGameNode(GameAsset* gameAsset, Matrix4* initialTransform, const GameNodeId serversGameNodeId)
+StrongNodePtr BaseGameLogic::VCreateGameNode(const GameAsset* gameAsset, const Matrix4* initialTransform, const GameNodeId serversGameNodeId)
 {
 	assert(m_pGameAssetFactory && m_pGameAssetManager);
 
+	// if it is server, m_bIsProxy == false and serverGameNodeId must be INVALID_GAME_NODE_ID
+	// because server generates new game node id
 	if (!m_bIsProxy && serversGameNodeId != INVALID_GAME_NODE_ID)
 		return StrongNodePtr();
 
+	// if it is client, m_bIsProxy == true and serverGameNodeId must be sent from server.
+	// So serversGameNodeId must not be equal INVALID_GAME_NODE_ID
 	if (m_bIsProxy && serversGameNodeId == INVALID_GAME_NODE_ID)
 		return StrongNodePtr();
 
@@ -205,7 +198,10 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(GameAsset* gameAsset, Matrix4* init
 	if (pGameNode)
 	{
 		m_pScene->AddChild(pGameNode, pGameNode->GetID());
-		if (!m_bIsProxy && (m_State == BGS_SpawningPlayersActors || m_State == BGS_Running))
+
+		// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running  
+		// then we have to send this event to clients
+		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
 		{
 			SharedPtr<Event_Data_Request_New_Game_Asset> pNewGameAsset(new Event_Data_Request_New_Game_Asset(gameAsset->GetName(), initialTransform, pGameNode->GetID()));
 			VariantMap map = pNewGameAsset->VSerialize();
@@ -214,6 +210,46 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(GameAsset* gameAsset, Matrix4* init
 	}
 	return pGameNode;
 }
+
+StrongNodePtr BaseGameLogic::VCreateGameNode(const String gameAssetName, const Matrix4* initialTransform, const GameNodeId serversGameNodeId)
+{
+	assert(m_pGameAssetFactory && m_pGameAssetManager);
+
+	GameAsset* pGameAsset = m_pGameAssetManager->FindGameAssetByName(gameAssetName);
+	if (!pGameAsset)
+	{
+		URHO3D_LOGERROR("Failed to find GameAsset by name " + gameAssetName + " in BaseGameLogic's function VCreateGameNode()");
+		return StrongNodePtr();
+	}
+
+	// if it is server, m_bIsProxy == false and serverGameNodeId must be INVALID_GAME_NODE_ID
+	// because server generates new game node id
+	if (!m_bIsProxy && serversGameNodeId != INVALID_GAME_NODE_ID)
+		return StrongNodePtr();
+
+	// if it is client, m_bIsProxy == true and serverGameNodeId must be sent from server.
+	// So serversGameNodeId must not be equal INVALID_GAME_NODE_ID
+	if (m_bIsProxy && serversGameNodeId == INVALID_GAME_NODE_ID)
+		return StrongNodePtr();
+
+	StrongNodePtr pGameNode = m_pGameAssetFactory->CreateNode(pGameAsset, serversGameNodeId);
+	if (pGameNode)
+	{
+		m_pScene->AddChild(pGameNode, pGameNode->GetID());
+
+		// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running  
+		// then we have to send this event to clients
+		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
+		{
+			SharedPtr<Event_Data_Request_New_Game_Asset> pNewGameAsset(new Event_Data_Request_New_Game_Asset(pGameAsset->GetName(), initialTransform, pGameNode->GetID()));
+			VariantMap map = pNewGameAsset->VSerialize();
+			SendEvent(Event_Data_Request_New_Game_Asset::g_EventType, map);
+		}
+	}
+
+	return pGameNode;
+}
+
 
 WeakNodePtr BaseGameLogic::VGetGameNode(const GameNodeId gameNodeId)
 {
@@ -237,7 +273,7 @@ void BaseGameLogic::VDestroyGameNode(const GameNodeId gameAssetId)
 void BaseGameLogic::VChangeState(enum BaseGameState newState)
 {
 
-    if (newState == BGS_WaitingForPlayers)
+    if (newState == BGS_WaitingForPlayer)
     {
         // Get rid of the Main Menu...
         SharedPtr<IGameView> it;
@@ -258,7 +294,7 @@ void BaseGameLogic::VChangeState(enum BaseGameState newState)
         }
         else
         {
-            VChangeState(BGS_WaitingForPlayersToLoadEnvironment);			// we must wait for all human player to report their environments are loaded.
+            VChangeState(BGS_SpawningPlayerGameNode);	// Game environments was loaded, we can spawn player specific game nodes.
             return;
         }
     }
@@ -273,12 +309,16 @@ void BaseGameLogic::VSetProxy()
 {
 	m_bIsProxy = true;
 
+	SubscribeToEvent(Event_Data_Request_New_Game_Asset::g_EventType, URHO3D_HANDLER(BaseGameLogic, RequestNewGameNodeDelegate));
 	
+	// May be create NULL PHYSICS there ? 
+	// Server should handle all physics.
+
 }
 
 bool BaseGameLogic::VLoadGame(String levelResource)
 {
-    SharedPtr<File> file = g_pApp->GetConstantResCache()->GetFile(levelResource);
+    /*SharedPtr<File> file = g_pApp->GetConstantResCache()->GetFile(levelResource);
     m_pScene = SharedPtr<Scene>(new Scene(context_));
 
     // initialize all human views
@@ -295,6 +335,7 @@ bool BaseGameLogic::VLoadGame(String levelResource)
     // call the delegate load function
     if (!VLoadGameDelegate(levelResource))
         return false;  // no error message here because it's assumed VLoadGameDelegate() kicked out the error
+		*/
 
     // trigger the Environment Loaded Game event - only then can player actors and AI be spawned!
     SendEvent(String("Environment_Loaded"));
@@ -329,38 +370,51 @@ void BaseGameLogic::VRemoveView(SharedPtr<IGameView> pView)
     }
 }
 
-void BaseGameLogic::InitializeComponents()
-{
-
-}
-
-
 // ----------------------------------------------------------
 // Delegates routines
 // ----------------------------------------------------------
 
-void BaseGameLogic::InitializeAllDelegates()
+void BaseGameLogic::VInitializeAllDelegates()
 {
-    SubscribeToEvent("Request_Destroy_Actor", URHO3D_HANDLER(BaseGameLogic, RequestDestroyActorDelegate));
+    SubscribeToEvent("Request_Destroy_Actor", URHO3D_HANDLER(BaseGameLogic, RequestDestroyGameNodeDelegate));
     SubscribeToEvent("Request_Start_Game", URHO3D_HANDLER(BaseGameLogic, RequestStartGameDelegate));
     SubscribeToEvent("Environment_Loaded", URHO3D_HANDLER(BaseGameLogic, EnvironmentLoadedDelegate));
 }
 
-void BaseGameLogic::DestroyAllDelegates()
+void BaseGameLogic::VDestroyAllDelegates()
 {
     UnsubscribeFromAllEvents();
 }
 
 
-void BaseGameLogic::RequestDestroyActorDelegate(StringHash eventType, VariantMap& eventData)
+void BaseGameLogic::RequestDestroyGameNodeDelegate(StringHash eventType, VariantMap& eventData)
 {
-    GameNodeId actorId = eventData["ActorId"].Get<GameNodeId>();
-    VDestroyGameNode(actorId);
+
+	
+	
+}
+
+void BaseGameLogic::RequestNewGameNodeDelegate(StringHash eventType, VariantMap& eventData)
+{
+	// This should only happen if the game logic is a proxy, and there is a server asking us to create an game node
+	assert(m_bIsProxy);
+
+	if (!m_bIsProxy)
+		return;
+
+	Event_Data_Request_New_Game_Asset dataNewGameAsset;
+	dataNewGameAsset.VDeserialize(eventData);
+
+	// Create the game node
+	StrongNodePtr pGameNode = VCreateGameNode(dataNewGameAsset.GetGameAsset(), dataNewGameAsset.GetInitialTransform(), dataNewGameAsset.GetServerActorId());
+
+
+
 }
 
 void BaseGameLogic::RequestStartGameDelegate(StringHash eventType, VariantMap& eventData)
 {
-    VChangeState(BGS_WaitingForPlayers);
+    VChangeState(BGS_WaitingForPlayer);
 }
 
 void BaseGameLogic::EnvironmentLoadedDelegate(StringHash eventType, VariantMap& eventData)

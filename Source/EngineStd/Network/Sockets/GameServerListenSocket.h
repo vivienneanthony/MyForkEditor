@@ -14,7 +14,7 @@ class GameServerListenSocket : public NetListenSocket
 	URHO3D_OBJECT(GameServerListenSocket, NetListenSocket)
 
 public:
-	GameServerListenSocket(Context* context, unsigned short portName);
+	GameServerListenSocket(Context* context, int portName);
 	virtual ~GameServerListenSocket() { }
 
 	virtual void VHandleInput() { }

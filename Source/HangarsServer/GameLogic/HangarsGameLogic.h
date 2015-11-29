@@ -14,9 +14,19 @@ public:
 	virtual bool VInitialize();
 	virtual void VShutdown();
 
+	virtual void VOnUpdate(float timeStep);
 	virtual void VChangeState(enum BaseGameState newState);
 
 	virtual bool VLoadGameDelegate(String pLevelData);
+
+protected:
+	virtual void VInitializeAllDelegates();		// Register all delegates
+	virtual void VDestroyAllDelegates();			// Unsubscribe from all events
+
+	void StartServerDelegate(StringHash eventType, VariantMap& eventData);
+	void ServerCreatedDelegate(StringHash eventType, VariantMap& eventData);
+
+
 };
 
 #endif // HANGARS_GAME_LOGIC_H

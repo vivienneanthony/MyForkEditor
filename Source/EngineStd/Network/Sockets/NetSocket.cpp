@@ -5,7 +5,7 @@
 
 NetSocket::NetSocket(Context* context) : Object(context)
 {
-	m_pNetwork = GetSubsystem<Network>();
+	m_pNetwork = g_pApp->GetNetwork();
 	m_DeleteFlags = 0;
 	m_SendsOfs = 0;
 	m_TimeOut = 0;
@@ -14,11 +14,12 @@ NetSocket::NetSocket(Context* context) : Object(context)
 	m_pConnection = NULL;
 
 	VInitializeDelegates();
+	
 }
 
 NetSocket::NetSocket(Context* context, String hostIP) : Object(context)
-{
-	m_pNetwork = GetSubsystem<Network>();
+{	
+	m_pNetwork = g_pApp->GetNetwork();
 	m_DeleteFlags = 0;
 	m_SendsOfs = 0;
 	m_TimeOut = 0;
@@ -42,8 +43,12 @@ NetSocket::~NetSocket()
 	VDestroyAllDelegates();
 }
 
+
+
 bool NetSocket::Connect(String ip, unsigned short port, Scene* scene, const VariantMap& map)
 {
+	assert(m_pNetwork);
+
 	// Connect to server, specify scene to use as a client for replication
 	m_UniqueId = 0; // Reset own object ID from possible previous connection
 	if (m_pNetwork->Connect(ip, port, scene, map))

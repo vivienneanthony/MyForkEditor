@@ -15,26 +15,24 @@ public:
 
 	// Node can be created on client side and server side.
 	// On client side we get event from server, where is contained serversId.
-	StrongNodePtr CreateNode(GameAsset* gameAsset, GameNodeId serversId);
+	StrongNodePtr CreateNode(const GameAsset* gameAsset, const GameNodeId serversId);
 
-	void ModifyNode(StrongNodePtr node, GameAsset* gameAsset);
+	void ModifyNode(StrongNodePtr node, const GameAsset* gameAsset);
 
-	virtual StrongComponentPtr VCreateComponent(GameAsset* gameAsset);
+	virtual StrongComponentPtr VCreateComponent(const GameAsset* gameAsset);
 
-	StrongNodePtr CreateNodeRecursive(GameAsset* gameAsset, GameNodeId serversId, Node* node, bool recursive);
+	StrongNodePtr CreateNodeRecursive(const GameAsset* gameAsset, const GameNodeId serversId, Node* node, bool recursive);
 
     // Set the game asset manager
 	void SetGameAssetManager (GameAssetManager* setGameAssetManager) { m_pGameAssetManager = setGameAssetManager; }
 
-
 protected:
-	GenericObjectFactory<BaseComponent, ComponentId> m_ComponentFactory;
-
-private:
 	GameNodeId GetNextGameNodeId() { ++m_LastGameNodeId; return m_LastGameNodeId; }
 	String* GameAssetTypeToString(GameAssetType inputType);
 
-private:
+
+protected:
+	GenericObjectFactory<BaseComponent, ComponentId> m_ComponentFactory;
 	GameNodeId m_LastGameNodeId;
 	GameAssetManager * m_pGameAssetManager;
 };

@@ -88,20 +88,20 @@ public:
 
     // add child
     GameAsset* AddChild(String GA_Name, String GA_Symbol,GameAssetType GA_Type, GameAssetState GA_State);
-	Vector<GameAsset*>& GetChilds() { return (*m_pChildrens); }
+	Vector<GameAsset*>& GetChilds() const { return (*m_pChildrens); }
 
 	// remove children
     bool DeleteChild(GameAsset* RemoveGameAsset);
     void RemoveClean(void);
 
     // Getters
-	inline String GetName() { return m_Name; };
-	inline String GetSymbol() { return m_Symbol; };
-	inline GameAssetType GetType() { return m_Type; };
-	inline bool IsLinkedGameAsset() {return m_bIsLinkedGameAsset;};
+	inline const String GetName() const { return m_Name; };
+	inline const String GetSymbol() const { return m_Symbol; };
+	inline const GameAssetType GetAssetType() const { return m_Type; };
+	inline const bool IsLinkedGameAsset() const {return m_bIsLinkedGameAsset;};
 
-	inline bool IsPhysical() {return m_bIsPhysical;};
-	inline String GetPhysicalModel() {return m_PhysicalModel;};
+	inline const bool IsPhysical() const {return m_bIsPhysical;};
+	inline const String GetPhysicalModel() const {return m_PhysicalModel;};
 
 
     void Dump(void);

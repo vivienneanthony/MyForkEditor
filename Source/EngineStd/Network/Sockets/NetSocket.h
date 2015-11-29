@@ -15,6 +15,7 @@ public:
 	NetSocket(Context* context, String hostIP);	// Handled by server
 	virtual ~NetSocket();
 
+
 	// Connect to the server. 
 	// Identity VariantMap supplied as parameters when connecting. The identity data can contain for example the user name or credentials
 	bool Connect(String ip, unsigned short port, Scene* scene, const VariantMap& map = Variant::emptyVariantMap);

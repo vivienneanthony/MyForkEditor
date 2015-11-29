@@ -10,14 +10,21 @@ class GameAssetManager;
 
 enum BaseGameState : int
 {
+	// Common client/server states
 	BGS_Invalid = 0,
 	BGS_Initializing,
 	BGS_MainMenu,
-	BGS_WaitingForPlayers,
+	BGS_Running,
+
+	// Client game states
+	BGS_WaitingForPlayer,
+	BGS_LoadingPlayerLobby,
 	BGS_LoadingGameEnvironment,
-	BGS_WaitingForPlayersToLoadEnvironment,
-	BGS_SpawningPlayersActors,
-	BGS_Running
+	BGS_SpawningPlayerGameNode,
+	
+	// Server game states
+	BGS_WaitingForServerCreating,
+	BGS_ServerCreated,
 };
 
 class BaseGameLogic : public IGameLogic
@@ -38,7 +45,10 @@ public:
 	virtual void VShutdown();
 
 	// Manipulation with actors
-	virtual StrongNodePtr VCreateGameNode(GameAsset* gameAsset, Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
+	virtual StrongNodePtr VCreateGameNode(const GameAsset* gameAsset, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
+	virtual StrongNodePtr VCreateGameNode(const String gameAssetName, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
+
+	
 	virtual WeakNodePtr VGetGameNode(const GameNodeId gameNodeId);
 	virtual void VDestroyGameNode(const GameNodeId gameNodeId);
 
@@ -56,6 +66,9 @@ public:
 	inline LevelManager* GetLevelManager() { return m_pLevelManager; }
 	inline SharedPtr<Scene> GetScene() { return m_pScene; }
 
+	inline void SetServerCreated(bool value) { m_bIsServerCreated = value; }
+	inline bool IsServerCreated() { return m_bIsServerCreated; }
+
     // Game Assets Getters/Setters
     inline GameAssetManager * GetGameAssetManager()  {return m_pGameAssetManager;}
 	inline GameAssetFactory * GetGameAssetFactory()  {return m_pGameAssetFactory;}
@@ -67,15 +80,15 @@ protected:
 	// Override this function to do any game-specific loading.
 	virtual bool VLoadGameDelegate(String pLevelData) { return true; }
 
-private:
-	virtual void InitializeComponents();		// Register factory and attributes for the component so it can be created via CreateComponent, and loaded / saved
-
-private:
-	virtual void InitializeAllDelegates();		// Register all delegates
-	virtual void DestroyAllDelegates();			// Unsubscribe from all events
+protected:
+	virtual void VInitializeAllDelegates();		// Register all delegates
+	virtual void VDestroyAllDelegates();			// Unsubscribe from all events
 
 	// Delegates
-	void RequestDestroyActorDelegate(StringHash eventType, VariantMap& eventData);
+	void RequestNewGameNodeDelegate(StringHash eventType, VariantMap& eventData);
+	void RequestDestroyGameNodeDelegate(StringHash eventType, VariantMap& eventData);
+	
+	// Game events delegates
 	void RequestStartGameDelegate(StringHash eventType, VariantMap& eventData);
 	void EnvironmentLoadedDelegate(StringHash eventType, VariantMap& eventData);
 
@@ -101,6 +114,8 @@ protected:
 	int m_HumanPlayersAttached;							// How many players actually play with us
 
 	bool m_bIsProxy;									// Is it client(proxy) connection, not real one.
+	bool m_bIsServerCreated;							// For server side.
+	bool m_bIsPlayerLoggedIn;							// TRUE - If password/login was corrected, FALSE - contrary
 };
 
 #endif // BASE_GAME_LOGIC_H

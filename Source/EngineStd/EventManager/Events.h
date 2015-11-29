@@ -18,7 +18,7 @@ public:
 	// Returns the type of the event
 	virtual const EventType& VGetEventType(void) const = 0;
 
-	float GetTimeStamp(void) const { return m_TimeStamp; }
+	float VGetTimeStamp(void) const { return m_TimeStamp; }
 
 	// Serializing for network input / output
 	virtual const VariantMap& VSerialize() const { return m_OutSerializer; }
@@ -53,7 +53,7 @@ public:
 		m_ViewId = INVALID_GAME_VIEW_ID;
 	}
 
-	Event_Data_Request_New_Game_Asset(String gameAssetName, Matrix4* initMatrix = NULL, GameNodeId nodeId = INVALID_GAME_NODE_ID, GameViewId viewId = INVALID_GAME_VIEW_ID) : 
+	Event_Data_Request_New_Game_Asset(const String gameAssetName, const Matrix4* initMatrix = NULL, const GameNodeId nodeId = INVALID_GAME_NODE_ID, const GameViewId viewId = INVALID_GAME_VIEW_ID) :
 		BaseEventData()
 	{
 		m_GameAssetName = gameAssetName;

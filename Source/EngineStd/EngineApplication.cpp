@@ -21,8 +21,11 @@ EngineApp::EngineApp(Context* context) : Application(context)
 {
     g_pApp = this;
     m_bIsInit = false;
+
 	m_pCurrentCursor = NULL;
+
 	m_pBaseSocketManager = NULL;
+	m_pNetworkEventer = NULL;
 }
 
 EngineApp::~EngineApp()
@@ -256,6 +259,7 @@ bool EngineApp::AttachAsClient()
 	identify["CLIENT_PASSWORD"] = m_GameOptions.m_Password;
 
 	ClientSocketManager* clientManager = new ClientSocketManager(context_, m_GameOptions.m_GameHost, m_GameOptions.m_ListenPort, identify);
+	
 	if (clientManager->Connect())
 	{
 		URHO3D_LOGDEBUG(String("Client connection failed."));

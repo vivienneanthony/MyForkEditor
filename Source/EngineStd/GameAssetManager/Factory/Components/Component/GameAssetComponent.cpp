@@ -23,7 +23,7 @@ GameAssetComponent::~GameAssetComponent()
 
 }
 
-bool GameAssetComponent::VInit(GameAsset* pGameAsset)
+bool GameAssetComponent::VInit(const GameAsset* pGameAsset)
 {
 	// Set type and state to nothing for now
 	m_GameAssetType = GAType_Component;

@@ -24,7 +24,7 @@ GameAssetForceFieldGeneratorUnit::~GameAssetForceFieldGeneratorUnit(void)
     return;
 }
 
-bool GameAssetForceFieldGeneratorUnit::VInit(GameAsset* pGameAsset)
+bool GameAssetForceFieldGeneratorUnit::VInit(const GameAsset* pGameAsset)
 {
 	// Set type and state to nothing for now
 	m_GameAssetType = GAType_ForcefieldGenerator;

@@ -14,7 +14,7 @@ AmmoPickup::AmmoPickup() : PickupInterface()
 }
 
 
-bool AmmoPickup::VInit(GameAsset* pGameAsset)
+bool AmmoPickup::VInit(const GameAsset* pGameAsset)
 {
 	return true;
 }

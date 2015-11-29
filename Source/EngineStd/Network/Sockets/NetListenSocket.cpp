@@ -1,4 +1,5 @@
 #include "EngineStd.h"
+#include "GameLogic/BaseGameLogic.h"
 #include "NetListenSocket.h"
 
 NetListenSocket::NetListenSocket(Context* context) : NetSocket(context)
@@ -6,17 +7,20 @@ NetListenSocket::NetListenSocket(Context* context) : NetSocket(context)
 	m_PortNum = 0;
 }
 
-NetListenSocket::NetListenSocket(Context* context, unsigned short portNum) : NetSocket(context_, String("localhost"))
+NetListenSocket::NetListenSocket(Context* context, unsigned short portNum) : NetSocket(context, String("localhost"))
 {
 	m_PortNum = portNum;
-	Init(portNum);
+	Init(m_PortNum);
 }
+
+
 
 void NetListenSocket::Init(unsigned short portNum)
 {
 	if (m_pNetwork->StartServer(portNum))
 	{
 		m_PortNum = portNum;
+		g_pApp->GetGameLogic()->SetServerCreated(true);
 		URHO3D_LOGDEBUG(String("Server was started"));
 	}
 	else
@@ -43,7 +47,7 @@ NetListenSocket::~NetListenSocket()
 // ----------------------- DELEGATES ----------------------
 void NetListenSocket::VInitializeDelegates()
 {
-	
+	NetSocket::VInitializeDelegates();
 
 }
 

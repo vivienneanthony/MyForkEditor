@@ -20,7 +20,7 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
     ,m_pGameAssetManager(NULL)
 {
     // Set invalid game node flag
-    m_LastGameNodeId = INVALID_GAME_NODE_ID;
+    m_LastGameNodeId = 1;
 
     // needed
     m_pGameAssetManager = NULL;
@@ -44,7 +44,7 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
     m_ComponentFactory.Register<GameAssetEngineCamera>((unsigned int)GameAssetEngineCamera::g_Type);
     context_->RegisterFactory<GameAssetEngineCamera>();
 
-    return;
+
 }
 
 GameAssetFactory::~GameAssetFactory()
@@ -52,34 +52,37 @@ GameAssetFactory::~GameAssetFactory()
 
 }
 
-StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serversId)
+StrongNodePtr GameAssetFactory::CreateNode(const GameAsset* gameAsset, const GameNodeId serversId)
 {
     GameNodeId nextGameNodeId = serversId;
     if (nextGameNodeId == INVALID_GAME_NODE_ID)
     {
-        nextGameNodeId = GetNextGameNodeId()+10;
+        nextGameNodeId = GetNextGameNodeId();
     }
 
     StrongNodePtr pGameNode(new Node(context_));
 
-    // Set Game Node id
     pGameNode->SetID(nextGameNodeId);
 
     ResourceCache* cache = g_pApp->GetConstantResCache();
 
+    // Create root component
     // Loop through each game asset child element and load the component
-    StrongComponentPtr component = VCreateComponent(gameAsset);
 
-    // Change id to new forced
-    component->SetID(nextGameNodeId);                   // Manually update component to use the Node Id
+    StrongComponentPtr component = VCreateComponent(gameAsset);
 
     if (component.NotNull())
     {
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
-        //pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), Urho3D::CreateMode::LOCAL);
-        pGameNode->AddComponent(component, (unsigned int)nextGameNodeId, Urho3D::CreateMode::LOCAL);                     // Manually update component to use the Node Id
+
+		// If you want to know GameAssetTypeId.
+		// Simply do substract abs(ComponentId - NodeId)
+		int componentId = nextGameNodeId + component->GetGameAssetType();
+
+        pGameNode->AddComponent(component, componentId, Urho3D::CreateMode::LOCAL);
+
 
         // Initialize after it's added
         component->Initialize();
@@ -88,7 +91,7 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
         if(gameAsset->IsPhysical())
         {
             // Create a model and string
-            String ModelFile = String("Models/")+gameAsset->GetPhysicalModel()+String(".mdl");
+            String ModelFile = String("Models/") + gameAsset->GetPhysicalModel()+String(".mdl");
 
             // create a static model
             StaticModel* m_pGameNodeModel = pGameNode->CreateComponent<StaticModel>();
@@ -111,15 +114,16 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
     {
         StrongComponentPtr component = VCreateComponent(gameAsset);
 
-        // Change id to new forced
-        component->SetID(nextGameNodeId);                         // Manually update component to use the Node Id
-
         if (component)
         {
             // *ITISSCAN* 23.11.2015.
             // Not to good cast from GameAssetType structure to unsigned int...
             // Maybe in future better to make StringHash instead?
-            pGameNode->AddComponent(component, (unsigned int)nextGameNodeId, component->GetCreateMode());                     // Manually update component to use the Node Id
+
+			// If you want to know GameAssetTypeId.
+			// Simply do substract abs(ComponentId - NodeId)
+			int componentId = nextGameNodeId + component->GetGameAssetType();
+            pGameNode->AddComponent(component, componentId, component->GetCreateMode());
 
         }
         else
@@ -142,15 +146,15 @@ StrongNodePtr GameAssetFactory::CreateNode(GameAsset* gameAsset, GameNodeId serv
     return pGameNode;
 }
 
-void GameAssetFactory::ModifyNode(StrongNodePtr node, GameAsset* gameAsset)
+void GameAssetFactory::ModifyNode(StrongNodePtr node, const GameAsset* gameAsset)
 {
 
 
 }
 
-StrongComponentPtr GameAssetFactory::VCreateComponent(GameAsset* gameAsset)
+StrongComponentPtr GameAssetFactory::VCreateComponent(const GameAsset* gameAsset)
 {
-    GameAssetType GA_Type = gameAsset->GetType();
+    GameAssetType GA_Type = gameAsset->GetAssetType();
 
     StrongComponentPtr pComponent(m_ComponentFactory.Create((unsigned int)GA_Type));
 
@@ -178,7 +182,7 @@ StrongComponentPtr GameAssetFactory::VCreateComponent(GameAsset* gameAsset)
 }
 
 // createnode
-StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNodeId serversId, Node * node=NULL, bool recursive=true)
+StrongNodePtr GameAssetFactory::CreateNodeRecursive(const GameAsset* gameAsset, const GameNodeId serversId, Node * node = NULL, bool recursive = true)
 {
     ResourceCache* cache = g_pApp->GetConstantResCache();
 
@@ -199,11 +203,12 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
 
     // If component creation failed exit
     if (component.NotNull())
-
     {
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int... Maybe in future better to make StringHash instead?
-        pGameNode->AddComponent(component, component->GetID(), component->GetCreateMode());
+		int componentId = nextGameNodeId + component->GetGameAssetType();
+
+		pGameNode->AddComponent(component, componentId, component->GetCreateMode());
 
         // Initialize after it's added
         component->Initialize();
@@ -247,7 +252,13 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(GameAsset* gameAsset, GameNo
                     // *ITISSCAN* 23.11.2015.
                     // Not to good cast from GameAssetType structure to unsigned int...
                     // Maybe in future better to make StringHash instead?
-                    pGameNode->AddComponent(component, (unsigned int)component->GetGameAssetType(), component->GetCreateMode());
+
+					// If you want to know GameAssetTypeId.
+					// Simply do substract abs(ComponentId - NodeId)
+					int componentId = nextGameNodeId + component->GetGameAssetType();
+
+					pGameNode->AddComponent(component, componentId, component->GetCreateMode());
+					
                 }
                 else
                 {

@@ -21,7 +21,7 @@ GameAssetEngineObject::~GameAssetEngineObject()
 
 }
 
-bool GameAssetEngineObject::VInit(GameAsset* pGameAsset)
+bool GameAssetEngineObject::VInit(const GameAsset* pGameAsset)
 {
     // Set type and state to nothing for now
 	m_GameAssetType = GAType_EngineObject;
