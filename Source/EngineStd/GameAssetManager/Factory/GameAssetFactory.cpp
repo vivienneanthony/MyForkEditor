@@ -20,7 +20,7 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
     ,m_pGameAssetManager(NULL)
 {
     // Set invalid game node flag
-    m_LastGameNodeId = 1;
+    m_LastGameNodeId = 10;
 
     // needed
     m_pGameAssetManager = NULL;
@@ -77,11 +77,9 @@ StrongNodePtr GameAssetFactory::CreateNode(const GameAsset* gameAsset, const Gam
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
 
-		// If you want to know GameAssetTypeId.
-		// Simply do substract abs(ComponentId - NodeId)
-		int componentId = nextGameNodeId + component->GetGameAssetType();
-
-        pGameNode->AddComponent(component, componentId, Urho3D::CreateMode::LOCAL);
+		
+		pGameNode->SetID(nextGameNodeId);
+		pGameNode->AddComponent(component, nextGameNodeId, Urho3D::CreateMode::LOCAL);
 
 
         // Initialize after it's added
@@ -122,8 +120,8 @@ StrongNodePtr GameAssetFactory::CreateNode(const GameAsset* gameAsset, const Gam
 
 			// If you want to know GameAssetTypeId.
 			// Simply do substract abs(ComponentId - NodeId)
-			int componentId = nextGameNodeId + component->GetGameAssetType();
-            pGameNode->AddComponent(component, componentId, component->GetCreateMode());
+			pGameNode->SetID(nextGameNodeId);
+            pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
 
         }
         else
@@ -206,9 +204,9 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(const GameAsset* gameAsset, 
     {
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int... Maybe in future better to make StringHash instead?
-		int componentId = nextGameNodeId + component->GetGameAssetType();
-
-		pGameNode->AddComponent(component, componentId, component->GetCreateMode());
+		
+		pGameNode->SetID(nextGameNodeId);
+		pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
 
         // Initialize after it's added
         component->Initialize();
@@ -252,12 +250,8 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(const GameAsset* gameAsset, 
                     // *ITISSCAN* 23.11.2015.
                     // Not to good cast from GameAssetType structure to unsigned int...
                     // Maybe in future better to make StringHash instead?
-
-					// If you want to know GameAssetTypeId.
-					// Simply do substract abs(ComponentId - NodeId)
-					int componentId = nextGameNodeId + component->GetGameAssetType();
-
-					pGameNode->AddComponent(component, componentId, component->GetCreateMode());
+					pGameNode->SetID(nextGameNodeId);
+					pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
 					
                 }
                 else
