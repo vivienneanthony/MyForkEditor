@@ -45,7 +45,7 @@ bool GameAssetEngineObject::VInit(const GameAsset* pGameAsset)
 void GameAssetEngineObject::Initialize(void)
 {
     // Get Attached node - preventing segfault problems
-    Node * pThisNode = GetNode();
+    Node * pThisNode = this->GetNode();
 
     if(!pThisNode)
     {
@@ -62,7 +62,7 @@ void GameAssetEngineObject::Initialize(void)
         String ModelFile = String("Models/") + PhysicalModel+String(".mdl");
 
         // create a static model
-        m_pNodeStaticModel =  pThisNode->CreateComponent<StaticModel>();
+        m_pNodeStaticModel =  pThisNode->CreateComponent<StaticModel>(Urho3D::CreateMode::LOCAL, pThisNode->GetID());
 
         // Set model and force default material loading
         m_pNodeStaticModel->SetModel(resCache->GetResource<Model>(ModelFile));
