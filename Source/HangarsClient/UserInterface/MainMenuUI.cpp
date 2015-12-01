@@ -127,6 +127,10 @@ void MainMenuUI::CreateLoginWindow()
 
     Button* enterButton = CreateCustomButton(m_pWindow, "Enter", "Enter");
     SubscribeToEvent(enterButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleEnterDelegate));
+
+    // Set Opacity
+    m_pWindow->SetOpacity(.5);
+
 }
 
 void MainMenuUI::HandleEnterDelegate(StringHash eventType, VariantMap& eventData)

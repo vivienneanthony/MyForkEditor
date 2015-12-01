@@ -17,6 +17,9 @@ GameAssetEngineLight::GameAssetEngineLight() : BaseComponent()
     // Set type and state to nothing for now
     m_GameAssetType = GAType_EngineLight;
     m_GameAssetState = GAState_None;
+
+    // Set light node to null
+    m_pNodeLight = NULL;
 }
 
 // Destructor
@@ -37,19 +40,21 @@ bool GameAssetEngineLight::VInit(const GameAsset* pGameAsset)
 // Add components here needed
 void GameAssetEngineLight::Initialize(void)
 {
-    // get attached node
-    Node * thisNode = GetNode();
+    // Get Attached node - preventing segfault problems
+    Node * pThisNode = this->GetNode();
 
-    // if node exist
-    if(thisNode)
+    if(!pThisNode)
     {
-        // Add light component
-        Light * pnodeLight = thisNode->CreateComponent<Light>();
-
-        // set brightness
-        pnodeLight->SetBrightness(1.0f);
-        pnodeLight->SetLightType(LIGHT_POINT);
+        return;
     }
+
+    // Create a light component
+     m_pNodeLight = pThisNode->CreateComponent<Light>();
+
+     // Set brightness
+     m_pNodeLight->SetBrightness(0.0f);
+     m_pNodeLight->SetSpecularIntensity(0.0f);
+     m_pNodeLight->SetLightType(LIGHT_DIRECTIONAL);
 
     return;
 }

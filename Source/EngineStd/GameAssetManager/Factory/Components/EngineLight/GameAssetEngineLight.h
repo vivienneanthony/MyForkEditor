@@ -10,24 +10,35 @@ class GameAssetEngineLight : public BaseComponent
     URHO3D_OBJECT(GameAssetEngineLight, BaseComponent);
 public:
     // Construct.
-	GameAssetEngineLight(Context* context);
+    GameAssetEngineLight(Context* context);
     GameAssetEngineLight();
     virtual ~GameAssetEngineLight();
 
-	static const GameAssetType g_Type;
+    static const GameAssetType g_Type;
 
-	// Base component overrided functions
-	virtual bool VInit(const GameAsset* pGameAsset);
-	virtual void VUpdateDelegate(float timeStep) { }
-	virtual void VInitializeDelegate() { }
+    // Base component overrided functions
+    virtual bool VInit(const GameAsset* pGameAsset);
+    virtual void VUpdateDelegate(float timeStep) { }
+    virtual void VInitializeDelegate() { }
 
-	virtual GameAssetType VGetGameAssetType(void) const { return g_Type; }
+    virtual GameAssetType VGetGameAssetType(void) const
+    {
+        return g_Type;
+    }
 
-	// Base component
-	virtual void Initialize(void);
+    // Base component initialization
+    virtual void Initialize(void);
+
+    // Passed Urho3D parameters
+    virtual void SetLightType(LightType SetLight)           { m_pNodeLight->SetLightType(SetLight); }
+    virtual void SetBrightness(float SetBright)            { m_pNodeLight->SetBrightness(SetBright); }
+    virtual void SetColor(Color &SetColor)                  { m_pNodeLight->SetColor(SetColor); }
+    virtual void SetSpecularIntensity(float SetSpecular)   { m_pNodeLight->SetSpecularIntensity(SetSpecular); }
+    virtual void SetRange (float SetRange)                 { m_pNodeLight->SetRange(SetRange);}
+    virtual void SetFOV (float SetFOV)                     { m_pNodeLight->SetFov(SetFOV);}
 
 private:
-
+    Light * m_pNodeLight;                                       // Save associated Light component
 };
 
 #endif // INTERACTIVE_H
