@@ -17,7 +17,9 @@ public:
 	// On client side we get event from server, where is contained serversId.
 	StrongNodePtr CreateNode(const GameAsset* gameAsset, const GameNodeId serversId);
 
+    // Modify node
 	void ModifyNode(StrongNodePtr node, const GameAsset* gameAsset);
+	void ModifyNode(StrongNodePtr pChildNode, const GameAsset* gameAsset, const pugi::xml_node GameAssetChild);
 
 	virtual StrongComponentPtr VCreateComponent(const GameAsset* gameAsset);
 

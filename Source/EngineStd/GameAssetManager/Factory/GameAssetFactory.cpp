@@ -76,8 +76,8 @@ StrongNodePtr GameAssetFactory::CreateNode(const GameAsset* gameAsset, const Gam
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
-		pGameNode->SetID(nextGameNodeId);
-		pGameNode->AddComponent(component, nextGameNodeId, Urho3D::CreateMode::LOCAL);
+        pGameNode->SetID(nextGameNodeId);
+        pGameNode->AddComponent(component, nextGameNodeId, Urho3D::CreateMode::LOCAL);
 
         // Initialize after it's added
         component->Initialize();
@@ -103,12 +103,12 @@ StrongNodePtr GameAssetFactory::CreateNode(const GameAsset* gameAsset, const Gam
             // Not to good cast from GameAssetType structure to unsigned int...
             // Maybe in future better to make StringHash instead?
 
-			// If you want to know GameAssetTypeId.
-			// Simply do substract abs(ComponentId - NodeId)
-			pGameNode->SetID(nextGameNodeId);
+            // If you want to know GameAssetTypeId.
+            // Simply do substract abs(ComponentId - NodeId)
+            pGameNode->SetID(nextGameNodeId);
             pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
 
-             // Initialize after it's added
+            // Initialize after it's added
             component->Initialize();
         }
         else
@@ -137,6 +137,86 @@ void GameAssetFactory::ModifyNode(StrongNodePtr node, const GameAsset* gameAsset
 
 }
 
+// Used to modify node attributes from pgi XMl - Modify Node
+void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gameAsset, const pugi::xml_node GameAssetChild)
+{
+    // Use additional flags based on type
+    if(gameAsset->GetAssetType()==GAType_EngineLight)
+    {
+        // Available additional flags
+        float SetBrightness = GameAssetChild.attribute("Brightness").as_float();
+        float SetSpecular = GameAssetChild.attribute("Specular").as_float();
+        float SetRange = GameAssetChild.attribute("Range").as_float();
+        float SetFov = GameAssetChild.attribute("Fov").as_float();
+
+        // Check if Light component actually exist
+        GameAssetEngineLight * EngineLight = (GameAssetEngineLight *) pChildNode->GetComponent("GameAssetEngineLight");
+
+        // If game asset has a Engine Light component
+        if(EngineLight)
+        {
+            if(SetBrightness)
+            {
+                EngineLight->SetBrightness(SetBrightness);
+            }
+            if(SetSpecular)
+            {
+                EngineLight->SetSpecularIntensity(SetSpecular);
+            }
+            if(SetRange)
+            {
+                EngineLight->SetRange(SetRange);
+            }
+            if(SetFov)
+            {
+                EngineLight->SetFOV(SetFov);
+            }
+        }
+    }
+
+    // Use additional flags based on type
+    if(gameAsset->GetAssetType()==GAType_EngineObject)
+    {
+        // Available additional flags
+        unsigned int SetViewMask = GameAssetChild.attribute("ViewMask").as_uint();
+        unsigned int SetLightMask = GameAssetChild.attribute("LightMask").as_uint();
+        unsigned int SetShadowMask = GameAssetChild.attribute("ShadowMask").as_uint();
+        unsigned int SetZoneMask = GameAssetChild.attribute("ZoneMask").as_uint();
+        unsigned int SetCastShadows = GameAssetChild.attribute("CastShadows").as_uint();
+
+        // Check if Light component actually exist
+        GameAssetEngineObject * EngineObject = (GameAssetEngineObject *) pChildNode->GetComponent("GameAssetEngineObject");
+
+        // If game asset has a Engine Light component
+        if(EngineObject)
+        {
+            if(SetViewMask)
+            {
+                EngineObject->SetViewMask(SetViewMask);
+            }
+            if(SetLightMask)
+            {
+                EngineObject->SetViewMask(SetLightMask);
+            }
+            if(SetShadowMask)
+            {
+                EngineObject->SetViewMask(SetShadowMask);
+            }
+            if(SetZoneMask)
+            {
+                EngineObject->SetViewMask(SetZoneMask);
+            }
+            if(SetCastShadows)
+            {
+                EngineObject->SetViewMask(SetCastShadows);
+            }
+        }
+    }
+
+    return;
+}
+
+// Create component
 StrongComponentPtr GameAssetFactory::VCreateComponent(const GameAsset* gameAsset)
 {
     GameAssetType GA_Type = gameAsset->GetAssetType();
@@ -192,8 +272,8 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(const GameAsset* gameAsset, 
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int... Maybe in future better to make StringHash instead?
 
-		pGameNode->SetID(nextGameNodeId);
-		pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
+        pGameNode->SetID(nextGameNodeId);
+        pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
 
         // Initialize after it's added
         component->Initialize();
@@ -237,8 +317,8 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(const GameAsset* gameAsset, 
                     // *ITISSCAN* 23.11.2015.
                     // Not to good cast from GameAssetType structure to unsigned int...
                     // Maybe in future better to make StringHash instead?
-					pGameNode->SetID(nextGameNodeId);
-					pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
+                    pGameNode->SetID(nextGameNodeId);
+                    pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
 
                 }
                 else

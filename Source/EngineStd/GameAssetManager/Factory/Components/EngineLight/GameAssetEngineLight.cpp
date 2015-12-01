@@ -41,15 +41,15 @@ bool GameAssetEngineLight::VInit(const GameAsset* pGameAsset)
 void GameAssetEngineLight::Initialize(void)
 {
     // Get Attached node - preventing segfault problems
-    Node * thisNode = this->GetNode();
+    Node * pThisNode = this->GetNode();
 
-    if(!thisNode)
+    if(!pThisNode)
     {
         return;
     }
 
     // Create a light component
-     m_pNodeLight = thisNode->CreateComponent<Light>();
+     m_pNodeLight = pThisNode->CreateComponent<Light>();
 
      // Set brightness
      m_pNodeLight->SetBrightness(0.0f);

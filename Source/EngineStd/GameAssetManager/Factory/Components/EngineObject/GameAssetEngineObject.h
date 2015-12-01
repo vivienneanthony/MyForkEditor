@@ -25,10 +25,18 @@ public:
 	// Additional
 	virtual void Initialize(void);
 
-private:
-    bool bPhysicalObject;
-    String PhysicalModel;
+	// Modify node
+    virtual void SetViewMask (unsigned SetMask) { m_pNodeStaticModel->SetViewMask(SetMask);}
+    virtual void SetLightMask (unsigned SetMask) { m_pNodeStaticModel->SetLightMask(SetMask);}
+    virtual void SetShadowMask (unsigned SetMask) { m_pNodeStaticModel->SetShadowMask(SetMask);}
+    virtual void SetZoneMask (unsigned SetMask) { m_pNodeStaticModel->SetZoneMask(SetMask);}
+    virtual void SetCastShadow (unsigned SetShadow) {m_pNodeStaticModel->SetCastShadows(SetShadow);}
 
+private:
+    bool bPhysicalObject;                       // If Object is a model
+    String PhysicalModel;                       // Model filename
+
+    StaticModel * m_pNodeStaticModel;           // Save associated model
 };
 
 #endif // INTERACTIVE_H

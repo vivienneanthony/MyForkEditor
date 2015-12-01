@@ -2,7 +2,6 @@
 
 #include "EngineStd/Mainloop/Activity/ActivityManager.h"
 #include "EngineStd/GameLogic/BaseGameLogic.h"
-#include "EngineStd/GameAssetManager/Factory/Components/EngineLight/GameAssetEngineLight.h"
 
 #include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
 #include "EngineStd/GameAssetManager/GameAssetManager.h"
@@ -11,8 +10,6 @@
 #include "UserInterface/MainMenuUI.h"
 #include "Activities/Intro/IntroActivity.h"
 
-
-class GameAssetEngineLight;
 
 MainMenuView::MainMenuView(Context* context, Renderer* renderer, bool intro) : HumanView(context, renderer)
 {
@@ -94,6 +91,7 @@ void MainMenuView::CreateManualScene(void)
 
     // Test Look at
     m_pCameraNode->LookAt(Vector3(0.0f,0.0f,0.0f));
+    m_pCameraNode->GetComponent<Camera>()->SetFarClip(2000.0);
 
     return;
 }
@@ -194,7 +192,13 @@ bool MainMenuView::LoadDemoScene(String demoFile)
         float XPos = NewGameAsset.attribute("XPos").as_float();
         float YPos = NewGameAsset.attribute("YPos").as_float();
         float ZPos = NewGameAsset.attribute("ZPos").as_float();
-        Quaternion Rot = Quaternion(NewGameAsset.attribute("Rotation").as_float());
+        float XRot = NewGameAsset.attribute("XRot").as_float();
+        float YRot = NewGameAsset.attribute("YRot").as_float();
+        float ZRot = NewGameAsset.attribute("ZRot").as_float();
+        float WRot = NewGameAsset.attribute("WRot").as_float();
+
+        // get rotation
+        Quaternion Rot = Quaternion(WRot, XRot, YRot, ZRot);
 
         // Load a game asset
         GameAsset* pLoadedGameAsset =  pAssetManager->FindGameAssetBySymbol(pSymbol);
@@ -218,28 +222,9 @@ bool MainMenuView::LoadDemoScene(String demoFile)
                 // Change node rotation and position
                 pLoadedGameAssetNode->SetPosition(Vector3(XPos,YPos,ZPos));
                 pLoadedGameAssetNode->SetRotation(Rot);
-            }
 
-            // Use additional flags based on type
-            if(pLoadedGameAsset->GetAssetType()==GAType_EngineLight)
-            {
-                // Available additional flags
-                float SetBrightness = NewGameAsset.attribute("Brightness").as_float();
-                float SetSpecular = NewGameAsset.attribute("Specular").as_float();
-                float SetRange = NewGameAsset.attribute("Range").as_float();
-                float SetFov = NewGameAsset.attribute("Fov").as_float();
-
-                // Check if Light component actually exist
-                GameAssetEngineLight * EngineLight = (GameAssetEngineLight *) pLoadedGameAssetNode->GetComponent("GameAssetEngineLight");
-
-                // If game asset has a Engine Light component
-                if(EngineLight)
-                {
-                    if(SetBrightness)   { EngineLight->SetBrightness(SetBrightness); }
-                    if(SetSpecular)     { EngineLight->SetSpecularIntensity(SetSpecular); }
-                    if(SetRange)        { EngineLight->SetRange(SetRange); }
-                    if(SetFov)          { EngineLight->SetFOV(SetFov); }
-                }
+                // ModifyNode based on input information
+                pAssetFactory->ModifyNode(pLoadedGameAssetNode, pLoadedGameAsset, NewGameAsset );
             }
         }
 
@@ -261,7 +246,13 @@ bool MainMenuView::LoadDemoScene(String demoFile)
                     float Child_XPos = NewGroupedGameAsset.attribute("XPos").as_float();
                     float Child_YPos = NewGroupedGameAsset.attribute("YPos").as_float();
                     float Child_ZPos = NewGroupedGameAsset.attribute("ZPos").as_float();
-                    Quaternion Child_Rot = Quaternion(NewGroupedGameAsset.attribute("Rotation").as_float());
+                    float Child_XRot = NewGroupedGameAsset.attribute("XRot").as_float();
+                    float Child_YRot = NewGroupedGameAsset.attribute("YRot").as_float();
+                    float Child_ZRot = NewGroupedGameAsset.attribute("ZRot").as_float();
+                    float Child_WRot = NewGroupedGameAsset.attribute("WRot").as_float();
+
+                    // get rotation
+                    Quaternion Child_Rot = Quaternion(Child_WRot, Child_XRot,Child_YRot,Child_ZRot);
 
                     // Load a game asset
                     GameAsset* pChild_LoadedGameAsset =  pAssetManager->FindGameAssetBySymbol(pChild_Symbol);
@@ -285,6 +276,9 @@ bool MainMenuView::LoadDemoScene(String demoFile)
                             // Change node rotation and position
                             pChild_LoadedGameAssetNode->SetPosition(Vector3(Child_XPos,Child_YPos,Child_ZPos));
                             pChild_LoadedGameAssetNode->SetRotation(Child_Rot);
+
+                             // ModifyNode based on input information
+                            pAssetFactory->ModifyNode(pChild_LoadedGameAssetNode, pChild_LoadedGameAsset, NewGroupedGameAsset );
                         }
                     }
                 }
@@ -302,7 +296,6 @@ bool MainMenuView::LoadDemoScene(String demoFile)
             }
         }
     }
-
 
     // Safe delete
     SAFE_DELETE(pPackageData);
