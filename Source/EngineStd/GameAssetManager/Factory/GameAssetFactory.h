@@ -21,7 +21,9 @@ public:
 
 	virtual StrongComponentPtr VCreateComponent(const GameAsset* gameAsset);
 
+    // Additional node creation
 	StrongNodePtr CreateNodeRecursive(const GameAsset* gameAsset, const GameNodeId serversId, Node* node, bool recursive);
+	StrongNodePtr CreateNodeEmpty(const GameNodeId serversId);
 
     // Set the game asset manager
 	void SetGameAssetManager (GameAssetManager* setGameAssetManager) { m_pGameAssetManager = setGameAssetManager; }

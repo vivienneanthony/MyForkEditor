@@ -22,6 +22,13 @@ public:
 
 	virtual GameAssetType VGetGameAssetType(void) const { return g_Type; }
 
+	// Additional
+	virtual void Initialize(void);
+
+private:
+    bool bPhysicalObject;
+    String PhysicalModel;
+
 };
 
 #endif // INTERACTIVE_H

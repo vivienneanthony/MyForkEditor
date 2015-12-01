@@ -2,14 +2,17 @@
 
 #include "EngineStd/Mainloop/Activity/ActivityManager.h"
 #include "EngineStd/GameLogic/BaseGameLogic.h"
+#include "EngineStd/GameAssetManager/Factory/Components/EngineLight/GameAssetEngineLight.h"
+
 #include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
 #include "EngineStd/GameAssetManager/GameAssetManager.h"
-
-
 
 #include "MainMenuView.h"
 #include "UserInterface/MainMenuUI.h"
 #include "Activities/Intro/IntroActivity.h"
+
+
+class GameAssetEngineLight;
 
 MainMenuView::MainMenuView(Context* context, Renderer* renderer, bool intro) : HumanView(context, renderer)
 {
@@ -72,6 +75,7 @@ void MainMenuView::CreateManualScene(void)
     // Add octree
     m_pScene-> CreateComponent<Octree>();
 
+    // Load a demo file
     LoadDemoScene("Demo1");
 
     // Create a scene node for the camera, which we will move around
@@ -79,13 +83,14 @@ void MainMenuView::CreateManualScene(void)
     m_pCameraNode = m_pScene->CreateChild(String("Camera").ToHash(), CreateMode::LOCAL);
     m_pCameraNode->CreateComponent<Camera>();
 
-    m_pCameraNode->SetPosition(Vector3(30.0f,10.0f,30.0f));
+    // Set Position
+    m_pCameraNode->SetPosition(Vector3(200.0f,40.0f,200.0f));
 
     // Following code hidden line 116 cause crash
-    SharedPtr<Viewport> viewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
+    SharedPtr<Viewport> m_pViewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
 
     // Set Viewport
-    m_pRenderer->SetViewport(1, viewport);
+    m_pRenderer->SetViewport(1, m_pViewport);
 
     // Test Look at
     m_pCameraNode->LookAt(Vector3(0.0f,0.0f,0.0f));
@@ -183,36 +188,121 @@ bool MainMenuView::LoadDemoScene(String demoFile)
     // For ... loop through each child
     for(pugi::xml_node NewGameAsset =  GameAssetRoot.first_child(); NewGameAsset; NewGameAsset = NewGameAsset.next_sibling())
     {
-
         // Get attributes from xml
-        const char* symbol = NewGameAsset.attribute("Symbol").as_string();
+        const char* pSymbol = NewGameAsset.attribute("Symbol").as_string();
+        const char* pNodeName = NewGameAsset.attribute("NodeName").as_string();
         float XPos = NewGameAsset.attribute("XPos").as_float();
         float YPos = NewGameAsset.attribute("YPos").as_float();
         float ZPos = NewGameAsset.attribute("ZPos").as_float();
-        Quaternion rotation = Quaternion(NewGameAsset.attribute("Rotation").as_float());
+        Quaternion Rot = Quaternion(NewGameAsset.attribute("Rotation").as_float());
 
         // Load a game asset
-        GameAsset* LoadedGameAsset =  pAssetManager->FindGameAssetBySymbol(symbol);
+        GameAsset* pLoadedGameAsset =  pAssetManager->FindGameAssetBySymbol(pSymbol);
 
-        // Load a sphere
-        if(LoadedGameAsset)
+        // Load game asset pointer
+        if(pLoadedGameAsset)
         {
-            // create a sphere node
-            StrongNodePtr LoadedGameAssetNode = pAssetFactory->CreateNode(LoadedGameAsset, INVALID_GAME_NODE_ID);
+            // Create a node
+            StrongNodePtr pLoadedGameAssetNode = pAssetFactory->CreateNode(pLoadedGameAsset, INVALID_GAME_NODE_ID);
 
-            if(LoadedGameAssetNode)
+            if(pLoadedGameAssetNode)
             {
-                m_pScene->AddChild(LoadedGameAssetNode);
+                m_pScene->AddChild(pLoadedGameAssetNode);
 
-                LoadedGameAssetNode->SetPosition(Vector3(XPos,YPos,ZPos));
+                // Set name if its in the xml
+                if(pNodeName)
+                {
+                    pLoadedGameAssetNode->SetName(String(pNodeName));
+                }
 
-                i++;
+                // Change node rotation and position
+                pLoadedGameAssetNode->SetPosition(Vector3(XPos,YPos,ZPos));
+                pLoadedGameAssetNode->SetRotation(Rot);
             }
 
-		
+            // Use additional flags based on type
+            if(pLoadedGameAsset->GetAssetType()==GAType_EngineLight)
+            {
+                // Available additional flags
+                float SetBrightness = NewGameAsset.attribute("Brightness").as_float();
+                float SetSpecular = NewGameAsset.attribute("Specular").as_float();
+                float SetRange = NewGameAsset.attribute("Range").as_float();
+                float SetFov = NewGameAsset.attribute("Fov").as_float();
 
+                // Check if Light component actually exist
+                GameAssetEngineLight * EngineLight = (GameAssetEngineLight *) pLoadedGameAssetNode->GetComponent("GameAssetEngineLight");
+
+                // If game asset has a Engine Light component
+                if(EngineLight)
+                {
+                    if(SetBrightness)   { EngineLight->SetBrightness(SetBrightness); }
+                    if(SetSpecular)     { EngineLight->SetSpecularIntensity(SetSpecular); }
+                    if(SetRange)        { EngineLight->SetRange(SetRange); }
+                    if(SetFov)          { EngineLight->SetFOV(SetFov); }
+                }
+            }
+        }
+
+        // Load game asset pointer
+        if(String(pSymbol)==String("Grouped"))
+        {
+            // Create a node
+            StrongNodePtr pGroupGameAssets = pAssetFactory->CreateNodeEmpty(INVALID_GAME_NODE_ID);
+
+            // if node as created
+            if(pGroupGameAssets)
+            {
+                // Loop through each child
+                for (pugi::xml_node NewGroupedGameAsset : NewGameAsset.children())
+                {
+                    // Get attributes from xml
+                    const char* pChild_Symbol = NewGroupedGameAsset.attribute("Symbol").as_string();
+                    const char* pChild_NodeName = NewGameAsset.attribute("NodeName").as_string();
+                    float Child_XPos = NewGroupedGameAsset.attribute("XPos").as_float();
+                    float Child_YPos = NewGroupedGameAsset.attribute("YPos").as_float();
+                    float Child_ZPos = NewGroupedGameAsset.attribute("ZPos").as_float();
+                    Quaternion Child_Rot = Quaternion(NewGroupedGameAsset.attribute("Rotation").as_float());
+
+                    // Load a game asset
+                    GameAsset* pChild_LoadedGameAsset =  pAssetManager->FindGameAssetBySymbol(pChild_Symbol);
+
+                    // Load a sphere
+                    if(pChild_LoadedGameAsset)
+                    {
+                        // create a sphere node
+                        StrongNodePtr pChild_LoadedGameAssetNode = pAssetFactory->CreateNode(pChild_LoadedGameAsset, INVALID_GAME_NODE_ID);
+
+                        if(pChild_LoadedGameAssetNode)
+                        {
+                            pGroupGameAssets->AddChild(pChild_LoadedGameAssetNode);
+
+                            // Set name if it's in the xml
+                            if(pChild_NodeName)
+                            {
+                                pChild_LoadedGameAssetNode->SetName(String(pChild_NodeName));
+                            }
+
+                            // Change node rotation and position
+                            pChild_LoadedGameAssetNode->SetPosition(Vector3(Child_XPos,Child_YPos,Child_ZPos));
+                            pChild_LoadedGameAssetNode->SetRotation(Child_Rot);
+                        }
+                    }
+                }
+            }
+
+            // if node is empty then delete
+            if(pGroupGameAssets->GetNumChildren()==0)
+            {
+                pGroupGameAssets->Remove();
+            }
+            else
+            {
+                // group to scene
+                m_pScene->AddChild(pGroupGameAssets);
+            }
         }
     }
+
 
     // Safe delete
     SAFE_DELETE(pPackageData);

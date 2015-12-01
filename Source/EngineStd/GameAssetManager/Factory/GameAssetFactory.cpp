@@ -76,26 +76,11 @@ StrongNodePtr GameAssetFactory::CreateNode(const GameAsset* gameAsset, const Gam
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int...
         // Maybe in future better to make StringHash instead?
-
-		
 		pGameNode->SetID(nextGameNodeId);
 		pGameNode->AddComponent(component, nextGameNodeId, Urho3D::CreateMode::LOCAL);
 
-
         // Initialize after it's added
         component->Initialize();
-
-        // Is Physical
-        if(gameAsset->IsPhysical())
-        {
-            // Create a model and string
-            String ModelFile = String("Models/") + gameAsset->GetPhysicalModel()+String(".mdl");
-
-            // create a static model
-            StaticModel* m_pGameNodeModel = pGameNode->CreateComponent<StaticModel>();
-            m_pGameNodeModel->SetModel(cache->GetResource<Model>(ModelFile));
-        }
-
     }
     else
     {
@@ -123,6 +108,8 @@ StrongNodePtr GameAssetFactory::CreateNode(const GameAsset* gameAsset, const Gam
 			pGameNode->SetID(nextGameNodeId);
             pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
 
+             // Initialize after it's added
+            component->Initialize();
         }
         else
         {
@@ -204,7 +191,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(const GameAsset* gameAsset, 
     {
         // *ITISSCAN* 23.11.2015.
         // Not to good cast from GameAssetType structure to unsigned int... Maybe in future better to make StringHash instead?
-		
+
 		pGameNode->SetID(nextGameNodeId);
 		pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
 
@@ -252,7 +239,7 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(const GameAsset* gameAsset, 
                     // Maybe in future better to make StringHash instead?
 					pGameNode->SetID(nextGameNodeId);
 					pGameNode->AddComponent(component, nextGameNodeId, component->GetCreateMode());
-					
+
                 }
                 else
                 {
@@ -312,6 +299,24 @@ StrongNodePtr GameAssetFactory::CreateNodeRecursive(const GameAsset* gameAsset, 
     }
 
     // send int
+    SendEvent("Game_Asset_Factory_Post_Init");
+
+    return pGameNode;
+}
+
+
+StrongNodePtr GameAssetFactory::CreateNodeEmpty(const GameNodeId serversId)
+{
+    GameNodeId nextGameNodeId = serversId;
+    if (nextGameNodeId == INVALID_GAME_NODE_ID)
+    {
+        nextGameNodeId = GetNextGameNodeId();
+    }
+
+    StrongNodePtr pGameNode(new Node(context_));
+
+    pGameNode->SetID(nextGameNodeId);
+
     SendEvent("Game_Asset_Factory_Post_Init");
 
     return pGameNode;
