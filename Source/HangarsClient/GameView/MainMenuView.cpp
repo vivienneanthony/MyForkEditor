@@ -56,6 +56,9 @@ void  MainMenuView::FinishIntroductionPartDelegate(StringHash eventType, Variant
         m_pMainMenu->VOnRestore();
     }
 
+    // Create Letter Box
+    //CreateLetterBox();
+
     m_pMainMenu->VSetVisible(true);
 
     UnsubscribeFromEvent("Finish_Introduction_Part");
@@ -81,7 +84,7 @@ void MainMenuView::CreateManualScene(void)
     m_pCameraNode->CreateComponent<Camera>();
 
     // Set Position
-    m_pCameraNode->SetPosition(Vector3(300.0f,40.0f,600.0f));
+    m_pCameraNode->SetPosition(Vector3(-400.0f,60.0f,200.0f));
 
     // Following code hidden line 116 cause crash
     SharedPtr<Viewport> m_pViewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
@@ -90,7 +93,7 @@ void MainMenuView::CreateManualScene(void)
     m_pRenderer->SetViewport(1, m_pViewport);
 
     // Test Look at
-    m_pCameraNode->LookAt(Vector3(0.0f,-0.0f,0.0f));
+    m_pCameraNode->LookAt(Vector3(0.0f,0.0f,0.0f));
     m_pCameraNode->GetComponent<Camera>()->SetFarClip(2000.0);
 
     return;
@@ -238,7 +241,7 @@ bool MainMenuView::LoadDemoScene(String demoFile)
             if(pGroupGameAssets)
             {
                 // Loop through each child
-                for (pugi::xml_node NewGroupedGameAsset : NewGameAsset.children())
+for (pugi::xml_node NewGroupedGameAsset : NewGameAsset.children())
                 {
                     // Get attributes from xml
                     const char* pChild_Symbol = NewGroupedGameAsset.attribute("Symbol").as_string();
@@ -277,7 +280,7 @@ bool MainMenuView::LoadDemoScene(String demoFile)
                             pChild_LoadedGameAssetNode->SetPosition(Vector3(Child_XPos,Child_YPos,Child_ZPos));
                             pChild_LoadedGameAssetNode->SetRotation(Child_Rot);
 
-                             // ModifyNode based on input information
+                            // ModifyNode based on input information
                             pAssetFactory->ModifyNode(pChild_LoadedGameAssetNode, pChild_LoadedGameAsset, NewGroupedGameAsset );
                         }
                     }
@@ -308,4 +311,44 @@ bool MainMenuView::LoadDemoScene(String demoFile)
 
     // Add addtional
     return true;
+}
+
+// Add letterbox
+void MainMenuView::CreateLetterBox(void)
+{
+    // Get graphics system
+    Graphics * pgraphics_ = g_pApp->GetGraphics();
+    ResourceCache* resCache = g_pApp->GetConstantResCache();
+
+
+    // Get rendering window size as floats
+    float width = (float)pgraphics_->GetWidth();
+    float height = (float)pgraphics_->GetHeight();
+
+    // Create LetterBox Sprite
+    Sprite* LetterBoxSprite = new Sprite(context_);
+    LetterBoxSprite->SetName("LetterBoxSprite");
+
+    // Get letter box image
+    Texture2D* texture = resCache->GetResource<Texture2D>("Textures/LetterBox.png");
+
+    // Set letter box properties
+    LetterBoxSprite->SetTexture(texture); // Set texture
+    LetterBoxSprite->SetSize(width,height);
+    LetterBoxSprite->SetAlignment(HA_CENTER, VA_CENTER);
+
+    // Create letter box image to UIElement
+    UIElement * LetterBoxUIElement = new UIElement(context_);
+    LetterBoxUIElement->AddChild(LetterBoxSprite);
+
+    // Add letter box UIElement to ui
+    //uiRoot_->AddChild(LetterBoxUIElement);
+
+
+    // Set style of UIElements
+    LetterBoxUIElement->SetOpacity(.8);
+
+    LetterBoxSprite->SetStyleAuto();
+    LetterBoxUIElement->SetStyleAuto();
+
 }

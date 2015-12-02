@@ -36,6 +36,7 @@ public:
     virtual void SetSpecularIntensity(float SetSpecular)   { m_pNodeLight->SetSpecularIntensity(SetSpecular); }
     virtual void SetRange (float SetRange)                 { m_pNodeLight->SetRange(SetRange);}
     virtual void SetFOV (float SetFOV)                     { m_pNodeLight->SetFov(SetFOV);}
+    virtual void SetLookAt (Vector3 SetLookAt)              { this->GetNode()->LookAt(SetLookAt);}
 
 private:
     Light * m_pNodeLight;                                       // Save associated Light component

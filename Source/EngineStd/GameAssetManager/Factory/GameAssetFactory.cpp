@@ -152,6 +152,9 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
         float SetSpecular = GameAssetChild.attribute("Specular").as_float();
         float SetRange = GameAssetChild.attribute("Range").as_float();
         float SetFov = GameAssetChild.attribute("Fov").as_float();
+        float SetLookAtXPos = GameAssetChild.attribute("LookAtX").as_float();
+        float SetLookAtYPos = GameAssetChild.attribute("LookAtY").as_float();
+        float SetLookAtZPos = GameAssetChild.attribute("LookAtZ").as_float();
 
         // Check if Light component actually exist
         GameAssetEngineLight * EngineLight = (GameAssetEngineLight *) pChildNode->GetComponent("GameAssetEngineLight");
@@ -174,6 +177,10 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
             if(SetFov)
             {
                 EngineLight->SetFOV(SetFov);
+            }
+            if(SetLookAtXPos!=0.0f||SetLookAtYPos!=0.0f||SetLookAtZPos!=0.0f)
+            {
+                EngineLight->SetLookAt(Vector3(SetLookAtXPos,SetLookAtYPos,SetLookAtZPos));
             }
         }
     }

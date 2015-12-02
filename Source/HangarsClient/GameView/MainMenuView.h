@@ -22,11 +22,14 @@ protected:
 	// Delegates
 	void FinishIntroductionPartDelegate(StringHash eventType, VariantMap& eventData);
 
-	// Test
+	// Create Manual scene
 	void CreateManualScene(void);
 
 	// Load a specific file
 	bool LoadDemoScene(String Demofile);
+
+	// Testing
+    void CreateLetterBox(void);
 
 public:
 	SharedPtr<IScreenElement> m_pMainMenu;
