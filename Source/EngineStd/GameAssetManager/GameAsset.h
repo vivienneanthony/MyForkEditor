@@ -28,6 +28,7 @@ enum GameAssetType
 	GAType_EngineObject=90000,
 	GAType_EngineLight,
 	GAType_EngineCamera,
+	GAType_EngineSkybox,
     GAType_NotApplicable=99999
 };
 

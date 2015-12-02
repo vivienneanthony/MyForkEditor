@@ -12,6 +12,7 @@
 // Engine specific assets
 #include "Components/EngineCamera/GameAssetEngineCamera.h"
 #include "Components/EngineLight/GameAssetEngineLight.h"
+#include "Components/EngineSkybox/GameAssetEngineSkybox.h"
 
 #include "GameAssetFactory.h"
 
@@ -43,6 +44,9 @@ GameAssetFactory::GameAssetFactory(Context* context_) : Object(context_)
 
     m_ComponentFactory.Register<GameAssetEngineCamera>((unsigned int)GameAssetEngineCamera::g_Type);
     context_->RegisterFactory<GameAssetEngineCamera>();
+
+    m_ComponentFactory.Register<GameAssetEngineSkybox>((unsigned int)GameAssetEngineSkybox::g_Type);
+    context_->RegisterFactory<GameAssetEngineSkybox>();
 
 
 }
@@ -183,6 +187,7 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
         unsigned int SetShadowMask = GameAssetChild.attribute("ShadowMask").as_uint();
         unsigned int SetZoneMask = GameAssetChild.attribute("ZoneMask").as_uint();
         unsigned int SetCastShadows = GameAssetChild.attribute("CastShadows").as_uint();
+        float SetScale = GameAssetChild.attribute("Scale").as_float();
 
         // Check if Light component actually exist
         GameAssetEngineObject * EngineObject = (GameAssetEngineObject *) pChildNode->GetComponent("GameAssetEngineObject");
@@ -209,6 +214,31 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
             if(SetCastShadows)
             {
                 EngineObject->SetViewMask(SetCastShadows);
+            }
+
+            if(SetScale)
+            {
+                EngineObject->SetScale(SetScale);
+            }
+        }
+    }
+
+     // Use additional flags based on type
+    if(gameAsset->GetAssetType()==GAType_EngineSkybox)
+    {
+        // Available additional flags
+        float SetScale = GameAssetChild.attribute("Scale").as_float();
+
+        // Check if Light component actually exist
+        GameAssetEngineSkybox * EngineSkybox = (GameAssetEngineSkybox *) pChildNode->GetComponent("GameAssetEngineSkybox");
+
+        // If game asset has a Engine Light component
+        if(EngineSkybox)
+        {
+
+            if(SetScale)
+            {
+                EngineSkybox->SetScale(SetScale);
             }
         }
     }

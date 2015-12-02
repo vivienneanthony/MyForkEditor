@@ -31,6 +31,7 @@ public:
     virtual void SetShadowMask (unsigned SetMask) { m_pNodeStaticModel->SetShadowMask(SetMask);}
     virtual void SetZoneMask (unsigned SetMask) { m_pNodeStaticModel->SetZoneMask(SetMask);}
     virtual void SetCastShadow (unsigned SetShadow) {m_pNodeStaticModel->SetCastShadows(SetShadow);}
+    virtual void SetScale      (float SetScale) {this->GetNode()->SetScale(SetScale);}
 
 private:
     bool bPhysicalObject;                       // If Object is a model

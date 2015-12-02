@@ -203,11 +203,13 @@ void GameAssetManager::InitializeBaseGameAssets(void)
     EngineGameAssetsName.Push("EngineLight");
     EngineGameAssetsName.Push("EngineCamera");
     EngineGameAssetsName.Push("EngineObject");
+    EngineGameAssetsName.Push("EngineSkybox");
 
     // Predefined Game Assets Types - Default
     EngineGameAssetsType.Push(GAType_EngineLight);
     EngineGameAssetsType.Push(GAType_EngineCamera);
     EngineGameAssetsType.Push(GAType_EngineObject);
+    EngineGameAssetsType.Push(GAType_EngineSkybox);
 
     if((EngineGameAssetsName.Size()!=EngineGameAssetsType.Size())||m_pGameAssetLibrary==NULL)
     {
