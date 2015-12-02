@@ -81,7 +81,7 @@ void MainMenuView::CreateManualScene(void)
     m_pCameraNode->CreateComponent<Camera>();
 
     // Set Position
-    m_pCameraNode->SetPosition(Vector3(200.0f,40.0f,200.0f));
+    m_pCameraNode->SetPosition(Vector3(300.0f,40.0f,600.0f));
 
     // Following code hidden line 116 cause crash
     SharedPtr<Viewport> m_pViewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
@@ -90,7 +90,7 @@ void MainMenuView::CreateManualScene(void)
     m_pRenderer->SetViewport(1, m_pViewport);
 
     // Test Look at
-    m_pCameraNode->LookAt(Vector3(0.0f,0.0f,0.0f));
+    m_pCameraNode->LookAt(Vector3(0.0f,-0.0f,0.0f));
     m_pCameraNode->GetComponent<Camera>()->SetFarClip(2000.0);
 
     return;
@@ -293,6 +293,11 @@ bool MainMenuView::LoadDemoScene(String demoFile)
             {
                 // group to scene
                 m_pScene->AddChild(pGroupGameAssets);
+
+                // Change node rotation and position
+                pGroupGameAssets->SetPosition(Vector3(XPos,YPos,ZPos));
+                pGroupGameAssets->SetRotation(Rot);
+
             }
         }
     }
