@@ -5,6 +5,8 @@
 #include "Resources/Loading.h"
 #include "HumanView.h"
 
+#include "../Elements/LetterBox.h"
+
 // ----------------------------------------------------------
 // Constructors.
 // ----------------------------------------------------------
@@ -27,6 +29,14 @@ HumanView::HumanView(Context *context, Renderer* renderer) : IGameView(context)
 
     m_PointerRadius = 30;
     m_pActivityManager = new ActivityManager(context);
+
+    ScreenElementList m_ScreenElements;
+
+    // Add LetterBox to Element List
+    m_pLetterBox = SharedPtr<IScreenElement>(new LetterBox(context_));
+
+    if(m_pLetterBox) { VPushElement(m_pLetterBox); }
+
 
     VInitializeAllDelegates();
 }

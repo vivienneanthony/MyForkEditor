@@ -37,6 +37,13 @@ public:
     virtual void SetRange (float SetRange)                 { m_pNodeLight->SetRange(SetRange);}
     virtual void SetFOV (float SetFOV)                     { m_pNodeLight->SetFov(SetFOV);}
     virtual void SetLookAt (Vector3 SetLookAt)              { this->GetNode()->LookAt(SetLookAt);}
+    virtual void SetCastShadows (bool SetCastShadows)       { m_pNodeLight->SetCastShadows(SetCastShadows);}
+
+    // Set Masking
+    virtual void SetViewMask (unsigned SetMask) { m_pNodeLight->SetViewMask(SetMask);}
+    virtual void SetLightMask (unsigned SetMask) { m_pNodeLight->SetLightMask(SetMask);}
+    virtual void SetShadowMask (unsigned SetMask) { m_pNodeLight->SetShadowMask(SetMask);}
+    virtual void SetZoneMask (unsigned SetMask) { m_pNodeLight->SetZoneMask(SetMask);}
 
 private:
     Light * m_pNodeLight;                                       // Save associated Light component

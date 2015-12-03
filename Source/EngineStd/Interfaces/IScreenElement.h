@@ -21,6 +21,7 @@ public:
 	virtual void VSetVisible(bool visible) = 0;
 
 	virtual bool const operator < (IScreenElement const &other) { return VGetZOrder() < other.VGetZOrder(); }
+
 };
 
 #endif

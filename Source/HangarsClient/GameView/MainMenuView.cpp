@@ -56,15 +56,16 @@ void  MainMenuView::FinishIntroductionPartDelegate(StringHash eventType, Variant
         m_pMainMenu->VOnRestore();
     }
 
-    // Create Letter Box
-    //CreateLetterBox();
-
     m_pMainMenu->VSetVisible(true);
 
     UnsubscribeFromEvent("Finish_Introduction_Part");
 
+    m_pLetterBox->VSetVisible(true);
+
     // Test loading a scene
     CreateManualScene();
+
+
 }
 
 void MainMenuView::CreateManualScene(void)

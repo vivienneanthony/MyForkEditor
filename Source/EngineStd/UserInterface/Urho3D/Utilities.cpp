@@ -75,3 +75,36 @@ Button* CreateCustomButton(Window* window, String name, String buttontext)
 
 	return button;
 }
+
+
+UIElement* CreateLetterBox(Context * context)
+{
+    // Get graphics systen
+    Graphics * graphics =  g_pApp->GetGraphics();
+    ResourceCache * resCache = g_pApp->GetConstantResCache();
+
+    // Get rendering window size as floats
+    float width = (float)graphics ->GetWidth();
+    float height = (float)graphics ->GetHeight();
+
+    // Create LetterBox Sprite
+    Sprite* pLetterBoxSprite = new Sprite(context);
+    pLetterBoxSprite->SetName("LetterBoxSprite");
+
+    // Get letter box image
+    Texture2D* ptexture = resCache ->GetResource<Texture2D>("GameData/Textures/LetterBox.png");
+
+    // Set letter box properties
+    pLetterBoxSprite->SetTexture(ptexture); // Set texture
+    pLetterBoxSprite->SetSize(width,height);
+    pLetterBoxSprite->SetAlignment(HA_CENTER, VA_CENTER);
+
+    // Create letter box image to UIElement
+    UIElement * pLetterBoxUIElement = new UIElement(context);
+    pLetterBoxUIElement->AddChild(pLetterBoxSprite);
+
+    // Add UI Element
+    context->GetSubsystem<UI>()->GetRoot()->AddChild(pLetterBoxUIElement);
+
+    return pLetterBoxUIElement;
+}
