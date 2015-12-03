@@ -56,6 +56,7 @@ void GameAssetEngineLight::Initialize(void)
      m_pNodeLight->SetSpecularIntensity(0.0f);
      m_pNodeLight->SetLightType(LIGHT_DIRECTIONAL);
      m_pNodeLight->SetCastShadows(true);
+     m_pNodeLight->SetLightMask(1);             // Default mask
 
     return;
 }

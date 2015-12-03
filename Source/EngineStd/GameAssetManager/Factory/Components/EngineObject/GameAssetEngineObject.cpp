@@ -71,6 +71,9 @@ void GameAssetEngineObject::Initialize(void)
         // Set Default paramet
         m_pNodeStaticModel->SetCastShadows(true);
 
+        // Set Light Mask
+        m_pNodeStaticModel->SetLightMask(1);             // Default mask
+
     }
 
     return;
