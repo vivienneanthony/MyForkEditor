@@ -193,15 +193,15 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
             }
             if(SetLightMask)
             {
-                EngineLight->SetViewMask(SetLightMask);
+                EngineLight->SetLightMask(SetLightMask);
             }
             if(SetShadowMask)
             {
-                EngineLight->SetViewMask(SetShadowMask);
+                EngineLight->SetShadowMask(SetShadowMask);
             }
             if(SetZoneMask)
             {
-                EngineLight->SetViewMask(SetZoneMask);
+                EngineLight->SetZoneMask(SetZoneMask);
             }
         }
     }
@@ -229,19 +229,19 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
             }
             if(SetLightMask)
             {
-                EngineObject->SetViewMask(SetLightMask);
+                EngineObject->SetLightMask(SetLightMask);
             }
             if(SetShadowMask)
             {
-                EngineObject->SetViewMask(SetShadowMask);
+                EngineObject->SetShadowMask(SetShadowMask);
             }
             if(SetZoneMask)
             {
-                EngineObject->SetViewMask(SetZoneMask);
+                EngineObject->SetZoneMask(SetZoneMask);
             }
             if(SetCastShadows)
             {
-                EngineObject->SetViewMask(SetCastShadows);
+                EngineObject->SetCastShadow(SetCastShadows);
             }
 
             if(SetScale)
