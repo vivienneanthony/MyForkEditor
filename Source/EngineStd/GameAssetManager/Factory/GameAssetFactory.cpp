@@ -155,6 +155,11 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
         float SetLookAtXPos = GameAssetChild.attribute("LookAtX").as_float();
         float SetLookAtYPos = GameAssetChild.attribute("LookAtY").as_float();
         float SetLookAtZPos = GameAssetChild.attribute("LookAtZ").as_float();
+        unsigned int SetViewMask = GameAssetChild.attribute("ViewMask").as_uint();
+        unsigned int SetLightMask = GameAssetChild.attribute("LightMask").as_uint();
+        unsigned int SetShadowMask = GameAssetChild.attribute("ShadowMask").as_uint();
+        unsigned int SetZoneMask = GameAssetChild.attribute("ZoneMask").as_uint();
+        unsigned int SetCastShadows = GameAssetChild.attribute("CastShadows").as_uint();
 
         // Check if Light component actually exist
         GameAssetEngineLight * EngineLight = (GameAssetEngineLight *) pChildNode->GetComponent("GameAssetEngineLight");
@@ -181,6 +186,22 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
             if(SetLookAtXPos!=0.0f||SetLookAtYPos!=0.0f||SetLookAtZPos!=0.0f)
             {
                 EngineLight->SetLookAt(Vector3(SetLookAtXPos,SetLookAtYPos,SetLookAtZPos));
+            }
+             if(SetViewMask)
+            {
+                EngineLight->SetViewMask(SetViewMask);
+            }
+            if(SetLightMask)
+            {
+                EngineLight->SetViewMask(SetLightMask);
+            }
+            if(SetShadowMask)
+            {
+                EngineLight->SetViewMask(SetShadowMask);
+            }
+            if(SetZoneMask)
+            {
+                EngineLight->SetViewMask(SetZoneMask);
             }
         }
     }

@@ -75,6 +75,10 @@ protected:
 	SharedPtr<IPointerHandler> m_pPointerHandler;   // Generic pointer handler
 	int m_PointerRadius;
 	SharedPtr<IKeyboardHandler> m_pKeyboardHandler;
+
+    // Letterbox pointer
+	SharedPtr<IScreenElement> m_pLetterBox;         // Temporary
+
 };
 
 #endif //HUMAN_VIEW_H

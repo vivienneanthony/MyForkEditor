@@ -23,6 +23,7 @@ public:
 	virtual bool VOnLostDevice() { return true; };
 	virtual bool VIsVisible() const;
 	virtual void VSetVisible(bool visible);
+
 };
 
 #endif //USER_INTERFACE_H
