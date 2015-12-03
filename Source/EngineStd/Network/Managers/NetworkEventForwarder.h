@@ -14,7 +14,7 @@ class NetworkEventForwarder : public Object
 	URHO3D_OBJECT(NetworkEventForwarder, Object);
 
 public:
-	NetworkEventForwarder(Connection* connection);
+	NetworkEventForwarder(unsigned int connectionId);
 
 	// Delegate that forwards events through the network.  The game layer must register objects of this class for 
 	// the events it wants.  See HangarsClientApp::VCreateGameAndView() and HangarsClientAp::RemoteClientDelegate()
@@ -22,5 +22,6 @@ public:
 	void ForwardEventDelegate(StringHash eventType, VariantMap& eventData);
 
 protected:
-	Connection* m_pConnection;
+	unsigned int m_ConnectionId;
+
 };

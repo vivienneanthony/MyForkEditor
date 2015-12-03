@@ -24,7 +24,13 @@ enum BaseGameState : int
 	
 	// Server game states
 	BGS_WaitingForServerCreating,
+	BGS_WaitingForServerRestarting,
+	BGS_WaitingForServerPause,
+	BGS_WaitingForServerStop,
 	BGS_ServerCreated,
+	BGS_ServerRestarted,
+	BGS_ServerPaused,
+	BGS_ServerStopped,
 };
 
 class BaseGameLogic : public IGameLogic
@@ -60,6 +66,9 @@ public:
 	virtual void VAddView(SharedPtr<IGameView> pView, GameNodeId gameNodeId = INVALID_GAME_NODE_ID);
 	virtual void VRemoveView(SharedPtr<IGameView> pView);
 
+	// Network
+	void SetLoginSuccess(bool success, String reason = String::EMPTY); 
+	
 	// Getter/Setters
 	inline ActivityManager* GetActivityManager() { return m_pActivityManager; }
 	inline GameViewList& GetGameViews() { return m_GameViews; }
@@ -69,9 +78,11 @@ public:
 	inline void SetServerCreated(bool value) { m_bIsServerCreated = value; }
 	inline bool IsServerCreated() { return m_bIsServerCreated; }
 
+	inline bool IsProxy() { return m_bIsProxy; }
+
     // Game Assets Getters/Setters
-    inline GameAssetManager * GetGameAssetManager()  {return m_pGameAssetManager;}
-	inline GameAssetFactory * GetGameAssetFactory()  {return m_pGameAssetFactory;}
+    inline GameAssetManager *GetGameAssetManager()  {return m_pGameAssetManager;}
+	inline GameAssetFactory *GetGameAssetFactory()  {return m_pGameAssetFactory;}
 
 protected:
 	// Network

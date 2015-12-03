@@ -1,7 +1,7 @@
 #include "HangarsServerStd.h"
 
 #include "GameLogic/HangarsGameLogic.h"
-#include "GameView/RemoteHumanView.h"
+#include "GameView/RemoteHangarsHumanView.h"
 #include "GameView/MainMenuView.h"
 
 #include "HangarsServerApplication.h"

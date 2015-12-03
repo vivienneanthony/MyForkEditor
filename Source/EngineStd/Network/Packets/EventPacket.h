@@ -7,8 +7,10 @@ class EventPacket : public BasePacket
 	URHO3D_OBJECT(EventPacket, BasePacket);
 
 public:
-	EventPacket(Context* context, unsigned int id, Node* node, StringHash eventType, bool isOrder = false, const VariantMap &eventData = Variant::emptyVariantMap); // Remote event packet with the specified node as sender. 
-	EventPacket(Context* context, unsigned int id, StringHash eventType, bool isOrder = false, const VariantMap &eventData = Variant::emptyVariantMap); // Remote event packet without the specified node as sender. 
+	static String g_Type;
+
+	EventPacket(Context* context, Node* node, StringHash eventType, bool isOrder = false, const VariantMap &eventData = Variant::emptyVariantMap); // Remote event packet with the specified node as sender. 
+	EventPacket(Context* context, StringHash eventType, bool isOrder = false, const VariantMap &eventData = Variant::emptyVariantMap); // Remote event packet without the specified node as sender. 
 
 	virtual ~EventPacket() { }
 

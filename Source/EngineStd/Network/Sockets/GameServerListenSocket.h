@@ -20,7 +20,7 @@ public:
 	virtual void VHandleInput() { }
 
 protected:
-	virtual void VInitializeDelegates();	// Subsribe to events to this net socket.
+	virtual void VInitializeAllDelegates();	// Subsribe to events to this net socket.
 	virtual void VDestroyAllDelegates();	// Unsubscribe from all events to this net socket
 
 	void HandleClientConnection(StringHash eventType, VariantMap& eventData);

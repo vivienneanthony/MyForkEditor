@@ -335,7 +335,7 @@ void MainMenuView::CreateLetterBox(void)
 
     // Set letter box properties
     LetterBoxSprite->SetTexture(texture); // Set texture
-    LetterBoxSprite->SetSize(width,height);
+    LetterBoxSprite->SetSize((int)width, (int)height);
     LetterBoxSprite->SetAlignment(HA_CENTER, VA_CENTER);
 
     // Create letter box image to UIElement
@@ -347,7 +347,7 @@ void MainMenuView::CreateLetterBox(void)
 
 
     // Set style of UIElements
-    LetterBoxUIElement->SetOpacity(.8);
+    LetterBoxUIElement->SetOpacity(0.8f);
 
     LetterBoxSprite->SetStyleAuto();
     LetterBoxUIElement->SetStyleAuto();

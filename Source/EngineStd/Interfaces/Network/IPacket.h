@@ -1,5 +1,11 @@
 #pragma once
 
+typedef unsigned int ConnectionId;
+extern const ConnectionId INVALID_CONNECTION_ID;
+
+typedef unsigned int PacketId;
+extern const PacketId INVALID_PACKET_ID;
+
 class IPacket : public Object
 {
 	URHO3D_OBJECT(IPacket, Object)

@@ -96,7 +96,7 @@ UIElement* CreateLetterBox(Context * context)
 
     // Set letter box properties
     pLetterBoxSprite->SetTexture(ptexture); // Set texture
-    pLetterBoxSprite->SetSize(width,height);
+    pLetterBoxSprite->SetSize((int)width, (int)height);
     pLetterBoxSprite->SetAlignment(HA_CENTER, VA_CENTER);
 
     // Create letter box image to UIElement

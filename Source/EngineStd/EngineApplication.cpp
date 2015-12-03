@@ -1,14 +1,15 @@
 #include "EngineStd.h"
 #include "Debugging/Logger.h"
 
-#include "GameLogic/BaseGameLogic.h"
 
+#include "Network/Managers/ClientSocketManager.h"
+#include "Network/Managers/NetworkEventForwarder.h"
+#include "EventManager/Events.h"
+
+#include "GameLogic/BaseGameLogic.h"
 #include "Interfaces/IGameView.h"
 
 #include "EnginePlatform.h"
-
-#include "Network/Managers/ClientSocketManager.h"
-
 #include "EngineApplication.h"
 
 
@@ -25,7 +26,7 @@ EngineApp::EngineApp(Context* context) : Application(context)
 	m_pCurrentCursor = NULL;
 
 	m_pBaseSocketManager = NULL;
-	m_pNetworkEventer = NULL;
+	m_pNetworkEventForwarder = NULL;
 }
 
 EngineApp::~EngineApp()
@@ -260,7 +261,7 @@ bool EngineApp::AttachAsClient()
 
 	ClientSocketManager* clientManager = new ClientSocketManager(context_, m_GameOptions.m_GameHost, m_GameOptions.m_ListenPort, identify);
 	
-	if (clientManager->Connect())
+	if (!clientManager->Connect())
 	{
 		URHO3D_LOGDEBUG(String("Client connection failed."));
 		SAFE_DELETE(clientManager);
@@ -268,9 +269,60 @@ bool EngineApp::AttachAsClient()
 	}
 
 	m_pBaseSocketManager = clientManager;
+	
+
 	return true;
 }
 
+
+void EngineApp::VCreateNetworkEventForwarder(void)
+{
+	if (m_pNetworkEventForwarder != NULL)
+	{
+		URHO3D_LOGERROR("Overwriting network event forwarder in TeapotWarsApp!");
+		SAFE_DELETE(m_pNetworkEventForwarder);
+	}
+
+	m_pNetworkEventForwarder = new NetworkEventForwarder(INVALID_CONNECTION_ID);
+
+	SubscribeToEvent(Event_Data_Request_New_Game_Node::g_EventType, URHO3D_HANDLER(EngineApp, ForwardEventDelegate));
+	
+}
+
+void EngineApp::VDestroyNetworkEventForwarder(void)
+{
+	UnsubscribeFromEvent(Event_Data_Network_Player_Game_Node_Assignment::g_EventType);
+}
+
+void EngineApp::ForwardEventDelegate(StringHash eventType, VariantMap& eventData)
+{
+	m_pNetworkEventForwarder->ForwardEventDelegate(eventType, eventData);
+}
+
+
+void EngineApp::DestroyNetwork()
+{
+	URHO3D_LOGINFO("Network is destroyed");
+	
+	if (g_pApp->GetGameLogic()->IsProxy())
+	{
+		g_pApp->GetGameLogic()->SetLoginSuccess(false);
+		VDestroyNetworkEventForwarder();
+	}
+	else
+	{
+		if (m_pNetwork)
+		{
+			m_pNetwork->StopServer();
+			g_pApp->GetGameLogic()->SetServerCreated(false);
+		}
+	}
+
+	m_pBaseSocketManager->Shutdown();
+	
+	SAFE_DELETE(m_pNetworkEventForwarder);
+	SAFE_DELETE(m_pBaseSocketManager);
+}
 
 void EngineApp::CreateConsole(XMLFile* style)
 {
@@ -284,7 +336,7 @@ void EngineApp::CreateConsole(XMLFile* style)
 	console->SetNumBufferedRows(2 * console->GetNumRows());
 	console->SetCommandInterpreter(GetTypeName());
 	console->SetVisible(false);
-	console->GetCloseButton()->SetVisible(true);
+	console->GetCloseButton()->SetVisible(false);
 	console->SetDefaultStyle(style);
 	console->GetBackground()->SetOpacity(0.8f);
 	// Open the operating system console window (for stdin / stdout) if not open yet

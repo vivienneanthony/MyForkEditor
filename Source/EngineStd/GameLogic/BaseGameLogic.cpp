@@ -203,9 +203,9 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const GameAsset* gameAsset, const M
 		// then we have to send this event to clients
 		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
 		{
-			SharedPtr<Event_Data_Request_New_Game_Asset> pNewGameAsset(new Event_Data_Request_New_Game_Asset(gameAsset->GetName(), initialTransform, pGameNode->GetID()));
+			SharedPtr<Event_Data_Request_New_Game_Node> pNewGameAsset(new Event_Data_Request_New_Game_Node(gameAsset->GetName(), initialTransform, pGameNode->GetID()));
 			VariantMap map = pNewGameAsset->VSerialize();
-			SendEvent(Event_Data_Request_New_Game_Asset::g_EventType, map);
+			SendEvent(Event_Data_Request_New_Game_Node::g_EventType, map);
 		}
 	}
 	return pGameNode;
@@ -241,9 +241,9 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const String gameAssetName, const M
 		// then we have to send this event to clients
 		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
 		{
-			SharedPtr<Event_Data_Request_New_Game_Asset> pNewGameAsset(new Event_Data_Request_New_Game_Asset(pGameAsset->GetName(), initialTransform, pGameNode->GetID()));
+			SharedPtr<Event_Data_Request_New_Game_Node> pNewGameAsset(new Event_Data_Request_New_Game_Node(pGameAsset->GetName(), initialTransform, pGameNode->GetID()));
 			VariantMap map = pNewGameAsset->VSerialize();
-			SendEvent(Event_Data_Request_New_Game_Asset::g_EventType, map);
+			SendEvent(Event_Data_Request_New_Game_Node::g_EventType, map);
 		}
 	}
 
@@ -272,17 +272,16 @@ void BaseGameLogic::VDestroyGameNode(const GameNodeId gameAssetId)
 
 void BaseGameLogic::VChangeState(enum BaseGameState newState)
 {
-
     if (newState == BGS_WaitingForPlayer)
     {
-        // Get rid of the Main Menu...
-        SharedPtr<IGameView> it;
-        it = m_GameViews.Front();
-        it->VShutdown();
-        m_GameViews.PopFront();
+		//// Get rid of the Main Menu...
+		//SharedPtr<IGameView> it;
+		//it = m_GameViews.Front();
+		//it->VShutdown();
+		//m_GameViews.PopFront();
 
-        // Note: Split screen support would require this to change!
-        m_ExpectedPlayers = 1;
+		//// Note: Split screen support would require this to change!
+		//m_ExpectedPlayers = 1;
     }
     else if (newState == BGS_LoadingGameEnvironment)
     {
@@ -309,11 +308,9 @@ void BaseGameLogic::VSetProxy()
 {
 	m_bIsProxy = true;
 
-	SubscribeToEvent(Event_Data_Request_New_Game_Asset::g_EventType, URHO3D_HANDLER(BaseGameLogic, RequestNewGameNodeDelegate));
+	SubscribeToEvent(Event_Data_Request_New_Game_Node::g_EventType, URHO3D_HANDLER(BaseGameLogic, RequestNewGameNodeDelegate));
 	
-	// May be create NULL PHYSICS there ? 
-	// Server should handle all physics.
-
+	
 }
 
 bool BaseGameLogic::VLoadGame(String levelResource)
@@ -370,6 +367,21 @@ void BaseGameLogic::VRemoveView(SharedPtr<IGameView> pView)
     }
 }
 
+void BaseGameLogic::SetLoginSuccess(bool success, String reason)
+{
+	m_bIsPlayerLoggedIn = success;
+	if (success)
+	{
+		SendEvent("Login_Successful");
+	}
+	else
+	{
+		VariantMap data;
+		data["REASON"] = reason;
+		SendEvent("Login_Unsuccessful", data);
+	}
+}
+
 // ----------------------------------------------------------
 // Delegates routines
 // ----------------------------------------------------------
@@ -402,7 +414,7 @@ void BaseGameLogic::RequestNewGameNodeDelegate(StringHash eventType, VariantMap&
 	if (!m_bIsProxy)
 		return;
 
-	Event_Data_Request_New_Game_Asset dataNewGameAsset;
+	Event_Data_Request_New_Game_Node dataNewGameAsset;
 	dataNewGameAsset.VDeserialize(eventData);
 
 	// Create the game node

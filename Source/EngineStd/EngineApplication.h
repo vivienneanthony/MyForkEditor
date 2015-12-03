@@ -40,6 +40,8 @@ public:
 
 	// Network
 	bool AttachAsClient();
+	// Destroy SocketManager, if need NetworkForwarder
+	void DestroyNetwork();
 
 protected:
 	// Initialize instance. Set startup parameters for window and
@@ -60,6 +62,14 @@ protected:
 																			// to game logic
 	// Message handling
 	bool OnMessageProc(AppMsg msg);
+
+	// Network
+	// Any events that will be received from the server logic should be here!
+	// So events from client sends to the server 
+	// and we get response from the server on that events.
+	virtual void VCreateNetworkEventForwarder(void);
+	virtual void VDestroyNetworkEventForwarder(void);
+	void ForwardEventDelegate(StringHash eventType, VariantMap& eventData);
 
 private:
 	// Utility function
@@ -92,7 +102,7 @@ public:
 	inline Network* GetNetwork() { return m_pNetwork; }
 	inline BaseSocketManager* GetSocketManager() { return m_pBaseSocketManager; }
 	inline void SetSocketManager(BaseSocketManager* manager) { m_pBaseSocketManager = manager; }
-	inline NetworkEventForwarder* GetEventForwarder() { return m_pNetworkEventer;  }
+	inline NetworkEventForwarder* GetEventForwarder() { return m_pNetworkEventForwarder;  }
 
 
 	// Game specific getters/setters
@@ -130,8 +140,8 @@ protected:
 // Network
 
 	Network* m_pNetwork;
-	BaseSocketManager* m_pBaseSocketManager;    // Can be server/client
-	NetworkEventForwarder* m_pNetworkEventer;	// Read events from server
+	BaseSocketManager* m_pBaseSocketManager;		    // Can be server/client
+	NetworkEventForwarder* m_pNetworkEventForwarder;	// Read events from server
 
 // Game specific
 	Cursor* m_pCurrentCursor;					// Current cursor, that handle UI system.

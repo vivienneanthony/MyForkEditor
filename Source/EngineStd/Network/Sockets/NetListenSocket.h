@@ -18,7 +18,7 @@ public:
 	
 
 protected:
-	virtual void VInitializeDelegates();	// Subsribe to events to this net socket.
+	virtual void VInitializeAllDelegates();	// Subsribe to events to this net socket.
 	virtual void VDestroyAllDelegates();	// Unsubscribe from all events to this net socket
 
 protected:

@@ -1,7 +1,9 @@
 #include "EngineStd.h"
 #include "EventPacket.h"
 
-EventPacket::EventPacket(Context* context, unsigned int id, Node* node, StringHash eventType, bool isOrder, const VariantMap &eventData) : BasePacket(context, id, isOrder)
+String EventPacket::g_Type = "EventPacket";
+
+EventPacket::EventPacket(Context* context, Node* node, StringHash eventType, bool isOrder, const VariantMap &eventData) : BasePacket(context, INVALID_PACKET_ID, isOrder)
 {
 	m_pNode = node;
 	m_EventType = eventType;
@@ -9,7 +11,7 @@ EventPacket::EventPacket(Context* context, unsigned int id, Node* node, StringHa
 	m_Size = m_EventData.Size();
 }
 
-EventPacket::EventPacket(Context* context, unsigned int id, StringHash eventType, bool isOrder, const VariantMap &eventData) : BasePacket(context, id, isOrder)
+EventPacket::EventPacket(Context* context, StringHash eventType, bool isOrder, const VariantMap &eventData) : BasePacket(context, INVALID_PACKET_ID, isOrder)
 {
 	m_pNode = nullptr;
 	m_EventType = eventType;

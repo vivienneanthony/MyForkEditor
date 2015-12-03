@@ -7,8 +7,10 @@ class BinaryPacket : public BasePacket
 	URHO3D_OBJECT(BinaryPacket, BasePacket);
 
 public:
-	BinaryPacket(Context* context, unsigned int id, unsigned char* data, unsigned int size, bool ordered = false, bool realiable = true, int unsignedContentId = 0); // binary packet
-	BinaryPacket(Context* context, unsigned int id, VectorBuffer& buffer, bool ordered = false, bool realiable = true, int unsignedContentId = 0); // binary packet
+	static String g_Type;
+
+	BinaryPacket(Context* context, PacketId id, unsigned char* data, unsigned int size, bool ordered = false, bool realiable = true, int unsignedContentId = 0); // binary packet
+	BinaryPacket(Context* context, PacketId id, VectorBuffer& buffer, bool ordered = false, bool realiable = true, int unsignedContentId = 0); // binary packet
 
 	virtual ~BinaryPacket();
 

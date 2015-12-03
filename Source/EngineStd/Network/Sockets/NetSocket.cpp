@@ -1,7 +1,14 @@
 #include "EngineStd.h"
 #include "NetSocket.h"
+
+#include "GameLogic/BaseGameLogic.h"
+#include "EventManager/Events.h"
+
 #include "../Packets/BinaryPacket.h"
 #include "../Packets/EventPacket.h"
+
+
+const ConnectionId INVALID_CONNECTION_ID = -1;
 
 NetSocket::NetSocket(Context* context) : Object(context)
 {
@@ -13,7 +20,7 @@ NetSocket::NetSocket(Context* context) : Object(context)
 	m_bIsInternal = false;
 	m_pConnection = NULL;
 
-	VInitializeDelegates();
+	VInitializeAllDelegates();
 	
 }
 
@@ -27,11 +34,14 @@ NetSocket::NetSocket(Context* context, String hostIP) : Object(context)
 	m_IpAddr = hostIP;
 	m_bIsInternal = true;
 
-	VInitializeDelegates();
+	m_pConnection = NULL;
+
+	VInitializeAllDelegates();
 }
 
 NetSocket::~NetSocket()
 {
+	m_pConnection = m_pNetwork->GetServerConnection();
 	if (m_pConnection)
 	{
 		if (m_pConnection->IsConnected() && m_pConnection->IsClient())
@@ -107,8 +117,15 @@ void NetSocket::VHandleOutput()
 			StringHash eventType = eventpkt->GetEventType();
 			Node* eventNode = eventpkt->GetNode();
 			eventData["EVENT_PACKET_ID"] = StringHash(eventpkt->GetPacketId());
-			
-			m_pConnection->SendRemoteEvent(eventNode, eventType, eventpkt->IsOrderered(), eventData);
+			if (eventNode)
+			{
+				m_pConnection->SendRemoteEvent(eventNode, eventType, eventpkt->IsOrderered(), eventData);
+			}
+			else
+			{
+				m_pConnection->SendRemoteEvent(eventType, eventpkt->IsOrderered(), eventData);
+			}
+
 			fSent++;
 		}
 
@@ -125,10 +142,18 @@ void NetSocket::VHandleInput()
 
 // DELEGATES
 
-void NetSocket::VInitializeDelegates()
+void NetSocket::VInitializeAllDelegates()
 {
 	SubscribeToEvent(E_NETWORKMESSAGE, URHO3D_HANDLER(NetSocket, HandleNetworkMessage));
 	SubscribeToEvent(E_REMOTEEVENTDATA, URHO3D_HANDLER(NetSocket, HandleRemoteEventNetworkMessage));
+	SubscribeToEvent(E_CLIENTDISCONNECTED, URHO3D_HANDLER(NetSocket, HandleDisconnect));
+	
+	if (g_pApp->GetGameLogic()->IsProxy())
+	{
+		SubscribeToEvent(Event_Data_Network_Player_Login_Result::g_EventType, URHO3D_HANDLER(NetSocket, HandleLoginRequest));
+		m_pNetwork->RegisterRemoteEvent(Event_Data_Network_Player_Login_Result::g_EventType);
+	}
+
 }
 
 void NetSocket::VDestroyAllDelegates()
@@ -163,11 +188,11 @@ void NetSocket::HandleRemoteEventNetworkMessage(StringHash eventType, VariantMap
 		
 		if (!node)
 		{
-			eventpacket = SharedPtr<BasePacket>(new EventPacket(context_, packetId, eventType, false, eventData));
+			eventpacket = SharedPtr<BasePacket>(new EventPacket(context_, eventType, false, eventData));
 		}
 		else
 		{
-			eventpacket = SharedPtr<BasePacket>(new EventPacket(context_, packetId, node, eventType, false, eventData));
+			eventpacket = SharedPtr<BasePacket>(new EventPacket(context_, node, eventType, false, eventData));
 		}
 
 		if (eventpacket.NotNull())
@@ -175,4 +200,33 @@ void NetSocket::HandleRemoteEventNetworkMessage(StringHash eventType, VariantMap
 			m_OutList.Push(eventpacket);
 		}
 	}
+}
+
+void NetSocket::HandleDisconnect(StringHash eventType, VariantMap& eventData)
+{
+	String reason = eventData["REASON"].GetString();
+	
+	if (reason == String("Incorrect_password"))
+	{
+
+	}
+	else if (reason == String("Incorrect_login"))
+	{
+
+	}
+
+}
+
+void NetSocket::HandleLoginRequest(StringHash eventType, VariantMap& eventData)
+{
+	String reason = eventData["REASON"].GetString();
+	bool success = eventData["LOGIN_SUCCESS"].GetBool();
+	
+	if (!success)
+	{
+		m_pConnection->Disconnect();
+		URHO3D_LOGERROR("Failed to login. Reason : " + reason);
+	}
+	
+	g_pApp->GetGameLogic()->SetLoginSuccess(success, reason);
 }

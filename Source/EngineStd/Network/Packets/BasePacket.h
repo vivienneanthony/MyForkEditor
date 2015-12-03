@@ -5,7 +5,9 @@ class BasePacket : public IPacket
 	URHO3D_OBJECT(BasePacket, IPacket)
 
 public:
-	BasePacket(Context* context, unsigned int id, bool isOrder);
+	static String g_Type;
+
+	BasePacket(Context* context, PacketId id, bool isOrder);
 	virtual ~BasePacket();
 
 	virtual String VGetType() const { return "BasePacket"; }
@@ -24,7 +26,7 @@ public:
 
 	VariantMap m_EventData;
 	
-	unsigned int m_PacketId;				// In order to specify message. It helps to handle specific message, if needed.
+	PacketId m_PacketId;			     	// In order to specify message. It helps to handle specific message, if needed.
 	bool m_bIsOrdered;						// For high performance, consider using unordered messages,
 											// because for in-order messages there is only a single channel within the connection, 
 											// and all previous in-order messages must arrive first before a new one can be processed.

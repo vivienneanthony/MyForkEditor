@@ -30,13 +30,32 @@ public:
 	void CreateServerWindow();
 
 	// UI Login delegates
+	void HandleServerOptionDelegate(StringHash eventType, VariantMap& eventData);
+	void HandlePlayersInfoDelegate(StringHash eventType, VariantMap& eventData);
+	void HandleServerInfoDelegate(StringHash eventType, VariantMap& eventData);
+
 	void HandleStartServerDelegate(StringHash eventType, VariantMap& eventData);
 	void HandleStopServerDelegate(StringHash eventType, VariantMap& eventData);
+	void HandleRestartServerDelegate(StringHash eventType, VariantMap& eventData);
+	void HandlePauseServerDelegate(StringHash eventType, VariantMap& eventData);
+
+	void HandleServerCreatedDelegate(StringHash eventType, VariantMap& eventData);
+
+	void HandleCloseDelegate(StringHash eventType, VariantMap& eventData);
 
 protected:
 	bool m_bIsInitialized;
 	
-	Window* m_pWindow;
+	SharedPtr<UIElement> m_pControlPanel;
+
+	Menu* m_pServerInfoMenu;
+	Menu* m_pPlayersInfoMenu;
+	Menu* m_pServerOptionMenu;
+
+	Window* m_pPlayersInfoWindow;
+	Window* m_pServerInfoWindow;
+	Window* m_pServerOptionWindow;
+
 	LineEdit* m_pPortEdit;
 };
 

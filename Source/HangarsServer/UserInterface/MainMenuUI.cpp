@@ -13,13 +13,12 @@
 MainMenuUI::MainMenuUI(Context* context) : BaseUI(context)
 {
 	m_bIsInitialized = false;
-	m_pWindow = nullptr;
+	m_pControlPanel= nullptr;
 }
 
 MainMenuUI::~MainMenuUI()
 {
-
-
+	
 }
 
 void MainMenuUI::VOnUpdate(float timeStep)
@@ -53,6 +52,7 @@ void MainMenuUI::VOnShutdown()
 
 bool MainMenuUI::VOnMsgProc(AppMsg message)
 {
+
 	return false;
 }
 
@@ -80,38 +80,49 @@ void MainMenuUI::VSetVisible(bool visible)
 
 void MainMenuUI::CreateServerWindow()
 {
-	m_pWindow = CreateCustomWindow(context_, "ServerWindow", IntVector2(0, -50));
+	UI* ui = GetSubsystem<UI>();
+	XMLFile* file = g_pApp->GetConstantResCache()->GetResource<XMLFile>("Server/ControlPanelUI.xml");
 	
-	Text* textName = new Text(context_);
-	textName->SetText("Enter port: ");
+	m_pControlPanel = ui->LoadLayout(file);
+	ui->GetRoot()->AddChild(m_pControlPanel);
 
-	textName->SetTextAlignment(HorizontalAlignment::HA_CENTER);
-	textName->SetStyleAuto();
+	m_pPlayersInfoWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Players_Info", true);
+	m_pServerInfoWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Info", true);
+	m_pServerOptionWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Option", true);
 
-	m_pWindow->AddChild(textName);
-	m_pWindow->SetFixedHeight(300);
-	m_pWindow->SetPosition(0, -100);
+	// Set delegates
+	m_pPlayersInfoMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Players_Info", true);
+	SubscribeToEvent(m_pPlayersInfoMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandlePlayersInfoDelegate));
 
-	// Create a LoginEdit
-	m_pPortEdit = new LineEdit(context_);
-	m_pPortEdit->SetName("LoginEdit");
-	m_pPortEdit->SetMinHeight(24);
-	m_pPortEdit->SetStyleAuto();
-	m_pPortEdit->SetFixedWidth(350);
-	m_pPortEdit->SetFixedHeight(20);
-	m_pPortEdit->SetAlignment(HorizontalAlignment::HA_CENTER, VA_TOP);
-	m_pWindow->AddChild(m_pPortEdit);
+	m_pServerInfoMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Info", true);
+	SubscribeToEvent(m_pServerInfoMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandleServerInfoDelegate));
+	
+	m_pServerOptionMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Option", true);
+	SubscribeToEvent(m_pServerOptionMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandleServerOptionDelegate));
 
-	Button* enterButton = CreateCustomButton(m_pWindow, "Enter", "StartServer");
-	enterButton->SetFixedWidth(100);
-	SubscribeToEvent(enterButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleStartServerDelegate));
+	m_pPortEdit = (LineEdit*)m_pControlPanel->GetChild("LineEdit_Server_Port", true);
+
+	Button* closeButton = (Button*)m_pControlPanel->GetChild("Close_button", true);
+	SubscribeToEvent(closeButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleCloseDelegate));
+
+	Button* startButton = (Button*)m_pControlPanel->GetChild("Button_Server_Start", true);
+	Button* restartButton = (Button*)m_pControlPanel->GetChild("Button_Server_Restart", true);
+	Button* stopButton = (Button*)m_pControlPanel->GetChild("Button_Server_Stop", true);
+	Button* pauseButton = (Button*)m_pControlPanel->GetChild("Button_Server_Pause", true);
+	
+	SubscribeToEvent(startButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleStartServerDelegate));
+	SubscribeToEvent(restartButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleRestartServerDelegate));
+	SubscribeToEvent(stopButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleStopServerDelegate));
+	SubscribeToEvent(pauseButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandlePauseServerDelegate));
+
+	SubscribeToEvent("Server_Created", URHO3D_HANDLER(MainMenuUI, HandleServerCreatedDelegate));
 }
 
 void MainMenuUI::HandleStartServerDelegate(StringHash eventType, VariantMap& eventData)
 {
 	int port = ToInt(m_pPortEdit->GetText());
 	g_pApp->GetGameOptions().m_ListenPort = port;
-	g_pApp->GetGameOptions().m_GameHost = "localhost";
+	g_pApp->GetGameOptions().m_GameHost = "unknown";
 	
 	if (!g_pApp->GetGameLogic()->IsServerCreated())
 	{
@@ -123,4 +134,99 @@ void MainMenuUI::HandleStartServerDelegate(StringHash eventType, VariantMap& eve
 	}
 }
 
+void MainMenuUI::HandleStopServerDelegate(StringHash eventType, VariantMap& eventData)
+{
+	if (!g_pApp->GetGameLogic()->IsServerCreated())
+	{
+		SendEvent(String("Request_Stop_Server"));
+	}
+	else
+	{
+		URHO3D_LOGINFO("Could not stop server. Server was not created.");
+	}
+}
 
+void MainMenuUI::HandleRestartServerDelegate(StringHash eventType, VariantMap& eventData)
+{
+	if (!g_pApp->GetGameLogic()->IsServerCreated())
+	{
+		SendEvent(String("Request_Restart_Server"));
+	}
+	else
+	{
+		URHO3D_LOGINFO("Could not restart server. Server was not created.");
+	}
+}
+
+
+void MainMenuUI::HandlePauseServerDelegate(StringHash eventType, VariantMap& eventData)
+{
+	if (!g_pApp->GetGameLogic()->IsServerCreated())
+	{
+		SendEvent(String("Request_Pause_Server"));
+	}
+	else
+	{
+		URHO3D_LOGINFO("Could not pause server. Server was not created.");
+	}
+}
+
+
+void MainMenuUI::HandleServerOptionDelegate(StringHash eventType, VariantMap& eventData)
+{
+	m_pServerInfoWindow->SetPriority(1);
+	m_pPlayersInfoWindow->SetPriority(1);
+	m_pServerOptionWindow->SetPriority(3);
+
+	m_pServerInfoWindow->SetEnabled(false);
+	m_pPlayersInfoWindow->SetEnabled(false);
+	m_pServerOptionWindow->SetEnabled(true);
+}
+
+void MainMenuUI::HandlePlayersInfoDelegate(StringHash eventType, VariantMap& eventData)
+{
+	m_pServerInfoWindow->SetPriority(1);
+	m_pPlayersInfoWindow->SetPriority(3);
+	m_pServerOptionWindow->SetPriority(1);
+
+	m_pServerInfoWindow->SetEnabled(false);
+	m_pPlayersInfoWindow->SetEnabled(true);
+	m_pServerOptionWindow->SetEnabled(false);
+}
+
+void MainMenuUI::HandleServerInfoDelegate(StringHash eventType, VariantMap& eventData)
+{
+	m_pServerInfoWindow->SetPriority(3);
+	m_pPlayersInfoWindow->SetPriority(1);
+	m_pServerOptionWindow->SetPriority(1);
+
+	m_pServerInfoWindow->SetEnabled(true);
+	m_pPlayersInfoWindow->SetEnabled(false);
+	m_pServerOptionWindow->SetEnabled(false);
+}
+
+void MainMenuUI::HandleCloseDelegate(StringHash eventType, VariantMap& eventData)
+{
+	context_->GetSubsystem<UI>()->GetRoot()->RemoveChild(m_pControlPanel);
+}
+
+void MainMenuUI::HandleServerCreatedDelegate(StringHash eventType, VariantMap& eventData)
+{
+	GameOptions& option = g_pApp->GetGameOptions();
+
+	Text* serverStatus = (Text*)m_pControlPanel->GetChild("Text_Server_Status_Value", true);
+	serverStatus->SetText("Running");
+	serverStatus->SetColor(Color(0.0f, 1.0f, 0.1f));
+
+	Text* serverAddress = (Text*)m_pControlPanel->GetChild("Text_Server_Address_Value", true);
+	serverAddress->SetText(option.m_GameHost);
+	serverAddress->SetColor(Color(0.0f, 1.0f, 0.1f));
+
+	Text* serverPort = (Text*)m_pControlPanel->GetChild("Text_Server_Port_Value", true);
+	serverPort->SetText(String(option.m_ListenPort));
+	serverPort->SetColor(Color(0.0f, 1.0f, 0.1f));
+
+	Text* serverName = (Text*)m_pControlPanel->GetChild("Text_Server_Name_Value", true);
+	serverName->SetText(String("Hangars #1 Server"));
+	serverName->SetColor(Color(0.0f, 1.0f, 0.1f));
+}

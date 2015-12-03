@@ -30,10 +30,11 @@ bool BaseSocketManager::Init()
 
 void BaseSocketManager::Shutdown()
 {
+	SocketList::Iterator it = m_SocketsList.Begin();
 	while (!m_SocketsList.Empty())
 	{
-		delete *m_SocketsList.Begin();
-		m_SocketsList.PopFront();
+		SAFE_DELETE(*it);
+		it = m_SocketsList.Erase(it);
 	}
 
 	VDestroyAllDelegates();

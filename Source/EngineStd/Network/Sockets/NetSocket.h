@@ -52,12 +52,14 @@ public:
 	int GetSendsOf() { return m_SendsOfs; }
 
 protected:
-	virtual void VInitializeDelegates();	// Subsribe to events to this net socket.
+	virtual void VInitializeAllDelegates();	// Subsribe to events to this net socket.
 	virtual void VDestroyAllDelegates();	// Unsubscribe from all events to this net socket
 	
 	void HandleNetworkMessage(StringHash eventType, VariantMap& eventData);
 	void HandleRemoteEventNetworkMessage(StringHash eventType, VariantMap& eventData);
+	void HandleDisconnect(StringHash eventType, VariantMap& eventData);
 
+	void HandleLoginRequest(StringHash eventType, VariantMap& eventData);
 
 protected:
 	Network* m_pNetwork;		// Networking.

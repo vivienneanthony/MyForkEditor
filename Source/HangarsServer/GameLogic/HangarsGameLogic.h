@@ -24,6 +24,9 @@ protected:
 	virtual void VDestroyAllDelegates();			// Unsubscribe from all events
 
 	void StartServerDelegate(StringHash eventType, VariantMap& eventData);
+	void StopServerDelegate(StringHash eventType, VariantMap& eventData);
+	void RestartServerDelegate(StringHash eventType, VariantMap& eventData);
+	void PauseServerDelegate(StringHash eventType, VariantMap& eventData);
 	void ServerCreatedDelegate(StringHash eventType, VariantMap& eventData);
 
 

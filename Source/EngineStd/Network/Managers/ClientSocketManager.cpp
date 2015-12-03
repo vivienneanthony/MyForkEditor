@@ -24,6 +24,7 @@ bool ClientSocketManager::Connect()
 	}
 
 	RemoteEventSocket* pSocket = new RemoteEventSocket(context_);
+
 	if (!pSocket->Connect(m_HostName, m_Port, g_pApp->GetGameLogic()->GetScene(), m_ClientIdentify))
 	{
 		SAFE_DELETE(pSocket);

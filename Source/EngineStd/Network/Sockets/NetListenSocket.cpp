@@ -5,12 +5,14 @@
 NetListenSocket::NetListenSocket(Context* context) : NetSocket(context)
 {
 	m_PortNum = 0;
+	VInitializeAllDelegates();
 }
 
 NetListenSocket::NetListenSocket(Context* context, unsigned short portNum) : NetSocket(context, String("localhost"))
 {
 	m_PortNum = portNum;
 	Init(m_PortNum);
+	VInitializeAllDelegates();
 }
 
 
@@ -25,6 +27,7 @@ void NetListenSocket::Init(unsigned short portNum)
 	}
 	else
 	{
+		g_pApp->GetGameLogic()->SetServerCreated(false);
 		URHO3D_LOGDEBUG(String("Server starting was failed. Check port number " + String(m_PortNum) + " ?"));
 	}
 
@@ -45,9 +48,9 @@ NetListenSocket::~NetListenSocket()
 
 
 // ----------------------- DELEGATES ----------------------
-void NetListenSocket::VInitializeDelegates()
+void NetListenSocket::VInitializeAllDelegates()
 {
-	NetSocket::VInitializeDelegates();
+	
 
 }
 

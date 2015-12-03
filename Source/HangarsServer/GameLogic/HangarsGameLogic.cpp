@@ -1,4 +1,5 @@
 #include <HangarsServerStd.h>
+#include "EngineStd/EventManager/Events.h"
 #include "EngineStd/Network/Managers/BaseSocketManager.h"
 #include "EngineStd/Network/Sockets/GameServerListenSocket.h"
 #include "HangarsGameLogic.h"
@@ -35,7 +36,6 @@ void HangarsGameLogic::VOnUpdate(float timeStep)
 
 	switch (m_State)
 	{
-
 		case BGS_ServerCreated:
 		{
 
@@ -43,6 +43,11 @@ void HangarsGameLogic::VOnUpdate(float timeStep)
 			break;
 		}
 
+		case BGS_ServerStopped:
+		{
+	
+			break;
+		}
 	}
 
 }
@@ -70,17 +75,46 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 
 		if (m_bIsServerCreated)
 		{
+			GameOptions& gameOption = g_pApp->GetGameOptions();
+			// There we should detect server ip address
+			gameOption.m_GameHost = "localhost";
+			
+			// Send event to subsystems about server creation result.
+			Event_Data_Server_Create_Result serverResultEvent(true);
+			VariantMap data = serverResultEvent.VSerialize();
+			SendEvent(Event_Data_Server_Create_Result::g_EventType, data);
+
 			VChangeState(BGS_ServerCreated);
+			URHO3D_LOGINFO("Server state is Created");
 		}
 		else
 		{
+			// Send event to subsystems about server creation result.
+			Event_Data_Server_Create_Result serverResultEvent(false);
+			VariantMap data = serverResultEvent.VSerialize();
+			SendEvent(Event_Data_Server_Create_Result::g_EventType, data);
+
 			VChangeState(BGS_Invalid);
+			URHO3D_LOGINFO("Server state is Invalid");
 		}
+	}
+	else if (m_State == BGS_WaitingForServerStop)
+	{
+		g_pApp->DestroyNetwork();
+
+		// Send event to subsystems about server stopping.
+		Event_Data_Server_Stop serverStopEvent();
+		SendEvent(Event_Data_Server_Stop::g_EventType);
+
+		SendEvent("Server_Stopped");
+		VChangeState(BGS_ServerStopped);
+		URHO3D_LOGINFO("Server state is Stopped");
 	}
 	else if (m_State == BGS_Invalid)
 	{
 		URHO3D_LOGERROR("Server state is INVALID !");
 	}
+
 }
 
 bool HangarsGameLogic::VLoadGameDelegate(String pLevelData)
@@ -94,7 +128,9 @@ void HangarsGameLogic::VInitializeAllDelegates()
 	BaseGameLogic::VInitializeAllDelegates();
 
 	SubscribeToEvent("Request_Start_Server", URHO3D_HANDLER(HangarsGameLogic, StartServerDelegate));
-	
+	SubscribeToEvent("Request_Stop_Server", URHO3D_HANDLER(HangarsGameLogic, StopServerDelegate));
+	SubscribeToEvent("Request_Restart_Server", URHO3D_HANDLER(HangarsGameLogic, RestartServerDelegate));
+	SubscribeToEvent("Request_Pause_Server", URHO3D_HANDLER(HangarsGameLogic, PauseServerDelegate));
 }
 
 void HangarsGameLogic::VDestroyAllDelegates()
@@ -105,4 +141,19 @@ void HangarsGameLogic::VDestroyAllDelegates()
 void HangarsGameLogic::StartServerDelegate(StringHash eventType, VariantMap& eventData)
 {
 	VChangeState(BGS_WaitingForServerCreating);
+}
+
+void HangarsGameLogic::StopServerDelegate(StringHash eventType, VariantMap& eventData)
+{
+	VChangeState(BGS_WaitingForServerStop);
+}
+
+void HangarsGameLogic::RestartServerDelegate(StringHash eventType, VariantMap& eventData)
+{
+	//VChangeState(BGS_WaitingForServerRestarting);
+}
+
+void HangarsGameLogic::PauseServerDelegate(StringHash eventType, VariantMap& eventData)
+{
+	//VChangeState(BGS_WaitingForServerPause);
 }

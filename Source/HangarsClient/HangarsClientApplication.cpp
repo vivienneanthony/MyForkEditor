@@ -66,7 +66,6 @@ bool HangarsClientApp::VCreateViewLogic()
 	URHO3D_LOGDEBUG("Game logic successfully initialized");
 
 
-
 	SharedPtr<IGameView> menuView = SharedPtr<IGameView>(new MainMenuView(context_, m_pRenderer , true));
 	m_pGameLogic->VAddView(menuView);
 
