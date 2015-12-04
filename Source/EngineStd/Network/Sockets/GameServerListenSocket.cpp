@@ -1,5 +1,5 @@
 #include "EngineStd.h"
-#include "EventManager/Events.h"
+#include "EventManager/Server/ServerEvents.h"
 #include "GameServerListenSocket.h"
 
 GameServerListenSocket::GameServerListenSocket(Context* context, int portNum) : NetListenSocket(context, portNum)

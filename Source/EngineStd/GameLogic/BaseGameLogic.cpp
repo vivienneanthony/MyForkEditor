@@ -1,6 +1,11 @@
 
 #include "EngineStd.h"
 
+// Network
+#include "EventManager/Server/ServerEvents.h"
+#include "EventManager/Local/LocalEvents.h"
+#include "EventManager/Client/ClientEvents.h"
+
 #include "UserInterface/HumanView/HumanView.h"
 
 #include "Mainloop/Activity/ActivityManager.h"
@@ -8,9 +13,9 @@
 #include "Resources/ResourceCache.h"
 
 #include "GameAssetManager/Factory/GameAssetFactory.h"
+#include "GameAssetManager/GameAssetManager.h"
 
 #include "LevelManager/LevelManager.h"
-#include "GameAssetManager/GameAssetManager.h"
 
 #include "BaseGameLogic.h"
 
@@ -370,16 +375,13 @@ void BaseGameLogic::VRemoveView(SharedPtr<IGameView> pView)
 void BaseGameLogic::SetLoginSuccess(bool success, String reason)
 {
 	m_bIsPlayerLoggedIn = success;
-	if (success)
-	{
-		SendEvent("Login_Successful");
-	}
-	else
-	{
-		VariantMap data;
-		data["REASON"] = reason;
-		SendEvent("Login_Unsuccessful", data);
-	}
+
+	Event_Data_Player_Login_Result logResult;
+	logResult.SetSuccess(success);
+	logResult.SetReason(reason);
+	VariantMap data = logResult.VSerialize();
+
+	SendEvent(Event_Data_Player_Login_Result::g_EventType, data);
 }
 
 // ----------------------------------------------------------
@@ -388,14 +390,19 @@ void BaseGameLogic::SetLoginSuccess(bool success, String reason)
 
 void BaseGameLogic::VInitializeAllDelegates()
 {
-    SubscribeToEvent("Request_Destroy_Actor", URHO3D_HANDLER(BaseGameLogic, RequestDestroyGameNodeDelegate));
-    SubscribeToEvent("Request_Start_Game", URHO3D_HANDLER(BaseGameLogic, RequestStartGameDelegate));
-    SubscribeToEvent("Environment_Loaded", URHO3D_HANDLER(BaseGameLogic, EnvironmentLoadedDelegate));
+    SubscribeToEvent(Event_Data_Destroy_Game_Node::g_EventType, URHO3D_HANDLER(BaseGameLogic, RequestDestroyGameNodeDelegate));
+    SubscribeToEvent(Event_Data_Request_Start_Game::g_EventType, URHO3D_HANDLER(BaseGameLogic, RequestStartGameDelegate));
+    //SubscribeToEvent("Environment_Loaded", URHO3D_HANDLER(BaseGameLogic, EnvironmentLoadedDelegate));
 }
 
 void BaseGameLogic::VDestroyAllDelegates()
 {
-    UnsubscribeFromAllEvents();
+	if (m_bIsProxy)
+	{
+		UnsubscribeFromEvent(Event_Data_Request_New_Game_Node::g_EventType);
+	}
+
+
 }
 
 

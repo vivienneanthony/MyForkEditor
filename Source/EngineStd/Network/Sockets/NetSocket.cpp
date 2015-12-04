@@ -2,7 +2,7 @@
 #include "NetSocket.h"
 
 #include "GameLogic/BaseGameLogic.h"
-#include "EventManager/Events.h"
+#include "EventManager/Server/ServerEvents.h"
 
 #include "../Packets/BinaryPacket.h"
 #include "../Packets/EventPacket.h"

@@ -4,7 +4,8 @@
 
 #include "Network/Managers/ClientSocketManager.h"
 #include "Network/Managers/NetworkEventForwarder.h"
-#include "EventManager/Events.h"
+
+#include "EventManager/Server/ServerEvents.h"
 
 #include "GameLogic/BaseGameLogic.h"
 #include "Interfaces/IGameView.h"
@@ -285,13 +286,11 @@ void EngineApp::VCreateNetworkEventForwarder(void)
 
 	m_pNetworkEventForwarder = new NetworkEventForwarder(INVALID_CONNECTION_ID);
 
-	SubscribeToEvent(Event_Data_Request_New_Game_Node::g_EventType, URHO3D_HANDLER(EngineApp, ForwardEventDelegate));
-	
 }
 
 void EngineApp::VDestroyNetworkEventForwarder(void)
 {
-	UnsubscribeFromEvent(Event_Data_Network_Player_Game_Node_Assignment::g_EventType);
+
 }
 
 void EngineApp::ForwardEventDelegate(StringHash eventType, VariantMap& eventData)

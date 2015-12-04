@@ -207,14 +207,16 @@ void GameAssetFactory::ModifyNode(StrongNodePtr pChildNode, const GameAsset* gam
     }
 
     // Use additional flags based on type
-    if(gameAsset->GetAssetType()==GAType_EngineObject)
+    if(gameAsset->GetAssetType() == GAType_EngineObject)
     {
         // Available additional flags
         unsigned int SetViewMask = GameAssetChild.attribute("ViewMask").as_uint();
         unsigned int SetLightMask = GameAssetChild.attribute("LightMask").as_uint();
         unsigned int SetShadowMask = GameAssetChild.attribute("ShadowMask").as_uint();
         unsigned int SetZoneMask = GameAssetChild.attribute("ZoneMask").as_uint();
-        unsigned int SetCastShadows = GameAssetChild.attribute("CastShadows").as_uint();
+        
+		unsigned int value = GameAssetChild.attribute("CastShadows").as_uint();
+		bool SetCastShadows = ((value >= 1) ? (true) : (false));
         float SetScale = GameAssetChild.attribute("Scale").as_float();
 
         // Check if Light component actually exist

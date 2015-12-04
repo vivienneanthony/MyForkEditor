@@ -1,5 +1,5 @@
 #include <HangarsServerStd.h>
-#include "EngineStd/EventManager/Events.h"
+#include "EngineStd/EventManager/Server/ServerEvents.h"
 #include "EngineStd/Network/Managers/BaseSocketManager.h"
 #include "EngineStd/Network/Sockets/GameServerListenSocket.h"
 #include "HangarsGameLogic.h"
@@ -103,10 +103,9 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 		g_pApp->DestroyNetwork();
 
 		// Send event to subsystems about server stopping.
-		Event_Data_Server_Stop serverStopEvent();
-		SendEvent(Event_Data_Server_Stop::g_EventType);
+		Event_Data_Server_Stop_Result serverStopEvent;
+		SendEvent(Event_Data_Server_Stop_Result::g_EventType);
 
-		SendEvent("Server_Stopped");
 		VChangeState(BGS_ServerStopped);
 		URHO3D_LOGINFO("Server state is Stopped");
 	}
@@ -127,10 +126,10 @@ void HangarsGameLogic::VInitializeAllDelegates()
 {
 	BaseGameLogic::VInitializeAllDelegates();
 
-	SubscribeToEvent("Request_Start_Server", URHO3D_HANDLER(HangarsGameLogic, StartServerDelegate));
-	SubscribeToEvent("Request_Stop_Server", URHO3D_HANDLER(HangarsGameLogic, StopServerDelegate));
-	SubscribeToEvent("Request_Restart_Server", URHO3D_HANDLER(HangarsGameLogic, RestartServerDelegate));
-	SubscribeToEvent("Request_Pause_Server", URHO3D_HANDLER(HangarsGameLogic, PauseServerDelegate));
+	SubscribeToEvent(Event_Data_Start_Server_Request::g_EventType, URHO3D_HANDLER(HangarsGameLogic, StartServerDelegate));
+	SubscribeToEvent(Event_Data_Stop_Server_Request::g_EventType, URHO3D_HANDLER(HangarsGameLogic, StopServerDelegate));
+	//SubscribeToEvent("Request_Restart_Server", URHO3D_HANDLER(HangarsGameLogic, RestartServerDelegate));
+	//sSubscribeToEvent("Request_Pause_Server", URHO3D_HANDLER(HangarsGameLogic, PauseServerDelegate));
 }
 
 void HangarsGameLogic::VDestroyAllDelegates()

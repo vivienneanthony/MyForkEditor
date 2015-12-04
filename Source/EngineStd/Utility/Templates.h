@@ -38,3 +38,6 @@ public:
 	}
 };
 
+
+template <class BaseType, class SubType>
+BaseType* GenericObjectCreationComponentFunction() { return new SubType(); }

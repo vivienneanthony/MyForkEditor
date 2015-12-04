@@ -11,10 +11,10 @@ LetterBox::LetterBox(Context* context) : BaseUI(context)
 	m_Height = 100;
 
 	// Create letterbox
-    m_pLetterBox = CreateLetterBox(context_);
+    //m_pLetterBox = CreateLetterBox(context_);
 
     // Set Opacity test
-    m_pLetterBox->SetOpacity(.5);
+  //  m_pLetterBox->SetOpacity(.5);
 
 }
 

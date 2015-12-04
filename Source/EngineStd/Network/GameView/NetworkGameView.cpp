@@ -2,7 +2,9 @@
 
 #include "Network/Managers/BaseSocketManager.h"
 #include "Network/Packets/EventPacket.h"
-#include "EventManager/Events.h"
+
+#include "EventManager/Server/ServerEvents.h"
+#include "EventManager/Local/LocalEvents.h"
 
 #include "NetworkGameView.h"
 

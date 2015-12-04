@@ -194,8 +194,6 @@ using namespace Urho3D;
 
 #include "EngineApplication.h"
 
-#include "EventManager/Events.h"
-
 #include <exception>
 
 #endif // ENGINE_STD_H

@@ -3,6 +3,9 @@
 #include "EngineStd/UserInterface/UserInterface.h"
 #include "EngineStd/UserInterface/Urho3D/Utilities.h"
 
+
+#include "EngineStd/EventManager/Client/ClientEvents.h"
+
 #include "EngineStd/GameLogic/BaseGameLogic.h"
 #include "EngineStd/GameLogic/LevelManager/LevelManager.h"
 #include "EngineStd/Resources/ResHandle.h"
@@ -128,6 +131,8 @@ void MainMenuUI::CreateLoginWindow()
     Button* enterButton = CreateCustomButton(m_pWindow, "Enter", "Enter");
     SubscribeToEvent(enterButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleEnterDelegate));
 
+	SubscribeToEvent(Event_Data_Player_Login_Result::g_EventType, URHO3D_HANDLER(MainMenuUI, HandlePlayerLoginResult));
+
     // Set Opacity
     m_pWindow->SetOpacity(.5);
 
@@ -138,7 +143,7 @@ void MainMenuUI::HandleEnterDelegate(StringHash eventType, VariantMap& eventData
     String loginName = m_pLoginEdit->GetText();
     String passwordName = m_pPasswordEdit->GetText();
 
-	SendEvent("Request_Start_Game");
+	SendEvent(Event_Data_Request_Start_Game::g_EventType);
 
 }
 
@@ -147,4 +152,24 @@ void MainMenuUI::HandleCloseDelegate(StringHash eventType, VariantMap& eventData
 {
     GetSubsystem<UI>()->GetRoot()->RemoveChild(m_pWindow);
     m_pWindow = nullptr;
+}
+
+void MainMenuUI::HandlePlayerLoginResult(StringHash eventType, VariantMap& eventData)
+{
+	Event_Data_Player_Login_Result logResult;
+	logResult.VDeserialize(eventData);
+
+	bool success = logResult.GetSuccess();
+
+	if (success)
+	{
+		// This event not handled yet.
+		SendEvent(Event_Data_Request_Enter_Lobby::g_EventType);
+	}
+	else
+	{
+		String reason = logResult.GetReason();
+		// here we show message about login fail
+
+	}
 }

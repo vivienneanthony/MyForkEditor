@@ -40,6 +40,8 @@ public:
 	void HandlePauseServerDelegate(StringHash eventType, VariantMap& eventData);
 
 	void HandleServerCreatedDelegate(StringHash eventType, VariantMap& eventData);
+	void HandleServerStoppedDelegate(StringHash eventType, VariantMap& eventData);
+
 
 	void HandleCloseDelegate(StringHash eventType, VariantMap& eventData);
 

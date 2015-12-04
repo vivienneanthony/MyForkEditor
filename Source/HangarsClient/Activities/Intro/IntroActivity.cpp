@@ -2,6 +2,8 @@
 #include "EngineStd/Mainloop/Activity/Activity.h"
 #include "EngineStd/GameLogic/BaseGameLogic.h"
 
+#include "EngineStd/EventManager/Local/LocalEvents.h"
+
 #include "GameView/MainMenuView.h"
 #include "IntroActivity.h"
 
@@ -62,7 +64,7 @@ void IntroActivity::VOnSuccess()
 	ResourceCache* resCache = g_pApp->GetConstantResCache();
 	m_Text->SetText("");
 	GetSubsystem<UI>()->GetRoot()->RemoveChild(m_Text);
-	SendEvent("Finish_Introduction_Part");
+	SendEvent(Event_Data_Finish_Introduction_Part::g_EventType);
 }
 
 

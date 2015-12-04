@@ -3,6 +3,8 @@
 #include "EngineStd/UserInterface/UserInterface.h"
 #include "EngineStd/UserInterface/Urho3D/Utilities.h"
 
+#include "EngineStd/EventManager/Server/ServerEvents.h"
+
 #include "EngineStd/GameLogic/BaseGameLogic.h"
 #include "EngineStd/GameLogic/LevelManager/LevelManager.h"
 #include "EngineStd/Resources/ResHandle.h"
@@ -115,7 +117,9 @@ void MainMenuUI::CreateServerWindow()
 	SubscribeToEvent(stopButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleStopServerDelegate));
 	SubscribeToEvent(pauseButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandlePauseServerDelegate));
 
-	SubscribeToEvent("Server_Created", URHO3D_HANDLER(MainMenuUI, HandleServerCreatedDelegate));
+	SubscribeToEvent(Event_Data_Server_Create_Result::g_EventType, URHO3D_HANDLER(MainMenuUI, HandleServerCreatedDelegate));
+	SubscribeToEvent(Event_Data_Server_Stop_Result::g_EventType, URHO3D_HANDLER(MainMenuUI, HandleServerStoppedDelegate));
+
 }
 
 void MainMenuUI::HandleStartServerDelegate(StringHash eventType, VariantMap& eventData)
@@ -126,7 +130,7 @@ void MainMenuUI::HandleStartServerDelegate(StringHash eventType, VariantMap& eve
 	
 	if (!g_pApp->GetGameLogic()->IsServerCreated())
 	{
-		SendEvent(String("Request_Start_Server"));
+		SendEvent(Event_Data_Start_Server_Request::g_EventType);
 	}
 	else
 	{
@@ -136,9 +140,9 @@ void MainMenuUI::HandleStartServerDelegate(StringHash eventType, VariantMap& eve
 
 void MainMenuUI::HandleStopServerDelegate(StringHash eventType, VariantMap& eventData)
 {
-	if (!g_pApp->GetGameLogic()->IsServerCreated())
+	if (g_pApp->GetGameLogic()->IsServerCreated())
 	{
-		SendEvent(String("Request_Stop_Server"));
+		SendEvent(Event_Data_Stop_Server_Request::g_EventType);
 	}
 	else
 	{
@@ -148,7 +152,7 @@ void MainMenuUI::HandleStopServerDelegate(StringHash eventType, VariantMap& even
 
 void MainMenuUI::HandleRestartServerDelegate(StringHash eventType, VariantMap& eventData)
 {
-	if (!g_pApp->GetGameLogic()->IsServerCreated())
+	if (g_pApp->GetGameLogic()->IsServerCreated())
 	{
 		SendEvent(String("Request_Restart_Server"));
 	}
@@ -161,7 +165,7 @@ void MainMenuUI::HandleRestartServerDelegate(StringHash eventType, VariantMap& e
 
 void MainMenuUI::HandlePauseServerDelegate(StringHash eventType, VariantMap& eventData)
 {
-	if (!g_pApp->GetGameLogic()->IsServerCreated())
+	if (g_pApp->GetGameLogic()->IsServerCreated())
 	{
 		SendEvent(String("Request_Pause_Server"));
 	}
@@ -229,4 +233,13 @@ void MainMenuUI::HandleServerCreatedDelegate(StringHash eventType, VariantMap& e
 	Text* serverName = (Text*)m_pControlPanel->GetChild("Text_Server_Name_Value", true);
 	serverName->SetText(String("Hangars #1 Server"));
 	serverName->SetColor(Color(0.0f, 1.0f, 0.1f));
+}
+
+void MainMenuUI::HandleServerStoppedDelegate(StringHash eventType, VariantMap& eventData)
+{
+	GameOptions& option = g_pApp->GetGameOptions();
+
+	Text* serverStatus = (Text*)m_pControlPanel->GetChild("Text_Server_Status_Value", true);
+	serverStatus->SetText("Stopped");
+	serverStatus->SetColor(Color(1.0f, 0.0f, 0.1f));
 }

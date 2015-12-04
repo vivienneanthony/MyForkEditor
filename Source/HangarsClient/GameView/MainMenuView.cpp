@@ -3,6 +3,8 @@
 #include "EngineStd/Mainloop/Activity/ActivityManager.h"
 #include "EngineStd/GameLogic/BaseGameLogic.h"
 
+#include "EngineStd/EventManager/Local/LocalEvents.h"
+
 #include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
 #include "EngineStd/GameAssetManager/GameAssetManager.h"
 
@@ -26,7 +28,7 @@ MainMenuView::MainMenuView(Context* context, Renderer* renderer, bool intro) : H
     }
     else
     {
-        SendEvent("Finish_Introduction_Part");
+        SendEvent(Event_Data_Finish_Introduction_Part::g_EventType);
     }
 
 }
@@ -40,7 +42,7 @@ MainMenuView::~MainMenuView()
 void  MainMenuView::VInitializeAllDelegates()
 {
     HumanView::VInitializeAllDelegates();
-    SubscribeToEvent("Finish_Introduction_Part", URHO3D_HANDLER(MainMenuView, FinishIntroductionPartDelegate));
+	SubscribeToEvent(Event_Data_Finish_Introduction_Part::g_EventType, URHO3D_HANDLER(MainMenuView, FinishIntroductionPartDelegate));
 
 }
 
@@ -58,7 +60,7 @@ void  MainMenuView::FinishIntroductionPartDelegate(StringHash eventType, Variant
 
     m_pMainMenu->VSetVisible(true);
 
-    UnsubscribeFromEvent("Finish_Introduction_Part");
+	UnsubscribeFromEvent(Event_Data_Finish_Introduction_Part::g_EventType);
 
     m_pLetterBox->VSetVisible(true);
 

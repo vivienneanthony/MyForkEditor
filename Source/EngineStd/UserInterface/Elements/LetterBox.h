@@ -1,7 +1,7 @@
 #ifndef LETTERBOX_ELEMENT_H
 #define LETTERBOX_ELEMENT_H
 
-#include "EngineStd/UserInterface/UserInterface.h"
+#include "UserInterface/UserInterface.h"
 
 class LetterBox : public BaseUI
 {

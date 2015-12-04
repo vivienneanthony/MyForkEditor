@@ -31,6 +31,7 @@ public:
 
 	// UI Login delegates
 	void HandleEnterDelegate(StringHash eventType, VariantMap& eventData);
+	void HandlePlayerLoginResult(StringHash eventType, VariantMap& eventData);
 
 	// UI Otions delegates
 	void HandleCloseDelegate(StringHash eventType, VariantMap& eventData);
