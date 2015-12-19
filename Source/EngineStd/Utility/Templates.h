@@ -38,6 +38,20 @@ public:
 	}
 };
 
+template <class Type>
+SharedPtr<Type> MakeStrongPtr(WeakPtr<Type> pWeakPtr)
+{
+	if (!pWeakPtr.Expired())
+		return SharedPtr<Type>(pWeakPtr);
+	else
+		return SharedPtr<Type>();
+}
 
-template <class BaseType, class SubType>
-BaseType* GenericObjectCreationComponentFunction() { return new SubType(); }
+template <class Type>
+WeakPtr<Type> MakeWeakPtr(SharedPtr<Type> pPtr)
+{
+	if (pPtr)
+		return WeakPtr<Type>(pPtr);
+	else
+		return WeakPtr<Type>();
+}

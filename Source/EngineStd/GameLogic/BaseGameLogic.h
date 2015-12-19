@@ -8,6 +8,8 @@ class GameAsset;
 class GameAssetFactory;
 class GameAssetManager;
 
+class TestFactory;
+
 enum BaseGameState : int
 {
 	// Common client/server states
@@ -51,9 +53,12 @@ public:
 	virtual void VShutdown();
 
 	// Manipulation with actors
-	virtual StrongNodePtr VCreateGameNode(const GameAsset* gameAsset, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
-	virtual StrongNodePtr VCreateGameNode(const String gameAssetName, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
-
+	virtual StrongNodePtr VCreateGameNode(const GameAsset* gameAsset, pugi::xml_node* overrides, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
+	
+	
+	// Test factory
+	virtual StrongNodePtr  VCreateGameNode(const String& gameNoderesource, pugi::xml_node* overrides, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID, bool addToMainScene= true);
+	
 	
 	virtual WeakNodePtr VGetGameNode(const GameNodeId gameNodeId);
 	virtual void VDestroyGameNode(const GameNodeId gameNodeId);
@@ -83,6 +88,7 @@ public:
     // Game Assets Getters/Setters
     inline GameAssetManager *GetGameAssetManager()  {return m_pGameAssetManager;}
 	inline GameAssetFactory *GetGameAssetFactory()  {return m_pGameAssetFactory;}
+	inline TestFactory* GetTestFactory() { return m_pTestFactory; }
 
 protected:
 	// Network
@@ -117,6 +123,8 @@ protected:
 
 	GameAssetManager * m_pGameAssetManager;             // Manages and loads game assets data
 	GameAssetFactory* m_pGameAssetFactory;				// Game Asset Factory. GameAsset -> Node.
+
+	TestFactory* m_pTestFactory;						// Test factory
 
 	bool m_bIsRenderDiagnostic;							// Are we rendering diagnostics?
 

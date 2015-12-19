@@ -48,7 +48,7 @@ void GameAssetEngineLight::Initialize(void)
         return;
     }
 
-    // Create a light component
+     // Create a light component
      m_pNodeLight = pThisNode->CreateComponent<Light>(Urho3D::CreateMode::LOCAL, pThisNode->GetID());
 
      // Set brightness

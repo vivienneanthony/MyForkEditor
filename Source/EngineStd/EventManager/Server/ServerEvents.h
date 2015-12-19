@@ -19,17 +19,17 @@ public:
 	Event_Data_Request_New_Game_Node() :
 		BaseEventData()
 	{
-		m_GameAssetName = "";
+		m_GameResourceName = "";
 		m_isInitialTransform = false;
 		m_InitialTransform = Matrix4::IDENTITY;
 		m_ServerGameNodeId = INVALID_GAME_NODE_ID;
 		m_ViewId = INVALID_GAME_VIEW_ID;
 	}
 
-	Event_Data_Request_New_Game_Node(const String gameAssetName, const Matrix4* initMatrix = NULL, const GameNodeId nodeId = INVALID_GAME_NODE_ID, const GameViewId viewId = INVALID_GAME_VIEW_ID) :
+	Event_Data_Request_New_Game_Node(const String gameNodeResource, const Matrix4* initMatrix = NULL, const GameNodeId nodeId = INVALID_GAME_NODE_ID, const GameViewId viewId = INVALID_GAME_VIEW_ID) :
 		BaseEventData()
 	{
-		m_GameAssetName = gameAssetName;
+		m_GameResourceName = gameNodeResource;
 		m_ViewId = viewId;
 		m_ServerGameNodeId = nodeId;
 
@@ -49,7 +49,7 @@ public:
 	{
 		m_OutSerializer["EVENT_TYPE"] = g_EventType.ToHash();
 		m_OutSerializer["EVENT_ORDER"] = m_EventOrder;
-		m_OutSerializer["GAME_ASSET_NAME"] = m_GameAssetName;
+		m_OutSerializer["GAME_RESOURCE_NAME"] = m_GameResourceName;
 		m_OutSerializer["GAME_VIEW_ID"] = m_ViewId;
 		m_OutSerializer["SERVER_GAME_NODE_ID"] = m_ServerGameNodeId;
 		m_OutSerializer["IS_INITIAL_TRANSFORM"] = m_isInitialTransform;
@@ -60,7 +60,7 @@ public:
 	virtual void VDeserialize(VariantMap& in)
 	{
 		m_EventOrder = in["EVENT_ORDER"].GetBool();
-		m_GameAssetName = in["GAME_ASSET_NAME"].GetString();
+		m_GameResourceName = in["GAME_RESOURCE_NAME"].GetString();
 		m_ViewId = in["GAME_VIEW_ID"].GetUInt();
 		m_ServerGameNodeId = in["SERVER_GAME_NODE_ID"].GetUInt();
 		m_isInitialTransform = in["IS_INITIAL_TRANSFORM"].GetBool();
@@ -69,7 +69,7 @@ public:
 
 	virtual IEventDataPtr VCopy()
 	{
-		return IEventDataPtr(new Event_Data_Request_New_Game_Node(m_GameAssetName, (m_isInitialTransform) ? &m_InitialTransform : NULL, m_ServerGameNodeId, m_ViewId));
+		return IEventDataPtr(new Event_Data_Request_New_Game_Node(m_GameResourceName, (m_isInitialTransform) ? &m_InitialTransform : NULL, m_ServerGameNodeId, m_ViewId));
 	}
 
 	virtual const String GetName(void) const
@@ -77,13 +77,13 @@ public:
 		return g_EventType.ToString();
 	}
 
-	const String& GetGameAsset(void) const { return m_GameAssetName; }
+	const String& GetResourceName(void) const { return m_GameResourceName; }
 	const Matrix4* GetInitialTransform(void) const { return (m_isInitialTransform) ? &m_InitialTransform : NULL; }
 	const GameNodeId GetServerActorId(void) const { return m_ServerGameNodeId; }
 	GameViewId GetViewId(void) const { return m_ViewId; }
 
 protected:
-	String m_GameAssetName;
+	String m_GameResourceName;
 	GameViewId m_ViewId;
 	GameNodeId m_ServerGameNodeId;
 	bool m_isInitialTransform;

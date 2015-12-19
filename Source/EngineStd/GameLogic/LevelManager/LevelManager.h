@@ -9,11 +9,14 @@ class LevelManager : public Object
 	URHO3D_OBJECT(LevelManager, Object)
 public:
 	// Constructors
-	LevelManager(Context* context);
+	LevelManager(Context* context, BaseGameLogic* gameLogic);
 	virtual ~LevelManager();
 
 	bool Initialize(Vector<String>& levels);
 	void Shutdown();
+
+	bool CreateLevel(SharedPtr<Scene> scene, String levelName, bool addToMainScene);
+
 
 
 	// Getters/Setters
@@ -21,6 +24,8 @@ public:
 	const int GetCurrentLevel() const { return m_CurrentLevel; }
 
 protected:
+	BaseGameLogic* m_pGameLogic;
+
 	Levels m_Levels;
 	int m_CurrentLevel;
 };

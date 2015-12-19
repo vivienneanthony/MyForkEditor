@@ -3,13 +3,26 @@
 
 class BaseComponent;
 
+class MainComponent;
+class GameNode;
+
 typedef unsigned int GameNodeId;
+typedef String GameNodeType;
+
 typedef unsigned int ComponentId;
 
 typedef SharedPtr<Node> StrongNodePtr;
 typedef WeakPtr<Node> WeakNodePtr;
+
+typedef SharedPtr<GameNode> StrongGameNodePtr;
+typedef WeakPtr<GameNode> WeakGameNodePtr;
+
 typedef SharedPtr<BaseComponent> StrongComponentPtr;
 typedef WeakPtr<BaseComponent> WeakComponentPtr;
+
+typedef SharedPtr<MainComponent> StrongGameNodeComponentPtr;
+typedef WeakPtr<MainComponent> WeakGameNodeComponentPtr;
+
 
 const GameNodeId INVALID_GAME_NODE_ID = 0;
 const ComponentId INVALID_COMPONENT_ID = 0;

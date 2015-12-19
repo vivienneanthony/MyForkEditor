@@ -60,7 +60,7 @@ void GameAssetEngineSkybox::Initialize(void)
     // Set model and force default material loading
     m_pNodeSkybox->SetModel(resCache->GetResource<Model>(SkyboxModelFile));
     m_pNodeSkybox->ApplyMaterialList();
-
+	
     // Set Default scale
     pThisNode->SetScale(2000.0f);
 

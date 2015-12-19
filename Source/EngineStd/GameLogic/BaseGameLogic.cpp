@@ -15,6 +15,11 @@
 #include "GameAssetManager/Factory/GameAssetFactory.h"
 #include "GameAssetManager/GameAssetManager.h"
 
+
+#include "GameAssetManager/GameNode/GameNode.h"
+#include "GameAssetManager/TestFactory/TestFactory.h"
+
+
 #include "LevelManager/LevelManager.h"
 
 #include "BaseGameLogic.h"
@@ -44,7 +49,7 @@ BaseGameLogic::BaseGameLogic(Context *context) : IGameLogic(context)
 
 BaseGameLogic::~BaseGameLogic()
 {
-
+	SAFE_DELETE(m_pTestFactory);
 }
 
 // ----------------------------------------------------------
@@ -60,12 +65,14 @@ bool BaseGameLogic::VInitialize()
 
     m_pActivityManager = new ActivityManager(context_);
 
-    m_pLevelManager = new LevelManager(context_);
+    m_pLevelManager = new LevelManager(context_, this);
 
     // New Game Asset Manager
     m_pGameAssetFactory = new GameAssetFactory(context_);
 
     m_pGameAssetManager = new GameAssetManager(context_);
+
+	m_pTestFactory = new TestFactory(context_);
 
     m_pGameAssetManager->Init();
 
@@ -83,7 +90,8 @@ bool BaseGameLogic::VInitialize()
     String Message= String("Game Asset Manager Loaded ") +String(m_pGameAssetManager->GetTotalGameAssets())+ String(" Game Assets");
 
     URHO3D_LOGINFO (Message);
-
+	
+	m_pScene = SharedPtr<Scene>(new Scene(context_));
     
     VInitializeAllDelegates();
 
@@ -163,6 +171,7 @@ void BaseGameLogic::VShutdown()
 
     SAFE_DELETE(m_pGameAssetManager);
 
+	SAFE_DELETE(m_pTestFactory);
 
     m_pLevelManager->Shutdown();
 
@@ -185,7 +194,7 @@ void BaseGameLogic::VShutdown()
 // GameNode manipulations
 // ----------------------------------------------------------
 
-StrongNodePtr BaseGameLogic::VCreateGameNode(const GameAsset* gameAsset, const Matrix4* initialTransform, const GameNodeId serversGameNodeId)
+StrongNodePtr BaseGameLogic::VCreateGameNode(const GameAsset* gameAsset, pugi::xml_node* overrides, const Matrix4* initialTransform, const GameNodeId serversGameNodeId)
 {
 	assert(m_pGameAssetFactory && m_pGameAssetManager);
 
@@ -216,16 +225,9 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const GameAsset* gameAsset, const M
 	return pGameNode;
 }
 
-StrongNodePtr BaseGameLogic::VCreateGameNode(const String gameAssetName, const Matrix4* initialTransform, const GameNodeId serversGameNodeId)
+StrongNodePtr BaseGameLogic::VCreateGameNode(const String& gameNodeResource, pugi::xml_node* overrides, const Matrix4* initialTransform, const GameNodeId serversGameNodeId, bool addToMainScene)
 {
-	assert(m_pGameAssetFactory && m_pGameAssetManager);
-
-	GameAsset* pGameAsset = m_pGameAssetManager->FindGameAssetByName(gameAssetName);
-	if (!pGameAsset)
-	{
-		URHO3D_LOGERROR("Failed to find GameAsset by name " + gameAssetName + " in BaseGameLogic's function VCreateGameNode()");
-		return StrongNodePtr();
-	}
+	assert(m_pTestFactory);
 
 	// if it is server, m_bIsProxy == false and serverGameNodeId must be INVALID_GAME_NODE_ID
 	// because server generates new game node id
@@ -237,16 +239,20 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const String gameAssetName, const M
 	if (m_bIsProxy && serversGameNodeId == INVALID_GAME_NODE_ID)
 		return StrongNodePtr();
 
-	StrongNodePtr pGameNode = m_pGameAssetFactory->CreateNode(pGameAsset, serversGameNodeId);
-	if (pGameNode)
+	StrongNodePtr pGameNode = m_pTestFactory->CreateNode(gameNodeResource, overrides, initialTransform, serversGameNodeId);
+	
+	if (pGameNode && addToMainScene)
 	{
 		m_pScene->AddChild(pGameNode, pGameNode->GetID());
+	}
 
+	if (pGameNode)
+	{
 		// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running  
 		// then we have to send this event to clients
 		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
 		{
-			SharedPtr<Event_Data_Request_New_Game_Node> pNewGameAsset(new Event_Data_Request_New_Game_Node(pGameAsset->GetName(), initialTransform, pGameNode->GetID()));
+			SharedPtr<Event_Data_Request_New_Game_Node> pNewGameAsset(new Event_Data_Request_New_Game_Node(gameNodeResource, initialTransform, pGameNode->GetID()));
 			VariantMap map = pNewGameAsset->VSerialize();
 			SendEvent(Event_Data_Request_New_Game_Node::g_EventType, map);
 		}
@@ -425,8 +431,13 @@ void BaseGameLogic::RequestNewGameNodeDelegate(StringHash eventType, VariantMap&
 	dataNewGameAsset.VDeserialize(eventData);
 
 	// Create the game node
-	StrongNodePtr pGameNode = VCreateGameNode(dataNewGameAsset.GetGameAsset(), dataNewGameAsset.GetInitialTransform(), dataNewGameAsset.GetServerActorId());
-
+	StrongNodePtr  pGameNode = VCreateGameNode(dataNewGameAsset.GetResourceName(), NULL, dataNewGameAsset.GetInitialTransform(), dataNewGameAsset.GetServerActorId());
+	if (pGameNode)
+	{
+		Event_Data_New_Game_Node pNewGameNodeEvent(pGameNode->GetID(), dataNewGameAsset.GetViewId());
+		VariantMap data = pNewGameNodeEvent.VSerialize();
+		SendEvent(Event_Data_New_Game_Node::g_EventType, data);
+	}
 
 
 }

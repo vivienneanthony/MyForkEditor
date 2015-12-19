@@ -149,9 +149,13 @@ void EngineApp::Stop()
 	{
 		m_pBaseSocketManager->Shutdown();
 		SAFE_DELETE(m_pBaseSocketManager);
+
+		SAFE_DELETE(m_pNetworkEventForwarder);
 	}
 	
     m_pGameLogic->VShutdown();
+
+	//SAFE_DELETE(m_pGameLogic);
 
     VDestroyAllDelegates();
 
