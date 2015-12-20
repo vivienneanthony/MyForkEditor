@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../../GameNode/GameNode.h"
-
 class MainComponent : public LogicComponent
 {
 	URHO3D_OBJECT(MainComponent, LogicComponent)

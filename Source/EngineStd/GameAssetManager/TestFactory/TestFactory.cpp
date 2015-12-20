@@ -1,7 +1,6 @@
 #include "EngineStd.h"
 
 #include "Resources/XMLResourceLoader/XMLResourceLoader.h"
-#include "../GameNode/GameNode.h"
 
 #include "Components/MainComponent.h"
 #include "Components/TransformComponent/TransformComponent.h"
