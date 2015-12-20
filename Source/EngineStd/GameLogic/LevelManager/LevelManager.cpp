@@ -4,7 +4,7 @@
 
 #include "EventManager/Local/LocalEvents.h"
 
-#include "GameAssetManager/GameNode/GameNode.h"
+//#include "GameAssetManager/GameNode/GameNode.h"
 #include "../../Resources/XMLResourceLoader/XMLResourceLoader.h"
 
 #include "LevelManager.h"
@@ -78,7 +78,7 @@ bool LevelManager::CreateLevel(SharedPtr<Scene> scene, String levelName, bool ad
 			}
 		}
 	}
-	
+
 
 	return true;
 }

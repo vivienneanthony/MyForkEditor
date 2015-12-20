@@ -16,7 +16,7 @@
 #include "GameAssetManager/GameAssetManager.h"
 
 
-#include "GameAssetManager/GameNode/GameNode.h"
+//#include "GameAssetManager/GameNode/GameNode.h"
 #include "GameAssetManager/TestFactory/TestFactory.h"
 
 
@@ -90,9 +90,9 @@ bool BaseGameLogic::VInitialize()
     String Message= String("Game Asset Manager Loaded ") +String(m_pGameAssetManager->GetTotalGameAssets())+ String(" Game Assets");
 
     URHO3D_LOGINFO (Message);
-	
+
 	m_pScene = SharedPtr<Scene>(new Scene(context_));
-    
+
     VInitializeAllDelegates();
 
     return true;
@@ -125,11 +125,11 @@ void BaseGameLogic::VOnUpdate(float timeStep)
     }
 
 	case BGS_LoadingPlayerLobby:
-	{	
+	{
 
 		break;
 	}
-    
+
     case BGS_SpawningPlayerGameNode:
     {
         VChangeState(BGS_Running);
@@ -213,7 +213,7 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const GameAsset* gameAsset, pugi::x
 	{
 		m_pScene->AddChild(pGameNode, pGameNode->GetID());
 
-		// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running  
+		// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running
 		// then we have to send this event to clients
 		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
 		{
@@ -240,7 +240,7 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const String& gameNodeResource, pug
 		return StrongNodePtr();
 
 	StrongNodePtr pGameNode = m_pTestFactory->CreateNode(gameNodeResource, overrides, initialTransform, serversGameNodeId);
-	
+
 	if (pGameNode && addToMainScene)
 	{
 		m_pScene->AddChild(pGameNode, pGameNode->GetID());
@@ -248,7 +248,7 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const String& gameNodeResource, pug
 
 	if (pGameNode)
 	{
-		// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running  
+		// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running
 		// then we have to send this event to clients
 		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
 		{
@@ -320,8 +320,8 @@ void BaseGameLogic::VSetProxy()
 	m_bIsProxy = true;
 
 	SubscribeToEvent(Event_Data_Request_New_Game_Node::g_EventType, URHO3D_HANDLER(BaseGameLogic, RequestNewGameNodeDelegate));
-	
-	
+
+
 }
 
 bool BaseGameLogic::VLoadGame(String levelResource)
@@ -415,8 +415,8 @@ void BaseGameLogic::VDestroyAllDelegates()
 void BaseGameLogic::RequestDestroyGameNodeDelegate(StringHash eventType, VariantMap& eventData)
 {
 
-	
-	
+
+
 }
 
 void BaseGameLogic::RequestNewGameNodeDelegate(StringHash eventType, VariantMap& eventData)
