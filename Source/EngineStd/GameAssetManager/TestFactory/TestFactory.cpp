@@ -7,7 +7,7 @@
 
 #include "Components/RenderComponent/LightComponent/BaseLightComponent.h"
 #include "Components/RenderComponent/ModelComponent/StaticModelComponent.h"
-#include "Components/RenderComponent/SkyBoxComponent/SkyBoxComponent.h"
+#include "Components/RenderComponent/SkyboxComponent/SkyBoxComponent.h"
 
 #include "Components/HangarsComponent/OSComponent/OSBaseComponent/OSBaseComponent.h"
 #include "Components/HangarsComponent/OSComponent/OSOrcasComponent/OSOrcasComponent.h"
@@ -146,7 +146,7 @@ void TestFactory::ModifyGameNode(StrongNodePtr node, pugi::xml_node* overrides, 
 	{
 
 		String name = pNode.attribute("name").as_string();
-		
+
 		WeakGameNodeComponentPtr pComponent = StrongGameNodeComponentPtr((MainComponent*)node->GetComponent(name, true));
 		if (pComponent.NotNull())
 		{
@@ -218,7 +218,7 @@ StrongGameNodeComponentPtr TestFactory::VCreateComponent(pugi::xml_node* pData)
 		return StrongGameNodeComponentPtr();
 	}
 
-	// pComponent will be NULL if the component wasn't found.  This isn't necessarily an error since you might have a 
+	// pComponent will be NULL if the component wasn't found.  This isn't necessarily an error since you might have a
 	// custom CreateComponent() function in a sub class.
 	return pComponent;
 }
