@@ -165,6 +165,11 @@
 #include <Urho3D/AngelScript/ScriptAPI.h>
 #include <Urho3D/AngelScript/ScriptFile.h>
 #include <Urho3D/AngelScript/ScriptInstance.h>
+
+// Database
+#include <Urho3D/Database/Database.h>
+#include <Urho3D/Database/DatabaseEvents.h>
+
 #ifdef NDEBUG
 	#undef URHO3D_LOGGING
 #endif
