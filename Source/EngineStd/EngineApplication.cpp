@@ -28,6 +28,8 @@ EngineApp::EngineApp(Context* context) : Application(context)
 
 	m_pBaseSocketManager = NULL;
 	m_pNetworkEventForwarder = NULL;
+
+	m_pDBConnection = NULL;
 }
 
 EngineApp::~EngineApp()
@@ -86,6 +88,7 @@ void EngineApp::Start()
     // Save all necessary subsystems in Game Application Layer
     context_->RegisterSubsystem(new Script(context_));
 
+	m_pDatabase = GetSubsystem<Database>();
     m_pGraphics = GetSubsystem<Graphics>();
     m_pRenderer = GetSubsystem<Renderer>();
     m_pUI = GetSubsystem<UI>();
@@ -300,6 +303,17 @@ void EngineApp::VDestroyNetworkEventForwarder(void)
 void EngineApp::ForwardEventDelegate(StringHash eventType, VariantMap& eventData)
 {
 	m_pNetworkEventForwarder->ForwardEventDelegate(eventType, eventData);
+}
+
+DbConnection* EngineApp::ConnectToDB(String connectionString)
+{
+	m_pDBConnection = m_pDatabase->Connect(connectionString);
+	if (!m_pDBConnection)
+	{
+		URHO3D_LOGINFO("Failed connect to database. Check connection string");
+	}
+
+	return m_pDBConnection;
 }
 
 

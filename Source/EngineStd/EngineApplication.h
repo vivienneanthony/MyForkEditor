@@ -43,6 +43,9 @@ public:
 	// Destroy SocketManager, if need NetworkForwarder
 	void DestroyNetwork();
 
+	// Database
+	DbConnection* ConnectToDB(String connectionString);
+
 protected:
 	// Initialize instance. Set startup parameters for window and
 	// other subsystems
@@ -70,6 +73,8 @@ protected:
 	virtual void VCreateNetworkEventForwarder(void);
 	virtual void VDestroyNetworkEventForwarder(void);
 	void ForwardEventDelegate(StringHash eventType, VariantMap& eventData);
+
+
 
 private:
 	// Utility function
@@ -142,6 +147,11 @@ protected:
 	Network* m_pNetwork;
 	BaseSocketManager* m_pBaseSocketManager;		    // Can be server/client
 	NetworkEventForwarder* m_pNetworkEventForwarder;	// Read events from server
+
+// Database
+	Database* m_pDatabase;
+	DbConnection* m_pDBConnection;
+
 
 // Game specific
 	Cursor* m_pCurrentCursor;					// Current cursor, that handle UI system.
