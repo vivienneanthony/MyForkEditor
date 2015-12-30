@@ -37,7 +37,6 @@ void GameServerListenSocket::HandleClientIdentity(StringHash eventType, VariantM
 	String login = eventData["CLIENT_LOGIN"].GetString();
 	String password = eventData["CLIENT_PASSWORD"].GetString();
 
-	VariantMap data;
 	Event_Data_Network_Player_Login_Result loginEvent;
 
 	// Here should be check for password/login identify from databases		
@@ -51,6 +50,5 @@ void GameServerListenSocket::HandleClientIdentity(StringHash eventType, VariantM
 		loginEvent.SetReason("Invalid_login_data");
 	}
 
-	data = loginEvent.VSerialize();
-	connection->SendRemoteEvent(Event_Data_Network_Player_Login_Result::g_EventType, loginEvent.GetEventOrder(), data);
+	connection->SendRemoteEvent(Event_Data_Network_Player_Login_Result::g_EventType, loginEvent.GetEventOrder(), loginEvent.VSerialize());
 }

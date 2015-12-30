@@ -18,7 +18,7 @@ public:
 	float VGetTimeStamp(void) const { return m_TimeStamp; }
 
 	// Serializing for network input / output
-	virtual const VariantMap& VSerialize() const { return m_OutSerializer; }
+	virtual VariantMap& VSerialize() { return m_OutSerializer; }
 	virtual void VDeserialize(VariantMap& in) { }
 
 	// Getters/Setters

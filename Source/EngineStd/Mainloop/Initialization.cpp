@@ -84,7 +84,7 @@ bool GameOptions::InitGameOptions(const char* xmlFilePath)
         {
 			String attribute;
 
-            m_ScreenSize.x_ =node.attribute("width").as_int();
+            m_ScreenSize.x_ = node.attribute("width").as_int();
             if (m_ScreenSize.x_ < 800) m_ScreenSize.x_ = 800;
             if (m_ScreenSize.x_ > 3840) m_ScreenSize.x_ = 3840;
 

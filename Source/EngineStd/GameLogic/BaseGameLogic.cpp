@@ -17,8 +17,7 @@
 
 
 //#include "GameAssetManager/GameNode/GameNode.h"
-#include "GameAssetManager/TestFactory/TestFactory.h"
-
+#include "GameAsset/GAFactory.h"
 
 #include "LevelManager/LevelManager.h"
 
@@ -32,7 +31,7 @@ BaseGameLogic::BaseGameLogic(Context *context) : IGameLogic(context)
 {
     m_pActivityManager = NULL;
     m_pLevelManager = NULL;
-    m_pGameAssetFactory = NULL;
+   // m_pGameAssetFactory = NULL;
 
     m_bIsRenderDiagnostic = false;
 	m_bIsProxy = false;
@@ -49,7 +48,7 @@ BaseGameLogic::BaseGameLogic(Context *context) : IGameLogic(context)
 
 BaseGameLogic::~BaseGameLogic()
 {
-	SAFE_DELETE(m_pTestFactory);
+	SAFE_DELETE(m_pGAFactory);
 }
 
 // ----------------------------------------------------------
@@ -67,29 +66,30 @@ bool BaseGameLogic::VInitialize()
 
     m_pLevelManager = new LevelManager(context_, this);
 
-    // New Game Asset Manager
-    m_pGameAssetFactory = new GameAssetFactory(context_);
+ //   // New Game Asset Manager
+ //   m_pGameAssetFactory = new GameAssetFactory(context_);
 
-    m_pGameAssetManager = new GameAssetManager(context_);
+ //   m_pGameAssetManager = new GameAssetManager(context_);
+	//m_pGameAssetManager->Init();
 
-	m_pTestFactory = new TestFactory(context_);
+	//URHO3D_LOGINFO("Game Asset Manager Initialized");
 
-    m_pGameAssetManager->Init();
+	//// Give factory access to to the game assets
+	//m_pGameAssetFactory->SetGameAssetManager(m_pGameAssetManager);
 
-    URHO3D_LOGINFO ("Game Asset Manager Initialized");
+	//URHO3D_LOGINFO("Game Asset Manager assigned to Factory");
 
-    // Give factory access to to the game assets
-    m_pGameAssetFactory->SetGameAssetManager(m_pGameAssetManager);
+	//// load game assets temporary
+	//m_pGameAssetManager->LoadGameAssets();
 
-    URHO3D_LOGINFO("Game Asset Manager assigned to Factory");
+	//// Test info string
+	//String Message = String("Game Asset Manager Loaded ") + String(m_pGameAssetManager->GetTotalGameAssets()) + String(" Game Assets");
 
-    // load game assets temporary
-    m_pGameAssetManager->LoadGameAssets();
+	//URHO3D_LOGINFO(Message);
 
-    // Test info string
-    String Message= String("Game Asset Manager Loaded ") +String(m_pGameAssetManager->GetTotalGameAssets())+ String(" Game Assets");
 
-    URHO3D_LOGINFO (Message);
+	// Game asset factory
+	m_pGAFactory = new GAFactory(context_);
 
 	m_pScene = SharedPtr<Scene>(new Scene(context_));
 
@@ -103,44 +103,58 @@ void BaseGameLogic::VOnUpdate(float timeStep)
     m_Lifetime += timeStep;
     switch (m_State)
     {
-    case BGS_Initializing:
-    {
-        VChangeState(BGS_MainMenu);
-        break;
-    }
+		case BGS_Initializing:
+		{
+			VChangeState(BGS_MainMenu);
+			break;
+		}
 
-    case BGS_MainMenu:
-    {
+		case BGS_MainMenu:
+		{
 
-        break;
-    }
+			break;
+		}
 
-    case BGS_WaitingForPlayer:
-    {
-        if (m_bIsPlayerLoggedIn)
-        {
-			VChangeState(BGS_LoadingPlayerLobby);
-        }
-        break;
-    }
+		case BGS_WaitingForPlayer:
+		{
+			if (m_bIsPlayerLoggedIn)
+			{
+				VChangeState(BGS_LoadingPlayerLobby);
+			}
+			break;
+		}
 
-	case BGS_LoadingPlayerLobby:
-	{
+		case BGS_LoadingPlayerLobby:
+		{
 
-		break;
-	}
+			break;
+		}
 
-    case BGS_SpawningPlayerGameNode:
-    {
-        VChangeState(BGS_Running);
-        break;
-    }
+		case BGS_SpawningPlayerGameNode:
+		{
+			VChangeState(BGS_Running);
+			break;
+		}
 
-    case BGS_Running:
-    {
-        m_pActivityManager->UpdateActivities(timeStep);
-        break;
-    }
+		case BGS_Running:
+		{
+			m_pActivityManager->UpdateActivities(timeStep);
+
+			if (m_pPhysics && !m_bIsProxy)
+			{
+				m_pPhysics->VOnUpdate(timeStep);
+				m_pPhysics->VSyncVisibleScene();
+			}
+
+			if (m_pChemistry && !m_bIsProxy)
+			{
+				m_pChemistry->VOnUpdate(timeStep);
+			}
+
+			break;
+		}
+
+
     }
 
     // update all game views
@@ -167,11 +181,11 @@ void BaseGameLogic::VShutdown()
 
     // delete
 
-    SAFE_DELETE(m_pGameAssetFactory);
+   // SAFE_DELETE(m_pGameAssetFactory);
 
-    SAFE_DELETE(m_pGameAssetManager);
+   // SAFE_DELETE(m_pGameAssetManager);
 
-	SAFE_DELETE(m_pTestFactory);
+	SAFE_DELETE(m_pGAFactory);
 
     m_pLevelManager->Shutdown();
 
@@ -194,40 +208,39 @@ void BaseGameLogic::VShutdown()
 // GameNode manipulations
 // ----------------------------------------------------------
 
-StrongNodePtr BaseGameLogic::VCreateGameNode(const GameAsset* gameAsset, pugi::xml_node* overrides, const Matrix4* initialTransform, const GameNodeId serversGameNodeId)
+StrongNodePtr BaseGameLogic::VCreateGameNode(const GameAsset* gameAsset, pugi::xml_node overrides, const Matrix4* initialTransform, const GameNodeId serversGameNodeId)
 {
-	assert(m_pGameAssetFactory && m_pGameAssetManager);
+	//assert(m_pGameAssetFactory && m_pGameAssetManager);
 
-	// if it is server, m_bIsProxy == false and serverGameNodeId must be INVALID_GAME_NODE_ID
-	// because server generates new game node id
-	if (!m_bIsProxy && serversGameNodeId != INVALID_GAME_NODE_ID)
-		return StrongNodePtr();
+	//// if it is server, m_bIsProxy == false and serverGameNodeId must be INVALID_GAME_NODE_ID
+	//// because server generates new game node id
+	//if (!m_bIsProxy && serversGameNodeId != INVALID_GAME_NODE_ID)
+	//	return StrongNodePtr();
 
-	// if it is client, m_bIsProxy == true and serverGameNodeId must be sent from server.
-	// So serversGameNodeId must not be equal INVALID_GAME_NODE_ID
-	if (m_bIsProxy && serversGameNodeId == INVALID_GAME_NODE_ID)
-		return StrongNodePtr();
+	//// if it is client, m_bIsProxy == true and serverGameNodeId must be sent from server.
+	//// So serversGameNodeId must not be equal INVALID_GAME_NODE_ID
+	//if (m_bIsProxy && serversGameNodeId == INVALID_GAME_NODE_ID)
+	//	return StrongNodePtr();
 
-	StrongNodePtr pGameNode = m_pGameAssetFactory->CreateNode(gameAsset, serversGameNodeId);
-	if (pGameNode)
-	{
-		m_pScene->AddChild(pGameNode, pGameNode->GetID());
+	//StrongNodePtr pGameNode = m_pGameAssetFactory->CreateNode(gameAsset, serversGameNodeId);
+	//if (pGameNode)
+	//{
+	//	m_pScene->AddChild(pGameNode, pGameNode->GetID());
 
-		// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running
-		// then we have to send this event to clients
-		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
-		{
-			SharedPtr<Event_Data_Request_New_Game_Node> pNewGameAsset(new Event_Data_Request_New_Game_Node(gameAsset->GetName(), initialTransform, pGameNode->GetID()));
-			VariantMap map = pNewGameAsset->VSerialize();
-			SendEvent(Event_Data_Request_New_Game_Node::g_EventType, map);
-		}
-	}
-	return pGameNode;
+	//	// If it is server and game state is BGS_SpawningPlayerGameNode or BGS_Running
+	//	// then we have to send this event to clients
+	//	if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
+	//	{
+	//		SharedPtr<Event_Data_Request_New_Game_Node> pNewGameAsset(new Event_Data_Request_New_Game_Node(gameAsset->GetName(), initialTransform, pGameNode->GetID()));
+	//		SendEvent(Event_Data_Request_New_Game_Node::g_EventType, pNewGameAsset->VSerialize());
+	//	}
+	//}
+	return StrongNodePtr();
 }
 
-StrongNodePtr BaseGameLogic::VCreateGameNode(const String& gameNodeResource, pugi::xml_node* overrides, const Matrix4* initialTransform, const GameNodeId serversGameNodeId, bool addToMainScene)
+StrongNodePtr BaseGameLogic::VCreateGameNode(const String& gameNodeResource, pugi::xml_node overrides, const Matrix4* initialTransform, const GameNodeId serversGameNodeId, bool addToMainScene)
 {
-	assert(m_pTestFactory);
+	assert(m_pGAFactory);
 
 	// if it is server, m_bIsProxy == false and serverGameNodeId must be INVALID_GAME_NODE_ID
 	// because server generates new game node id
@@ -239,7 +252,7 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const String& gameNodeResource, pug
 	if (m_bIsProxy && serversGameNodeId == INVALID_GAME_NODE_ID)
 		return StrongNodePtr();
 
-	StrongNodePtr pGameNode = m_pTestFactory->CreateNode(gameNodeResource, overrides, initialTransform, serversGameNodeId);
+	StrongNodePtr pGameNode = m_pGAFactory->CreateNode(gameNodeResource, overrides, initialTransform, serversGameNodeId);
 
 	if (pGameNode && addToMainScene)
 	{
@@ -253,8 +266,7 @@ StrongNodePtr BaseGameLogic::VCreateGameNode(const String& gameNodeResource, pug
 		if (!m_bIsProxy && (m_State == BGS_SpawningPlayerGameNode || m_State == BGS_Running))
 		{
 			SharedPtr<Event_Data_Request_New_Game_Node> pNewGameAsset(new Event_Data_Request_New_Game_Node(gameNodeResource, initialTransform, pGameNode->GetID()));
-			VariantMap map = pNewGameAsset->VSerialize();
-			SendEvent(Event_Data_Request_New_Game_Node::g_EventType, map);
+			SendEvent(Event_Data_Request_New_Game_Node::g_EventType, pNewGameAsset->VSerialize());
 		}
 	}
 
@@ -382,12 +394,8 @@ void BaseGameLogic::SetLoginSuccess(bool success, String reason)
 {
 	m_bIsPlayerLoggedIn = success;
 
-	Event_Data_Player_Login_Result logResult;
-	logResult.SetSuccess(success);
-	logResult.SetReason(reason);
-	VariantMap data = logResult.VSerialize();
-
-	SendEvent(Event_Data_Player_Login_Result::g_EventType, data);
+	Event_Data_Player_Login_Result logResult(success, reason);
+	SendEvent(Event_Data_Player_Login_Result::g_EventType, logResult.VSerialize());
 }
 
 // ----------------------------------------------------------
@@ -431,12 +439,11 @@ void BaseGameLogic::RequestNewGameNodeDelegate(StringHash eventType, VariantMap&
 	dataNewGameAsset.VDeserialize(eventData);
 
 	// Create the game node
-	StrongNodePtr  pGameNode = VCreateGameNode(dataNewGameAsset.GetResourceName(), NULL, dataNewGameAsset.GetInitialTransform(), dataNewGameAsset.GetServerActorId());
+	StrongNodePtr  pGameNode = VCreateGameNode(dataNewGameAsset.GetResourceName(), pugi::xml_node(), dataNewGameAsset.GetInitialTransform(), dataNewGameAsset.GetServerActorId());
 	if (pGameNode)
 	{
 		Event_Data_New_Game_Node pNewGameNodeEvent(pGameNode->GetID(), dataNewGameAsset.GetViewId());
-		VariantMap data = pNewGameNodeEvent.VSerialize();
-		SendEvent(Event_Data_New_Game_Node::g_EventType, data);
+		SendEvent(Event_Data_New_Game_Node::g_EventType, pNewGameNodeEvent.VSerialize());
 	}
 
 
@@ -451,4 +458,35 @@ void BaseGameLogic::EnvironmentLoadedDelegate(StringHash eventType, VariantMap& 
 {
     m_HumanGamesLoaded++;
 }
+
+void BaseGameLogic::GetGameAssetXml(pugi::xml_document& document, const GameNodeId id, SharedPtr<Scene> scene)
+{
+	// Get from game logic scene
+	if (scene == NULL)
+	{
+		Node* gameNode = m_pScene->GetChild(id);
+		if (gameNode)
+		{
+			m_pGAFactory->ToXML(document, StrongNodePtr(gameNode));
+		}
+		else
+		{
+			URHO3D_LOGERROR("Failed to find game node in GetGameAssetXML() function");
+		}
+	}
+	else
+	{
+		StrongNodePtr gameNode = StrongNodePtr(scene->GetChild(String(id), true));
+		if (gameNode)
+		{
+			GAFactory::ToXML(document, gameNode);
+		}
+		else
+		{
+			URHO3D_LOGERROR("Failed to find game node in GetGameAssetXML() function");
+		}
+	}
+
+}
+
 

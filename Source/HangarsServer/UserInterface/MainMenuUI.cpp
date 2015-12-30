@@ -16,6 +16,8 @@ MainMenuUI::MainMenuUI(Context* context) : BaseUI(context)
 {
 	m_bIsInitialized = false;
 	m_pControlPanel= nullptr;
+	m_pInput = GetSubsystem<Input>();
+	m_bIsCreated = false;
 }
 
 MainMenuUI::~MainMenuUI()
@@ -25,7 +27,7 @@ MainMenuUI::~MainMenuUI()
 
 void MainMenuUI::VOnUpdate(float timeStep)
 {
-
+	
 }
 
 bool MainMenuUI::VOnRestore()
@@ -54,7 +56,10 @@ void MainMenuUI::VOnShutdown()
 
 bool MainMenuUI::VOnMsgProc(AppMsg message)
 {
-
+	if(m_pInput->GetKeyPress(Urho3D::KEY_F1))
+	{
+		CreateServerWindow();
+	}
 	return false;
 }
 
@@ -82,44 +87,52 @@ void MainMenuUI::VSetVisible(bool visible)
 
 void MainMenuUI::CreateServerWindow()
 {
-	UI* ui = GetSubsystem<UI>();
-	XMLFile* file = g_pApp->GetConstantResCache()->GetResource<XMLFile>("Server/ControlPanelUI.xml");
-	
-	m_pControlPanel = ui->LoadLayout(file);
-	ui->GetRoot()->AddChild(m_pControlPanel);
+	if (!m_bIsCreated)
+	{
+		UI* ui = GetSubsystem<UI>();
+		XMLFile* file = g_pApp->GetConstantResCache()->GetResource<XMLFile>("Server/ControlPanelUI.xml");
 
-	m_pPlayersInfoWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Players_Info", true);
-	m_pServerInfoWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Info", true);
-	m_pServerOptionWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Option", true);
+		m_pControlPanel = ui->LoadLayout(file);
+		ui->GetRoot()->AddChild(m_pControlPanel);
 
-	// Set delegates
-	m_pPlayersInfoMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Players_Info", true);
-	SubscribeToEvent(m_pPlayersInfoMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandlePlayersInfoDelegate));
+		m_pPlayersInfoWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Players_Info", true);
+		m_pServerInfoWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Info", true);
+		m_pServerOptionWindow = (Window*)m_pControlPanel->GetChild("Window_Server_Option", true);
 
-	m_pServerInfoMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Info", true);
-	SubscribeToEvent(m_pServerInfoMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandleServerInfoDelegate));
-	
-	m_pServerOptionMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Option", true);
-	SubscribeToEvent(m_pServerOptionMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandleServerOptionDelegate));
+		// Set delegates
+		m_pPlayersInfoMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Players_Info", true);
+		SubscribeToEvent(m_pPlayersInfoMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandlePlayersInfoDelegate));
 
-	m_pPortEdit = (LineEdit*)m_pControlPanel->GetChild("LineEdit_Server_Port", true);
+		m_pServerInfoMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Info", true);
+		SubscribeToEvent(m_pServerInfoMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandleServerInfoDelegate));
 
-	Button* closeButton = (Button*)m_pControlPanel->GetChild("Close_button", true);
-	SubscribeToEvent(closeButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleCloseDelegate));
+		m_pServerOptionMenu = (Menu*)m_pControlPanel->GetChild("Menu_Server_Option", true);
+		SubscribeToEvent(m_pServerOptionMenu, E_MENUSELECTED, URHO3D_HANDLER(MainMenuUI, HandleServerOptionDelegate));
 
-	Button* startButton = (Button*)m_pControlPanel->GetChild("Button_Server_Start", true);
-	Button* restartButton = (Button*)m_pControlPanel->GetChild("Button_Server_Restart", true);
-	Button* stopButton = (Button*)m_pControlPanel->GetChild("Button_Server_Stop", true);
-	Button* pauseButton = (Button*)m_pControlPanel->GetChild("Button_Server_Pause", true);
-	
-	SubscribeToEvent(startButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleStartServerDelegate));
-	SubscribeToEvent(restartButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleRestartServerDelegate));
-	SubscribeToEvent(stopButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleStopServerDelegate));
-	SubscribeToEvent(pauseButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandlePauseServerDelegate));
+		m_pPortEdit = (LineEdit*)m_pControlPanel->GetChild("LineEdit_Server_Port", true);
 
-	SubscribeToEvent(Event_Data_Server_Create_Result::g_EventType, URHO3D_HANDLER(MainMenuUI, HandleServerCreatedDelegate));
-	SubscribeToEvent(Event_Data_Server_Stop_Result::g_EventType, URHO3D_HANDLER(MainMenuUI, HandleServerStoppedDelegate));
+		Button* closeButton = (Button*)m_pControlPanel->GetChild("Close_button", true);
+		SubscribeToEvent(closeButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleCloseDelegate));
 
+		Button* startButton = (Button*)m_pControlPanel->GetChild("Button_Server_Start", true);
+		Button* restartButton = (Button*)m_pControlPanel->GetChild("Button_Server_Restart", true);
+		Button* stopButton = (Button*)m_pControlPanel->GetChild("Button_Server_Stop", true);
+		Button* pauseButton = (Button*)m_pControlPanel->GetChild("Button_Server_Pause", true);
+
+		SubscribeToEvent(startButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleStartServerDelegate));
+		SubscribeToEvent(restartButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleRestartServerDelegate));
+		SubscribeToEvent(stopButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleStopServerDelegate));
+		SubscribeToEvent(pauseButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandlePauseServerDelegate));
+
+		SubscribeToEvent(Event_Data_Server_Create_Result::g_EventType, URHO3D_HANDLER(MainMenuUI, HandleServerCreatedDelegate));
+		SubscribeToEvent(Event_Data_Server_Stop_Result::g_EventType, URHO3D_HANDLER(MainMenuUI, HandleServerStoppedDelegate));
+
+		m_bIsCreated = true;
+	}
+	else
+	{
+		m_pControlPanel->SetVisible(true);
+	}
 }
 
 void MainMenuUI::HandleStartServerDelegate(StringHash eventType, VariantMap& eventData)
@@ -211,7 +224,7 @@ void MainMenuUI::HandleServerInfoDelegate(StringHash eventType, VariantMap& even
 
 void MainMenuUI::HandleCloseDelegate(StringHash eventType, VariantMap& eventData)
 {
-	context_->GetSubsystem<UI>()->GetRoot()->RemoveChild(m_pControlPanel);
+	m_pControlPanel->SetVisible(false);
 }
 
 void MainMenuUI::HandleServerCreatedDelegate(StringHash eventType, VariantMap& eventData)

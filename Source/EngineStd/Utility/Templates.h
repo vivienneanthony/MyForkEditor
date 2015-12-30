@@ -1,6 +1,17 @@
 #pragma once
 
+class Engine_noncopyable 
+{
+private:
+	// Default constructor  
+	Engine_noncopyable() 
+	{  }; 
 
+private:
+	// Copy constructors are disabled
+	Engine_noncopyable(const Engine_noncopyable& x);
+	Engine_noncopyable& operator=(const Engine_noncopyable& x);
+};
 
 template <class BaseType, class SubType>
 BaseType* GenericObjectCreationFunction() { return new SubType(); }

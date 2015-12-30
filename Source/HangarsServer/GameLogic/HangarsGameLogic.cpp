@@ -7,8 +7,7 @@
 
 HangarsGameLogic::HangarsGameLogic(Context* context) : BaseGameLogic(context)
 {
-
-
+	m_pDatabaseConnection = NULL;
 }
 
 HangarsGameLogic::~HangarsGameLogic()
@@ -28,6 +27,7 @@ bool HangarsGameLogic::VInitialize()
 void HangarsGameLogic::VShutdown()
 {
 	BaseGameLogic::VShutdown();
+
 }
 
 void HangarsGameLogic::VOnUpdate(float timeStep)
@@ -59,7 +59,10 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 	BaseGameLogic::VChangeState(newState);
 
 	if (m_State == BGS_WaitingForServerCreating)
-	{
+	{ 
+		// Get connection to database
+		m_pDatabaseConnection = g_pApp->ConnectToDB("DSN=HangarsDSN");
+
 		BaseSocketManager *pServer = new BaseSocketManager(context_);
 		if (!pServer->Init())
 		{
@@ -70,11 +73,11 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 
 		NetSocket* socket = new GameServerListenSocket(context_, g_pApp->GetGameOptions().m_ListenPort);
 		
-		pServer->AddSocket(socket);
-		g_pApp->SetSocketManager(pServer);
-
-		if (m_bIsServerCreated)
+		if (m_bIsServerCreated && m_pDatabaseConnection)
 		{
+			pServer->AddSocket(socket);
+			g_pApp->SetSocketManager(pServer);
+			
 			GameOptions& gameOption = g_pApp->GetGameOptions();
 			// There we should detect server ip address
 			gameOption.m_GameHost = "localhost";
@@ -89,6 +92,8 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 		}
 		else
 		{
+			SAFE_DELETE(socket);
+
 			// Send event to subsystems about server creation result.
 			Event_Data_Server_Create_Result serverResultEvent(false);
 			VariantMap data = serverResultEvent.VSerialize();
@@ -97,11 +102,14 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 			VChangeState(BGS_Invalid);
 			URHO3D_LOGINFO("Server state is Invalid");
 		}
+
+		
 	}
 	else if (m_State == BGS_WaitingForServerStop)
 	{
 		g_pApp->DestroyNetwork();
 
+		m_pDatabaseConnection = NULL;
 		// Send event to subsystems about server stopping.
 		Event_Data_Server_Stop_Result serverStopEvent;
 		SendEvent(Event_Data_Server_Stop_Result::g_EventType);

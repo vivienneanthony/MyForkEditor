@@ -57,14 +57,14 @@ bool LevelManager::CreateLevel(SharedPtr<Scene> scene, String levelName, bool ad
 
 
 	// load all initial game nodes
-	pugi::xml_node node = root.child("StaticGameNodes");
+	pugi::xml_node node = root.child("StaticGameAssets");
 	if (node)
 	{
 		for (pugi::xml_node pNode = node.first_child(); pNode; pNode = pNode.next_sibling())
 		{
 			String resource = pNode.attribute("resource").as_string();
 
-			StrongNodePtr  pGameNode = m_pGameLogic->VCreateGameNode(resource, &pNode, NULL, INVALID_GAME_NODE_ID, addToMainScene);
+			StrongNodePtr pGameNode = m_pGameLogic->VCreateGameNode(resource, pNode, NULL, INVALID_GAME_NODE_ID, addToMainScene);
 			if (pGameNode)
 			{
 				Event_Data_New_Game_Node pNewGameNodeEvent(pGameNode->GetID());
@@ -72,9 +72,13 @@ bool LevelManager::CreateLevel(SharedPtr<Scene> scene, String levelName, bool ad
 				SendEvent(Event_Data_New_Game_Node::g_EventType, data);
 			}
 
+			GameNodeId nodeId = pGameNode->GetID();
+			String name = pGameNode->GetName();
+
 			if (!addToMainScene)
 			{
 				scene->AddChild(pGameNode);
+				
 			}
 		}
 	}

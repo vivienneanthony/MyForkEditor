@@ -47,7 +47,10 @@ public:
 
 protected:
 	bool m_bIsInitialized;
-	
+	bool m_bIsCreated;
+
+	Input* m_pInput;
+
 	SharedPtr<UIElement> m_pControlPanel;
 
 	Menu* m_pServerInfoMenu;

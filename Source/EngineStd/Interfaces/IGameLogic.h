@@ -2,10 +2,9 @@
 #define IGAME_LOGIC_H
 
 class IGamePhysics;
-enum BaseGameState : int;
+class IGameChemistry;
 
-class GameAssetManager;
-class GameAssetFactory;
+enum BaseGameState : int;
 
 class IGameLogic : public Object
 {
@@ -22,6 +21,8 @@ public:
 	virtual void VChangeState(BaseGameState newState) = 0;
 	virtual bool VLoadGame(String levelResource) = 0;
 
+	virtual SharedPtr<IGamePhysics> VGetGamePhysics() = 0;
+	virtual SharedPtr<IGameChemistry> VGetGameChemistry() = 0;
 };
 
 #endif //IGAME_LOGIC_H

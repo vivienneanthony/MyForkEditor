@@ -72,7 +72,7 @@ Vector<GameAsset*>* GameAssetData::GetGameAssets(void)
 }
 
 // Deserialize
-bool GameAssetData::Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisChildGameAsset)
+bool GameAssetData::Deserialize(pugi::xml_node ThisChild, GameAsset * m_ThisChildGameAsset)
 {
     // Get attributes from xml to flags to set
     const char * m_Name = ThisChild.attribute("Name").as_string();
@@ -116,7 +116,7 @@ bool GameAssetData::Deserialize(pugi::xml_node & ThisChild, GameAsset * m_ThisCh
         m_GameAsset_NewChild = m_ThisChildGameAsset->AddChild("n/a","n/a",GAType_NotApplicable, GAState_NotApplicable);
 
         // Deserialize the next child
-        Deserialize(ThisChild_Child,m_GameAsset_NewChild);
+        Deserialize(ThisChild_Child, m_GameAsset_NewChild);
     }
 
     return true;

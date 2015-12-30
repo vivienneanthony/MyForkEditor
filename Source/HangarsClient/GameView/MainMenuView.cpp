@@ -113,6 +113,14 @@ bool MainMenuView::LoadDemoScene(String demoFile)
 	LevelManager* pLevelManager = g_pApp->GetGameLogic()->GetLevelManager();
 	pLevelManager->CreateLevel(m_pScene, "Levels/LoginScreen.xml", false);
 
+	// Test XML creation
+	pugi::xml_document document;
+
+	const Vector<SharedPtr<Node>>& childrens = m_pScene->GetChildren();
+	int size = childrens.Size();
+	g_pApp->GetGameLogic()->GetGameAssetXml(document, 15, m_pScene);
+
+	document.save_file("test.xml");
 
     // Get Resource
     /*ResourceCache* resCache = g_pApp->GetConstantResCache();

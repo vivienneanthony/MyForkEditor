@@ -8,7 +8,7 @@ class GameAsset;
 class GameAssetFactory;
 class GameAssetManager;
 
-class TestFactory;
+class GAFactory;
 
 enum BaseGameState : int
 {
@@ -53,12 +53,11 @@ public:
 	virtual void VShutdown();
 
 	// Manipulation with actors
-	virtual StrongNodePtr VCreateGameNode(const GameAsset* gameAsset, pugi::xml_node* overrides, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
+	virtual StrongNodePtr VCreateGameNode(const GameAsset* gameAsset, pugi::xml_node overrides, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
 	
 	
-	// Test factory
-	virtual StrongNodePtr  VCreateGameNode(const String& gameNoderesource, pugi::xml_node* overrides, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID, bool addToMainScene= true);
-	
+	// GA factory
+	virtual StrongNodePtr VCreateGameNode(const String& resource, pugi::xml_node overrides, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID, bool addToMainScene= true);
 	
 	virtual WeakNodePtr VGetGameNode(const GameNodeId gameNodeId);
 	virtual void VDestroyGameNode(const GameNodeId gameNodeId);
@@ -74,7 +73,13 @@ public:
 	// Network
 	void SetLoginSuccess(bool success, String reason = String::EMPTY); 
 	
+	// Editor function
+	void GetGameAssetXml(pugi::xml_document& document, const GameNodeId id, SharedPtr<Scene> scene = SharedPtr<Scene>());
+
 	// Getter/Setters
+	virtual SharedPtr<IGamePhysics> VGetGamePhysics() { return m_pPhysics; }
+	virtual SharedPtr<IGameChemistry> VGetGameChemistry() { return m_pChemistry; }
+
 	inline ActivityManager* GetActivityManager() { return m_pActivityManager; }
 	inline GameViewList& GetGameViews() { return m_GameViews; }
 	inline LevelManager* GetLevelManager() { return m_pLevelManager; }
@@ -86,9 +91,10 @@ public:
 	inline bool IsProxy() { return m_bIsProxy; }
 
     // Game Assets Getters/Setters
-    inline GameAssetManager *GetGameAssetManager()  {return m_pGameAssetManager;}
-	inline GameAssetFactory *GetGameAssetFactory()  {return m_pGameAssetFactory;}
-	inline TestFactory* GetTestFactory() { return m_pTestFactory; }
+    //inline GameAssetManager *GetGameAssetManager()  {return m_pGameAssetManager;}
+	//inline GameAssetFactory *GetGameAssetFactory()  {return m_pGameAssetFactory;}
+	inline GAFactory* GetGAFactory() { return m_pGAFactory; }
+
 
 protected:
 	// Network
@@ -121,12 +127,15 @@ protected:
 
 	LevelManager* m_pLevelManager;						// Manages loading and chaining levels
 
-	GameAssetManager * m_pGameAssetManager;             // Manages and loads game assets data
-	GameAssetFactory* m_pGameAssetFactory;				// Game Asset Factory. GameAsset -> Node.
+	//GameAssetManager * m_pGameAssetManager;             // Manages and loads game assets data
+	//GameAssetFactory* m_pGameAssetFactory;				// Game Asset Factory. GameAsset -> Node.
 
-	TestFactory* m_pTestFactory;						// Test factory
+	GAFactory* m_pGAFactory;							// Game Asset Factory. GameAsset -> GameNode.
 
 	bool m_bIsRenderDiagnostic;							// Are we rendering diagnostics?
+	SharedPtr<IGamePhysics> m_pPhysics;
+
+	SharedPtr<IGameChemistry> m_pChemistry;
 
 	int m_HumanGamesLoaded;
 	int m_ExpectedPlayers;								// How many players will play with us ?

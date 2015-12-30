@@ -30,6 +30,9 @@ protected:
 	void ServerCreatedDelegate(StringHash eventType, VariantMap& eventData);
 
 
+protected:
+	DbConnection* m_pDatabaseConnection;
+
 };
 
 #endif // HANGARS_GAME_LOGIC_H

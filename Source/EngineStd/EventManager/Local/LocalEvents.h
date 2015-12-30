@@ -16,7 +16,7 @@ public:
 	}
 
 
-	virtual const VariantMap& VSerialize()
+	virtual VariantMap& VSerialize()
 	{
 		m_OutSerializer["EVENT_TYPE"] = g_EventType.ToHash();
 		m_OutSerializer["EVENT_ORDER"] = m_EventOrder;
@@ -61,7 +61,7 @@ public:
 
 	}
 
-	virtual const VariantMap& VSerialize()
+	virtual VariantMap& VSerialize()
 	{
 		m_OutSerializer["EVENT_TYPE"] = g_EventType.ToHash();
 		m_OutSerializer["EVENT_ORDER"] = m_EventOrder;
@@ -116,7 +116,7 @@ public:
 
 	}
 
-	virtual const VariantMap& VSerialize()
+	virtual VariantMap& VSerialize()
 	{
 		m_OutSerializer["EVENT_TYPE"] = g_EventType.ToHash();
 		m_OutSerializer["EVENT_ORDER"] = m_EventOrder;
