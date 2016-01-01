@@ -115,6 +115,18 @@ void MainEditorView::EditorInstance()
     // Subscribe to events
     SubscribeToEvent(E_EDITORINSTANCE, URHO3D_HANDLER(MainEditorView, HandleEditorInstanceClose));
 
+ // Create additional menu in the editor after setup
+    if (m_pEditor->CreateSettingsMenu())
+    {
+        URHO3D_LOGERROR("Failed to create view settings menu.");
+    }
+
+    // Create additional menu in the editor after setup
+    if (m_pEditor->CreateAboutMenu())
+    {
+        URHO3D_LOGERROR("Failed to create about menu.");
+    }
+
     return;
 }
 // Handle creating console

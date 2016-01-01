@@ -32,6 +32,11 @@ const StringHash A_SHOWATTRIBUTE_VAR("ShowAttributeAction");
 const StringHash A_SHOWHIERARCHY_VAR("ShowHierarchyAction");
 const StringHash A_SHOWRESOURCE_VAR("ShowResourceBrowser");
 
+const StringHash A_ABOUTGDP_VAR("AboutGarageDoorProductions");
+const StringHash A_ABOUTGDPTEAM_VAR("AboutGarageDoorProductionsTeam");
+
+const StringHash A_SETTINGSPREFERENCES_VAR("SettingsPreferences");
+
 const StringHash A_NEWSCENE_VAR("NewScene");
 const StringHash A_OPENSCENE_VAR("OpenScene");
 const StringHash A_SAVESCENE_VAR("SaveScene");
