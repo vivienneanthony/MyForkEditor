@@ -116,12 +116,15 @@ endif ()
 # Urho3D tools
 add_subdirectory (Tools)
 
-
-
 # Build the engine
 if (Build-EngineStd)
   # Add Engine
   add_subdirectory (EngineStd)
+endif()
+
+if (Build-EngineIDE)
+  # Add Engine
+  add_subdirectory (EngineIDE)
 endif()
 
 if (Build-HangarsGame)
@@ -129,7 +132,6 @@ if (Build-HangarsGame)
   add_subdirectory (HangarsClient)
   add_subdirectory (HangarsServer)
 endif()
-
 
 # Urho3D extras
 if (URHO3D_EXTRAS)
