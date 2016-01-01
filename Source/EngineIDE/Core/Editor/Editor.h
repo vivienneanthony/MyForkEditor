@@ -65,6 +65,10 @@ public:
 	bool CreateGameAssetInspectorWindow();
 	// Create view settigns window
 	bool CreateViewSettingsWindow();
+		// Create about menu
+	bool CreateAboutMenu(void);
+	// Create settings menu
+	bool CreateSettingsMenu(void);
 
 public:
 	// Getters/Setters

@@ -574,7 +574,46 @@ bool Editor::CreateViewSettingsWindow()
 	return true;
 }
 
+// Create Settings menu
+bool Editor::CreateSettingsMenu(void)
+{
+    // Create Settings Menu
+	MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
 
+	if (!pMenubar)
+	{
+		return false;
+	}
+
+    // Create Menu
+	pMenubar->CreateMenu("Settings");
+
+	pMenubar->CreateMenuItem("Settings", "Preferences", A_SETTINGSPREFERENCES_VAR);
+
+    return true;
+}
+
+// Create About Menu
+bool Editor::CreateAboutMenu(void)
+{
+    // Create about menu
+	MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
+
+	if (!pMenubar)
+	{
+		return false;
+	}
+
+    // Create Menu
+	pMenubar->CreateMenu("About");
+
+
+	pMenubar->CreateMenuItem("About", "Garage Door Productions", A_ABOUTGDP_VAR);
+	pMenubar->CreateMenuItem("About", "Developers", A_ABOUTGDPTEAM_VAR);
+
+
+	return true;
+}
 
 bool Editor::LoadScene(const String& fileName)
 {
