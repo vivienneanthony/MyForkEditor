@@ -17,7 +17,7 @@ public:
 	NetworkEventForwarder(unsigned int connectionId);
 
 	// Delegate that forwards events through the network.  The game layer must register objects of this class for 
-	// the events it wants.  See HangarsClientApp::VCreateGameAndView() and HangarsClientAp::RemoteClientDelegate()
+	// the events it wants.  See HangarsEditorApp::VCreateGameAndView() and HangarsClientAp::RemoteClientDelegate()
 	// for examples of this happening.
 	void ForwardEventDelegate(StringHash eventType, VariantMap& eventData);
 

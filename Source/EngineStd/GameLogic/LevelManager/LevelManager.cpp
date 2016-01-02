@@ -68,8 +68,7 @@ bool LevelManager::CreateLevel(SharedPtr<Scene> scene, String levelName, bool ad
 			if (pGameNode)
 			{
 				Event_Data_New_Game_Node pNewGameNodeEvent(pGameNode->GetID());
-				VariantMap data = pNewGameNodeEvent.VSerialize();
-				SendEvent(Event_Data_New_Game_Node::g_EventType, data);
+				SendEvent(Event_Data_New_Game_Node::g_EventType, pNewGameNodeEvent.VSerialize());
 			}
 
 			GameNodeId nodeId = pGameNode->GetID();

@@ -1,4 +1,5 @@
 #include "EngineStd.h"
+#include "GameLogic/BaseGameLogic.h"
 #include "Mainloop/Activity/ActivityManager.h"
 #include "Audio/Audio.h"
 #include "Resources/ResourceCache.h"
@@ -16,7 +17,6 @@ const GameViewId INVALID_GAME_VIEW_ID = -1;
 
 HumanView::HumanView(Context *context, Renderer* renderer) : IGameView(context)
 {
-
     m_pRenderer = renderer ? renderer :  nullptr;
     InitAudio();
     if (m_pRenderer)
@@ -29,14 +29,6 @@ HumanView::HumanView(Context *context, Renderer* renderer) : IGameView(context)
 
     m_PointerRadius = 30;
     m_pActivityManager = new ActivityManager(context);
-
-    ScreenElementList m_ScreenElements;
-
-    // Add LetterBox to Element List
-    m_pLetterBox = SharedPtr<IScreenElement>(new LetterBox(context_));
-
-    if(m_pLetterBox) { VPushElement(m_pLetterBox); }
-
 
     VInitializeAllDelegates();
 }
@@ -86,7 +78,6 @@ bool HumanView::VOnLostDevice()
 void HumanView::VOnUpdate(float timeStep)
 {
     m_pActivityManager->UpdateActivities(timeStep);
-
 
     // This section of code was added post-press. It runs through the screenlist
     // and calls VOnUpdate. Some screen elements need to update every frame, one
@@ -214,32 +205,31 @@ void HumanView::VRemoveElement(SharedPtr<IScreenElement> pElement)
     }
 }
 
-bool HumanView::LoadGame(SharedPtr<File> file, SharedPtr<Scene> level)
+bool HumanView::LoadGame(pugi::xml_node pLevelData)
 {
     // call the delegate method
-    return VLoadGameDelegate(file, level);
+	return VLoadGameDelegate(pLevelData);
 }
 
 
-bool HumanView::VLoadGameDelegate(SharedPtr<File> file, SharedPtr<Scene> level)
+bool HumanView::VLoadGameDelegate(pugi::xml_node pLevelData)
 {
-    m_pScene = level;
-    ProgressBar progress(context_, g_pApp->GetConstantResCache());
-    progress.PreLoadScene(file, m_pScene, nullptr);
-    //m_pScene->LoadXML(*level);
-    // Create the camera (not included in the scene file)
-    m_pCameraNode = m_pScene->GetChild("MainCamera");
-    if (m_pCameraNode == nullptr)
-    {
-        m_pCameraNode = m_pScene->CreateChild("MainCamera");
-        m_pCameraNode->CreateComponent<Camera>();
+	// Default action. Connect HumanView's scene with GameLogic's scene.
+	m_pScene = g_pApp->GetGameLogic()->GetScene();
+	
+	// Create the camera (not included in the scene file)
+	m_pCameraNode = m_pScene->GetChild("MainCamera");
+	if (m_pCameraNode == nullptr)
+	{
+		m_pCameraNode = m_pScene->CreateChild("MainCamera");
+		m_pCameraNode->CreateComponent<Camera>();
 
-        // Set an initial position for the camera scene node above the plane
-        m_pCameraNode->SetPosition(Vector3(0.0f, 10.0f, 0.0f));
-    }
+		// Set an initial position for the camera scene node above the plane
+		m_pCameraNode->SetPosition(Vector3(0.0f, 10.0f, 0.0f));
+	}
 
-    SharedPtr<Viewport> viewport(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
-    m_pRenderer->SetViewport(1, viewport);
+	m_pViewport = SharedPtr<Viewport>(new Viewport(context_, m_pScene, m_pCameraNode->GetComponent<Camera>()));
+	m_pRenderer->SetViewport(1, m_pViewport);
     return true;
 }
 

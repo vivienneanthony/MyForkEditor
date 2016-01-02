@@ -2,8 +2,10 @@
 #include "EngineStd/EventManager/Server/ServerEvents.h"
 #include "EngineStd/Network/Managers/BaseSocketManager.h"
 #include "EngineStd/Network/Sockets/GameServerListenSocket.h"
-#include "HangarsGameLogic.h"
 
+#include "Database/Test.h"
+
+#include "HangarsGameLogic.h"
 
 HangarsGameLogic::HangarsGameLogic(Context* context) : BaseGameLogic(context)
 {
@@ -87,6 +89,13 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 			VariantMap data = serverResultEvent.VSerialize();
 			SendEvent(Event_Data_Server_Create_Result::g_EventType, data);
 
+			if (m_pDatabaseConnection->IsConnected())
+			{
+				TestDatabase();
+			}
+			
+			
+			
 			VChangeState(BGS_ServerCreated);
 			URHO3D_LOGINFO("Server state is Created");
 		}

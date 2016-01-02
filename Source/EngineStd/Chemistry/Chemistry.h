@@ -28,6 +28,5 @@ protected:
 
 };
 
-
 extern Urho3D::SharedPtr<IGameChemistry> CreateGameChemistry();
 extern Urho3D::SharedPtr<IGameChemistry> CreateNullChemistry();

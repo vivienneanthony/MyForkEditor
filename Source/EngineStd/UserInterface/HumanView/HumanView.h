@@ -36,15 +36,17 @@ public:
 	virtual void VPushElement(SharedPtr<IScreenElement> pElement);
 	virtual void VRemoveElement(SharedPtr<IScreenElement> pElement);
 
-	bool LoadGame(SharedPtr<File> file, SharedPtr<Scene> level);
+	bool LoadGame(pugi::xml_node pLevelData);
 
 
 protected:
-	virtual bool VLoadGameDelegate(SharedPtr<File> file, SharedPtr<Scene> level);
+	virtual bool VLoadGameDelegate(pugi::xml_node pLevelData);
 
 
 	// Getter/Setters
 	inline ActivityManager* GetActivityManager() { return m_pActivityManager; }
+	inline SharedPtr<Viewport> GetViewport() { return m_pViewport; }
+
 
 protected:
 	// Initialize audio system. Can exist ONLY 1 Audio system in the program.
@@ -52,8 +54,8 @@ protected:
 
 protected:
 	// Delegates
-	virtual void VInitializeAllDelegates();				// Register all delegates
-	virtual void VDestroyAllDelegates();					// Unsubscribe from all events
+	virtual void VInitializeAllDelegates();			// Register all delegates
+	virtual void VDestroyAllDelegates();			// Unsubscribe from all events
 
 protected:
 	GameViewId m_ViewId;							// Unique game view id.
@@ -68,17 +70,14 @@ protected:
 	ScreenElementList m_ScreenElements;				// A game screen entity.
 
 	SharedPtr<Scene> m_pScene;
-	Node* m_pCameraNode;							// Camera node
+	SharedPtr<Node> m_pCameraNode;					// Camera node
 
+	SharedPtr<Viewport> m_pViewport;
 
 	// Interface sensitive objects
 	SharedPtr<IPointerHandler> m_pPointerHandler;   // Generic pointer handler
 	int m_PointerRadius;
 	SharedPtr<IKeyboardHandler> m_pKeyboardHandler;
-
-    // Letterbox pointer
-	SharedPtr<IScreenElement> m_pLetterBox;         // Temporary
-
 };
 
 #endif //HUMAN_VIEW_H

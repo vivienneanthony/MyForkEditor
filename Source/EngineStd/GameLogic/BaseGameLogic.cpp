@@ -11,10 +11,13 @@
 #include "Mainloop/Activity/ActivityManager.h"
 
 #include "Resources/ResourceCache.h"
+#include "Resources/XMLResourceLoader/XMLResourceLoader.h"
 
 #include "GameAssetManager/Factory/GameAssetFactory.h"
 #include "GameAssetManager/GameAssetManager.h"
 
+#include "Chemistry/Chemistry.h"
+#include "Physics/Physics.h"
 
 //#include "GameAssetManager/GameNode/GameNode.h"
 #include "GameAsset/GAFactory.h"
@@ -91,6 +94,9 @@ bool BaseGameLogic::VInitialize()
 	// Game asset factory
 	m_pGAFactory = new GAFactory(context_);
 
+	m_pChemistry = SharedPtr<IGameChemistry>(new EngineChemistry(context_));
+	m_pPhysics = SharedPtr<IGamePhysics>(new EnginePhysics(context_));
+
 	m_pScene = SharedPtr<Scene>(new Scene(context_));
 
     VInitializeAllDelegates();
@@ -111,22 +117,11 @@ void BaseGameLogic::VOnUpdate(float timeStep)
 
 		case BGS_MainMenu:
 		{
-
 			break;
 		}
 
 		case BGS_WaitingForPlayer:
 		{
-			if (m_bIsPlayerLoggedIn)
-			{
-				VChangeState(BGS_LoadingPlayerLobby);
-			}
-			break;
-		}
-
-		case BGS_LoadingPlayerLobby:
-		{
-
 			break;
 		}
 
@@ -320,10 +315,6 @@ void BaseGameLogic::VChangeState(enum BaseGameState newState)
             return;
         }
     }
-
-
-
-
     m_State = newState;
 }
 
@@ -338,28 +329,87 @@ void BaseGameLogic::VSetProxy()
 
 bool BaseGameLogic::VLoadGame(String levelResource)
 {
-    /*SharedPtr<File> file = g_pApp->GetConstantResCache()->GetFile(levelResource);
+    SharedPtr<File> file = g_pApp->GetConstantResCache()->GetFile(levelResource);
     m_pScene = SharedPtr<Scene>(new Scene(context_));
 
-    // initialize all human views
+	pugi::xml_document* document = XMLResourceLoader::LoadXMLDocument(levelResource);
+	pugi::xml_node pLevelData = document->root();
+
+	if (!pLevelData)
+	{
+		URHO3D_LOGERROR("Failed to load document in BaseGameLogic::VLoadGame()");
+		return false;
+	}
+
+	// Pre and post load scripts
+	const char* preLoadScript = NULL;
+	const char* postLoadScript = NULL;
+
+	// Parse the pre & post script attributes
+	pugi::xml_node pScriptElement = pLevelData.child("Script");
+	if (pScriptElement)
+	{
+		preLoadScript = pScriptElement.attribute("preLoad").as_string();
+		postLoadScript = pScriptElement.attribute("postLoad").as_string();
+	}
+
+	// Load the pre-load script if there is one
+	if (preLoadScript)
+	{
+		
+	}
+
+	// load all initial game nodes
+	pugi::xml_node node = pLevelData.child("StaticGameAssets");
+	if (node)
+	{
+		for (pugi::xml_node pNode = node.first_child(); pNode; pNode = pNode.next_sibling())
+		{
+			String resource = pNode.attribute("resource").as_string();
+
+			StrongNodePtr pGameNode = VCreateGameNode(resource, pNode, NULL, INVALID_GAME_NODE_ID);
+			if (pGameNode)
+			{
+				Event_Data_New_Game_Node pNewGameNodeEvent(pGameNode->GetID());
+				SendEvent(Event_Data_New_Game_Node::g_EventType, pNewGameNodeEvent.VSerialize());
+			}
+		}
+	}
+
+    // Initialize all human views
     for (auto it = m_GameViews.Begin(); it != m_GameViews.End(); ++it)
     {
         SharedPtr<IGameView> pView = *it;
         if (pView->VGetType() == GameView_Human)
         {
             SharedPtr<HumanView> pHumanView = StaticCast<HumanView, IGameView>(pView);
-            pHumanView->LoadGame(file, m_pScene);
+			pHumanView->LoadGame(pLevelData);
         }
     }
 
-    // call the delegate load function
-    if (!VLoadGameDelegate(levelResource))
-        return false;  // no error message here because it's assumed VLoadGameDelegate() kicked out the error
-		*/
+    // Call the delegate load function
+	if (!VLoadGameDelegate(pLevelData))
+	{
+		return false;  // no error message here because it's assumed VLoadGameDelegate() kicked out the error
+	}
 
-    // trigger the Environment Loaded Game event - only then can player actors and AI be spawned!
-    SendEvent(String("Environment_Loaded"));
+	// load the post-load script if there is one
+	if (postLoadScript)
+	{
 
+	}
+
+	if (m_bIsProxy)
+	{
+		// Trigger the Remote Environment Loaded Game event - only then can player actors and AI be spawned!
+		SendEvent(String("Remote_Environment_Loaded"));
+	}
+	else
+	{
+		// Trigger the Environment Loaded Game event - only then can player actors and AI be spawned!
+		SendEvent(String("Environment_Loaded"));
+	}
+    
     return true;
 }
 
@@ -415,8 +465,6 @@ void BaseGameLogic::VDestroyAllDelegates()
 	{
 		UnsubscribeFromEvent(Event_Data_Request_New_Game_Node::g_EventType);
 	}
-
-
 }
 
 

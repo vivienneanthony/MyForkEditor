@@ -2,7 +2,6 @@
 #define BASE_GAME_LOGIC_H
 
 class ActivityManager;
-class AwesomiumCore;
 class LevelManager;
 class GameAsset;
 class GameAssetFactory;
@@ -39,9 +38,11 @@ class BaseGameLogic : public IGameLogic
 {
 	// This is neccessary, in order that get access to GameViews.
 	friend class EngineApp;
-
-
 	URHO3D_OBJECT(BaseGameLogic, Object)
+
+protected:
+	typedef const Vector<SharedPtr<Node>>& GameNodes;
+
 public:
 	// Constructors
 	BaseGameLogic(Context *context);
@@ -55,12 +56,14 @@ public:
 	// Manipulation with actors
 	virtual StrongNodePtr VCreateGameNode(const GameAsset* gameAsset, pugi::xml_node overrides, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID);
 	
-	
 	// GA factory
 	virtual StrongNodePtr VCreateGameNode(const String& resource, pugi::xml_node overrides, const Matrix4* initialTransform = NULL, const GameNodeId serversGameNodeId = INVALID_GAME_NODE_ID, bool addToMainScene= true);
 	
 	virtual WeakNodePtr VGetGameNode(const GameNodeId gameNodeId);
 	virtual void VDestroyGameNode(const GameNodeId gameNodeId);
+
+	// Get Game nodes
+	GameNodes GetGameNodesList() { return m_pScene->GetChildren(); }
 
 	// Handle game state
 	virtual void VChangeState(enum BaseGameState newState);
@@ -101,7 +104,7 @@ protected:
 	virtual void VSetProxy();
 
 	// Override this function to do any game-specific loading.
-	virtual bool VLoadGameDelegate(String pLevelData) { return true; }
+	virtual bool VLoadGameDelegate(pugi::xml_node pLevelData) { return true; }
 
 protected:
 	virtual void VInitializeAllDelegates();		// Register all delegates

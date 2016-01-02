@@ -25,9 +25,30 @@ bool RemoteGameLogic::VInitialize()
 
 void RemoteGameLogic::VShutdown()
 {
-
-
     BaseGameLogic::VShutdown();
+
+}
+
+void RemoteGameLogic::VOnUpdate(float timeStep)
+{
+	BaseGameLogic::VOnUpdate(timeStep);
+
+	switch (m_State)
+	{
+		case BGS_WaitingForPlayer:
+		{
+			if (m_bIsPlayerLoggedIn)
+			{
+				VChangeState(BGS_LoadingPlayerLobby);
+			}
+			break;
+		}
+
+		case BGS_LoadingPlayerLobby:
+		{
+			break;
+		}
+	}
 }
 
 
@@ -35,19 +56,14 @@ void RemoteGameLogic::VChangeState(enum BaseGameState newState)
 {
     BaseGameLogic::VChangeState(newState);
 
-
-	if (m_State == BGS_WaitingForPlayer)
+	if (newState == BGS_WaitingForPlayer)
 	{
 		VSetProxy();
-
 		g_pApp->AttachAsClient();
-
-
 	}
-
 }
 
-bool RemoteGameLogic::VLoadGameDelegate(String pLevelData)
+bool RemoteGameLogic::VLoadGameDelegate(pugi::xml_node pLevelData)
 {
     return true;
 }

@@ -15,10 +15,11 @@ public:
 	virtual bool VInitialize();
 	virtual void VShutdown();
 
+	virtual void VOnUpdate(float timeStep);
 
 	virtual void VChangeState(enum BaseGameState newState);
 
-	virtual bool VLoadGameDelegate(String pLevelData);
+	virtual bool VLoadGameDelegate(pugi::xml_node pLevelData);
 
 protected:
 

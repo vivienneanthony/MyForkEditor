@@ -83,5 +83,4 @@ Urho3D::SharedPtr<IGameChemistry> CreateNullChemistry()
 	}
 
 	return gameChemistry;
-
 }

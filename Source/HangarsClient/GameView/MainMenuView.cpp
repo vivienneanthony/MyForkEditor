@@ -64,12 +64,8 @@ void  MainMenuView::FinishIntroductionPartDelegate(StringHash eventType, Variant
 
 	UnsubscribeFromEvent(Event_Data_Finish_Introduction_Part::g_EventType);
 
-    m_pLetterBox->VSetVisible(true);
-
     // Test loading a scene
     CreateManualScene();
-
-
 }
 
 void MainMenuView::CreateManualScene(void)

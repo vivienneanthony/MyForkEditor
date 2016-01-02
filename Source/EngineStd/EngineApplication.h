@@ -75,7 +75,6 @@ protected:
 	void ForwardEventDelegate(StringHash eventType, VariantMap& eventData);
 
 
-
 private:
 	// Utility function
 	void CreateConsole(XMLFile* style);
@@ -108,7 +107,7 @@ public:
 	inline BaseSocketManager* GetSocketManager() { return m_pBaseSocketManager; }
 	inline void SetSocketManager(BaseSocketManager* manager) { m_pBaseSocketManager = manager; }
 	inline NetworkEventForwarder* GetEventForwarder() { return m_pNetworkEventForwarder;  }
-
+	inline DbConnection* GetDatabaseConnection() { return m_pDBConnection; }
 
 	// Game specific getters/setters
 	virtual String GetWindowIcon() = 0;
@@ -143,7 +142,6 @@ protected:
 	WorkQueue* m_pWorkQueue;					// Executes background tasks in worker threads
 
 // Network
-
 	Network* m_pNetwork;
 	BaseSocketManager* m_pBaseSocketManager;		    // Can be server/client
 	NetworkEventForwarder* m_pNetworkEventForwarder;	// Read events from server
@@ -151,7 +149,6 @@ protected:
 // Database
 	Database* m_pDatabase;
 	DbConnection* m_pDBConnection;
-
 
 // Game specific
 	Cursor* m_pCurrentCursor;					// Current cursor, that handle UI system.
@@ -171,9 +168,9 @@ protected:
 	bool m_bIsInit;								// True - already initialized all subsystems. Game can be started.
 
 	PlatformOS m_CurrentPlatform;               // Current platform
-
 };
 
 extern EngineApp* g_pApp;						// Global pointer, which is visible for whole program.
 
 #endif // ENGINE_APPLICATION_H
+
