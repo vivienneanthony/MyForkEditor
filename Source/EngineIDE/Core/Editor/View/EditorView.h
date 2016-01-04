@@ -42,6 +42,8 @@ public:
 	TabWindow* GetRightFrame() { return m_pRightFrame; }
 	// Get middle frame
 	TabWindow* GetMiddleFrame() { return m_pMiddleFrame; }
+	// Get main frame
+    UIElement* GetMainFrame() {return m_pMainFrame;}
 
 	// Is tool bar visible
 	bool IsToolBarVisible() const { return m_pToolbar->IsVisible(); }

@@ -67,6 +67,12 @@ public:
 
     /// \todo handle changes that a pending (marked as *), external data, save/load editor state ??
 
+    // Scene stop update
+    virtual void StopSceneUpdate();
+    // Scene start update
+    virtual void StartSceneUpdate();
+
+
 protected:
     bool visible_;
 };
