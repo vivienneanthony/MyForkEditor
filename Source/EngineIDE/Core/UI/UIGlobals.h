@@ -52,6 +52,9 @@ const StringHash A_CREATEREPNODE_VAR("CreateRepNode");
 const StringHash A_CREATECOMPONENT_VAR("CreateComponent");
 const StringHash A_CREATEBUILTINOBJ_VAR("CreateBuiltinObject");
 
+// Game Asset Node Create
+const StringHash A_CREATEGAMEASSETNODE_VAR("CreateGameAssetNode");
+
 const int PICK_GEOMETRIES = 0;
 const int PICK_LIGHTS = 1;
 const int PICK_ZONES = 2;

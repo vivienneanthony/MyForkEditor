@@ -15,5 +15,14 @@ EditorPlugin::~EditorPlugin()
 
 }
 
+// Scene start update
+void EditorPlugin::StartSceneUpdate()
+{
+}
+
+// Scene stop update
+void EditorPlugin::StopSceneUpdate()
+{
+}
 
 

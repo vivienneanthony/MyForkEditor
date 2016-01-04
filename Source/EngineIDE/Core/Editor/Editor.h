@@ -150,6 +150,9 @@ protected:
 	void HandleHierarchyListSelectionChangeDelegate(StringHash eventType, VariantMap& eventData);
 	// Handle Hierarchy double click events
 	void HandleHierarchyListDoubleClickDelegate(StringHash eventType, VariantMap& eventData);
+	// Handle Key Down
+    void HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData);
+
 
 protected:
 	// Cached pointer from Engine

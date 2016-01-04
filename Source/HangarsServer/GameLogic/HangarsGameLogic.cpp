@@ -47,7 +47,7 @@ void HangarsGameLogic::VOnUpdate(float timeStep)
 
 		case BGS_ServerStopped:
 		{
-	
+
 			break;
 		}
 	}
@@ -57,11 +57,11 @@ void HangarsGameLogic::VOnUpdate(float timeStep)
 
 void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 {
-	
+
 	BaseGameLogic::VChangeState(newState);
 
 	if (m_State == BGS_WaitingForServerCreating)
-	{ 
+	{
 		// Get connection to database
 		m_pDatabaseConnection = g_pApp->ConnectToDB("DSN=HangarsDSN");
 
@@ -74,16 +74,16 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 		}
 
 		NetSocket* socket = new GameServerListenSocket(context_, g_pApp->GetGameOptions().m_ListenPort);
-		
+
 		if (m_bIsServerCreated && m_pDatabaseConnection)
 		{
 			pServer->AddSocket(socket);
 			g_pApp->SetSocketManager(pServer);
-			
+
 			GameOptions& gameOption = g_pApp->GetGameOptions();
 			// There we should detect server ip address
 			gameOption.m_GameHost = "localhost";
-			
+
 			// Send event to subsystems about server creation result.
 			Event_Data_Server_Create_Result serverResultEvent(true);
 			VariantMap data = serverResultEvent.VSerialize();
@@ -91,11 +91,9 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 
 			if (m_pDatabaseConnection->IsConnected())
 			{
-				TestDatabase();
+				 TestDatabase();
 			}
-			
-			
-			
+
 			VChangeState(BGS_ServerCreated);
 			URHO3D_LOGINFO("Server state is Created");
 		}
@@ -112,7 +110,7 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 			URHO3D_LOGINFO("Server state is Invalid");
 		}
 
-		
+
 	}
 	else if (m_State == BGS_WaitingForServerStop)
 	{

@@ -28,6 +28,7 @@
 #include "../UI/Attribute/AttributeInspector.h"
 #include "../UI/Modal/ModalWindow.h"
 #include "../UI/Settings/ViewSettingsWindow.h"
+#include "../UI/About/AboutTeamGDPWindow.h"
 
 #include "../UI/UIUtils.h"
 #include "../UI/UIGlobals.h"
@@ -330,6 +331,7 @@ void Editor::InitializeAllDelegates()
 		SubscribeToEvent(m_pEditorView->GetMiddleFrame(), E_ACTIVETABCHANGED, URHO3D_HANDLER(Editor, HandleMainEditorTabChangedDelegate));
 	}
 
+    // Handle Update Delegate
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Editor, HandleUpdateDelegate));
 }
 
@@ -829,6 +831,9 @@ void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
 	{
 		m_pResourceBrowser->Update();
 	}
+
+	// Handle editor keypress check
+	HandleKeyDownDelegate(eventType,eventData);
 }
 
 void Editor::HandleMenuBarActionDelegate(StringHash eventType, VariantMap& eventData)
@@ -953,4 +958,56 @@ void Editor::AddResourcePath(String newPath, bool usePreferredDir /*= true*/)
     // Add resource path as first priority so that it takes precedence over the default data paths
 	m_pCache->AddResourceDir(newPath, 0);
     //RebuildResourceDatabase();
+}
+
+// Handle Key Presses
+void Editor::HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData)
+{
+    // Get input subsystem
+    Input * input_ = g_pApp->GetSubsystem<Input>();
+
+    // Check for delete key was pressed
+    if (input_->GetKeyPress(KEY_DELETE)==true)
+    {
+
+        // Edit nodes
+        Vector<WeakPtr<Node>>&	editNodes = m_pEditorSelection->GetEditNodes();
+
+        // Check if there are selected items
+        if(editNodes.Size()>0)
+        {
+            // Get the initial node ID
+            unsigned id=editNodes.At(0)->GetID();
+
+            // Check if the node is not blank or the screen
+            if(id!=1&&id!=0)
+            {
+
+                // if the plugin is set
+                if(m_pEditorPluginMain)
+                {
+
+                    // Stop any plugin from update to execute delete
+                    m_pEditorPluginMain->StopSceneUpdate();
+
+                    // Should stop some scene updating
+                    if(m_pScene)
+                    {
+                        // Get first valid node to delete
+                        Node * deleteNode = editNodes.At(0);
+
+                        // Clear selection if not it will crash
+                        m_pEditorSelection->ClearSelection();
+
+                        // Remove the node
+                        m_pScene->RemoveChild(deleteNode);
+                    }
+
+                    // Start scene updating
+                    m_pEditorPluginMain->StopSceneUpdate();
+                }
+            }
+        }
+    }
+    return;
 }

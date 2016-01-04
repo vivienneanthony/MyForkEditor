@@ -35,6 +35,8 @@ enum SnapScaleMode
 
 class EPScene3D;
 class GizmoScene3D;
+class GameAssetSelector;
+class AboutTeamGDPWindow;
 
 using namespace Urho3D;
 
@@ -294,7 +296,14 @@ protected:
     void CreateBuiltinObject(const String& name);
     bool CheckForExistingGlobalComponent(Node* node, const String& typeName);
 
+    // Create game asst
+    void CreateGameAssetNode(void);
+    void HandleCreateGameAssetNode(StringHash eventType, VariantMap& eventData);
+    void HandleCreateGameAssetNodeCancelPressed(StringHash eventType, VariantMap& eventData);
 
+    // Create about team
+    void CreateAboutTeamGDPWindow(void);
+    void HandleAboutTeamGDPWindowClosePressed(StringHash eventType, VariantMap& eventData);
 
     // Mini Tool Bar actions
     void MiniToolBarCreateLocalNode(StringHash eventType, VariantMap& eventData);
@@ -330,6 +339,10 @@ protected:
     SharedPtr<EPScene3DView>	activeView;
     SharedPtr<Node>				cameraNode_;
     SharedPtr<Camera>			camera_;
+
+    // Game Assset Selector
+    SharedPtr<GameAssetSelector> gameAssetChooserWindow;
+    SharedPtr<AboutTeamGDPWindow> pAboutTeamGDPWindow;
 
     // cache editor subsystems
     EditorData*			editorData_;
