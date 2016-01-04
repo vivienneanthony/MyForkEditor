@@ -29,6 +29,7 @@
 #include "../UI/Modal/ModalWindow.h"
 #include "../UI/Settings/ViewSettingsWindow.h"
 #include "../UI/About/AboutTeamGDPWindow.h"
+#include "../UI/Selector/GameAssetSelector.h"
 
 #include "../UI/UIUtils.h"
 #include "../UI/UIGlobals.h"
@@ -156,6 +157,9 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 	ModalWindow::RegisterObject(context_);
 	TabWindow::RegisterObject(context_);
 	HierarchyWindow::RegisterObject(context_);
+
+    GameAssetSelector::RegisterObject(context_);
+    AboutTeamGDPWindow::RegisterObject(context_);
 
 
     // InitializeSettings

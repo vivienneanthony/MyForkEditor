@@ -79,7 +79,7 @@ AboutTeamGDPWindow::AboutTeamGDPWindow(Context* context) :
     AddChild(m_pAboutUs);
     m_pAboutUs->SetInternal(true);
 
-    m_pAboutUs->SetText("Vivienne Anthony");
+    m_pAboutUs->SetText("Vivienne Anthony (Programmer) - Andrej (Programmer)");
 
 
     BorderImage * spacer2 = CreateChild<BorderImage>("ATGW_Spacer2");

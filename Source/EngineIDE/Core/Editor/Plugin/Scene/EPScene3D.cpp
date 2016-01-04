@@ -1751,11 +1751,16 @@ void EPScene3D::CreateAboutTeamGDPWindow(void)
         pAboutTeamGDPWindow->SetModalFrameSize(IntVector2(300,500));
         pAboutTeamGDPWindow->SetOpacity(1.0f);
 
-        pAboutTeamGDPWindow-> SetPosition(700, 25);
-
         // Event subscription
         SubscribeToEvent(pAboutTeamGDPWindow->GetOkButton(), E_RELEASED, URHO3D_HANDLER(EPScene3D,HandleAboutTeamGDPWindowClosePressed));
         SubscribeToEvent(pAboutTeamGDPWindow->GetCloseButton(),E_RELEASED,URHO3D_HANDLER(EPScene3D,HandleAboutTeamGDPWindowClosePressed));
+
+        // Get frame width and height
+        int Width = editorView_->GetMainFrame()->GetWidth();
+        int Height = editorView_->GetMainFrame()->GetHeight();
+
+        // Set position to the middle of the screen
+        pAboutTeamGDPWindow-> SetPosition(Width/2-pAboutTeamGDPWindow->GetWidth()/2, Height/2-pAboutTeamGDPWindow->GetHeight()/2);
 
     }
 
