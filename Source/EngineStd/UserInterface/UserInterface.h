@@ -9,12 +9,6 @@ class BaseUI : public IScreenElement
 {
 	URHO3D_OBJECT(BaseUI,IScreenElement);
 
-protected:
-	int					m_PosX, m_PosY;
-	int					m_Width, m_Height;
-	int					m_Result;
-	bool				m_bIsVisible;
-
 public:
 	BaseUI(Context* context);
 	virtual ~BaseUI();
@@ -23,6 +17,15 @@ public:
 	virtual bool VOnLostDevice() { return true; };
 	virtual bool VIsVisible() const;
 	virtual void VSetVisible(bool visible);
+
+protected:
+	int	m_PosX;
+	int m_PosY;
+	int	m_Width;
+	int m_Height;
+	int	m_Result;
+	bool m_bIsVisible;
+
 
 };
 

@@ -59,8 +59,6 @@ protected:
 	void HandleRemoteEventNetworkMessage(StringHash eventType, VariantMap& eventData);
 	void HandleDisconnect(StringHash eventType, VariantMap& eventData);
 
-	void HandleLoginRequest(StringHash eventType, VariantMap& eventData);
-
 protected:
 	Network* m_pNetwork;		// Networking.
 	Connection* m_pConnection;	// Client connection to the server.

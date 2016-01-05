@@ -22,8 +22,11 @@ public:
 	virtual bool VLoadGameDelegate(pugi::xml_node pLevelData);
 
 protected:
+	// Network
+	virtual void VSetProxy();
 
-
+	// Delegates
+	void HandleLoginRequest(StringHash eventType, VariantMap& eventData);
 };
 
 #endif // REMOTE_GAME_LOGIC_H

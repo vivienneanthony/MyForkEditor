@@ -271,14 +271,18 @@ bool EngineApp::AttachAsClient()
 	
 	if (!clientManager->Connect())
 	{
-		URHO3D_LOGDEBUG(String("Client connection failed."));
+		URHO3D_LOGDEBUG(String("Client connection to server failed. Propably server is shutdown."));
 		SAFE_DELETE(clientManager);
 		return false;
 	}
 
+	if (m_pBaseSocketManager != NULL)
+	{
+		SAFE_DELETE(m_pBaseSocketManager);
+	}
+
 	m_pBaseSocketManager = clientManager;
 	
-
 	return true;
 }
 
@@ -287,12 +291,11 @@ void EngineApp::VCreateNetworkEventForwarder(void)
 {
 	if (m_pNetworkEventForwarder != NULL)
 	{
-		URHO3D_LOGERROR("Overwriting network event forwarder in TeapotWarsApp!");
+		URHO3D_LOGERROR("Overwriting network event forwarder in EngineApp!");
 		SAFE_DELETE(m_pNetworkEventForwarder);
 	}
 
 	m_pNetworkEventForwarder = new NetworkEventForwarder(INVALID_CONNECTION_ID);
-
 }
 
 void EngineApp::VDestroyNetworkEventForwarder(void)
@@ -323,14 +326,12 @@ void EngineApp::DestroyNetwork()
 	
 	if (g_pApp->GetGameLogic()->IsProxy())
 	{
-		g_pApp->GetGameLogic()->SetLoginSuccess(false);
 		VDestroyNetworkEventForwarder();
 	}
 	else
 	{
 		if (m_pNetwork)
 		{
-			m_pNetwork->StopServer();
 			g_pApp->GetGameLogic()->SetServerCreated(false);
 		}
 	}

@@ -47,7 +47,7 @@ void HangarsGameLogic::VOnUpdate(float timeStep)
 
 		case BGS_ServerStopped:
 		{
-
+	
 			break;
 		}
 	}
@@ -57,14 +57,15 @@ void HangarsGameLogic::VOnUpdate(float timeStep)
 
 void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 {
-
+	
 	BaseGameLogic::VChangeState(newState);
 
 	if (m_State == BGS_WaitingForServerCreating)
-	{
+	{ 
 		// Get connection to database
-		m_pDatabaseConnection = g_pApp->ConnectToDB("DSN=HangarsDSN");
-
+		m_pDatabaseConnection = NULL;
+		//g_pApp->ConnectToDB("DSN=Hangars");
+		
 		BaseSocketManager *pServer = new BaseSocketManager(context_);
 		if (!pServer->Init())
 		{
@@ -75,42 +76,37 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 
 		NetSocket* socket = new GameServerListenSocket(context_, g_pApp->GetGameOptions().m_ListenPort);
 
-		if (m_bIsServerCreated && m_pDatabaseConnection)
+			
+		pServer->AddSocket(socket);
+		g_pApp->SetSocketManager(pServer);
+			
+		GameOptions& gameOption = g_pApp->GetGameOptions();
+		
+		
+		
+		// There we should detect server ip address
+		gameOption.m_GameHost = "localhost";
+			
+		// Send event to subsystems about server creation result.
+		Event_Data_Server_Create_Result serverResultEvent(true);
+		SendEvent(Event_Data_Server_Create_Result::g_EventType, serverResultEvent.VSerialize());
+			
+		VChangeState(BGS_ServerCreated);
+		URHO3D_LOGINFO("Server state is Created");
+		
+		if (!m_bIsServerCreated && !m_pDatabaseConnection)
 		{
-			pServer->AddSocket(socket);
-			g_pApp->SetSocketManager(pServer);
+			g_pApp->DestroyNetwork();
 
-			GameOptions& gameOption = g_pApp->GetGameOptions();
-			// There we should detect server ip address
-			gameOption.m_GameHost = "localhost";
-
-			// Send event to subsystems about server creation result.
-			Event_Data_Server_Create_Result serverResultEvent(true);
-			VariantMap data = serverResultEvent.VSerialize();
-			SendEvent(Event_Data_Server_Create_Result::g_EventType, data);
-
-			if (m_pDatabaseConnection->IsConnected())
-			{
-				 TestDatabase();
-			}
-
-			VChangeState(BGS_ServerCreated);
-			URHO3D_LOGINFO("Server state is Created");
-		}
-		else
-		{
 			SAFE_DELETE(socket);
 
 			// Send event to subsystems about server creation result.
 			Event_Data_Server_Create_Result serverResultEvent(false);
-			VariantMap data = serverResultEvent.VSerialize();
-			SendEvent(Event_Data_Server_Create_Result::g_EventType, data);
+			SendEvent(Event_Data_Server_Create_Result::g_EventType, serverResultEvent.VSerialize());
 
 			VChangeState(BGS_Invalid);
 			URHO3D_LOGINFO("Server state is Invalid");
 		}
-
-
 	}
 	else if (m_State == BGS_WaitingForServerStop)
 	{
