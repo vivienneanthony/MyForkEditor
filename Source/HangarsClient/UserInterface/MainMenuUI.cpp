@@ -2,7 +2,7 @@
 
 #include "EngineStd/UserInterface/UserInterface.h"
 #include "EngineStd/UserInterface/Urho3D/Utilities.h"
-
+#include "EngineStd/UserInterface/ScreenElement/Windows/ModelessWindow.h"
 
 #include "EngineStd/EventManager/Client/ClientEvents.h"
 
@@ -13,14 +13,17 @@
 
 #include "EngineStd/GameAssetManager/GameAssetManager.h"
 
+#include "GameView/MainMenuView.h"
 #include "MainMenuUI.h"
 
 #include <iostream>
 
-MainMenuUI::MainMenuUI(Context* context) : BaseUI(context)
+MainMenuUI::MainMenuUI(Context* context, MainMenuView* menu) : BaseUI(context)
 {
     m_bIsInitialized = false;
     m_pWindow = nullptr;
+
+	m_pMainMenuView = menu;
 }
 
 MainMenuUI::~MainMenuUI()
@@ -88,7 +91,7 @@ void MainMenuUI::VSetVisible(bool visible)
 
 void MainMenuUI::CreateLoginWindow()
 {
-    m_pWindow = CreateCustomWindow(context_, "LoginWindow", IntVector2(0, -50));
+    m_pWindow = CreateCustomWindow(context_, "LoginWindow", 300, 200, IntVector2(0, -25));
 
     Text* textName = new Text(context_);
     textName->SetText("Enter your login: ");
@@ -97,7 +100,6 @@ void MainMenuUI::CreateLoginWindow()
     textName->SetStyleAuto();
 
     m_pWindow->AddChild(textName);
-    m_pWindow->SetFixedHeight(300);
     m_pWindow->SetPosition(0, -100);
 
     // Create a LoginEdit
@@ -127,7 +129,6 @@ void MainMenuUI::CreateLoginWindow()
     m_pPasswordEdit->SetFixedHeight(20);
     m_pPasswordEdit->SetAlignment(HorizontalAlignment::HA_CENTER, VA_TOP);
     m_pWindow->AddChild(m_pPasswordEdit);
-
     Button* enterButton = CreateCustomButton(m_pWindow, "Enter", "Enter");
     SubscribeToEvent(enterButton, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleEnterDelegate));
 
@@ -170,6 +171,20 @@ void MainMenuUI::HandlePlayerLoginResult(StringHash eventType, VariantMap& event
 	{
 		String reason = logResult.GetReason();
 		// here we show message about login fail
-
+		if (!m_ModelessWindow)
+		{
+			reason.Replace("_", " ");
+			m_ModelessWindow = SharedPtr<ModelessWindow>(new ModelessWindow(context_, reason));
+			m_ModelessWindow->VOnRestore();
+			UIElement* button = m_ModelessWindow->GetCloseButton();
+			SubscribeToEvent(button, E_RELEASED, URHO3D_HANDLER(MainMenuUI, HandleModelessWindow));
+			m_pMainMenuView->VPushElement(StaticCast<IScreenElement>(m_ModelessWindow));
+		}
 	}
+}
+
+void MainMenuUI::HandleModelessWindow(StringHash eventType, VariantMap& eventData)
+{
+	m_pMainMenuView->VRemoveElement(StaticCast<IScreenElement>(m_ModelessWindow));
+	m_ModelessWindow.Reset();
 }

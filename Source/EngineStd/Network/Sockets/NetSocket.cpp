@@ -2,7 +2,6 @@
 #include "NetSocket.h"
 
 #include "GameLogic/BaseGameLogic.h"
-#include "EventManager/Server/ServerEvents.h"
 
 #include "../Packets/BinaryPacket.h"
 #include "../Packets/EventPacket.h"
@@ -44,10 +43,7 @@ NetSocket::~NetSocket()
 	m_pConnection = m_pNetwork->GetServerConnection();
 	if (m_pConnection)
 	{
-		if (m_pConnection->IsConnected() && m_pConnection->IsClient())
-		{
-			m_pConnection->Disconnect(1000);
-		}
+		m_pConnection->Disconnect();
 	}
 
 	VDestroyAllDelegates();
@@ -64,7 +60,7 @@ bool NetSocket::Connect(String ip, unsigned short port, Scene* scene, const Vari
 	if (m_pNetwork->Connect(ip, port, scene, map))
 	{
 		m_TimeCreated = g_pApp->GetTimer()->GetTimeStamp();
-		URHO3D_LOGDEBUG(String("Socket was connected to the server. ") + m_TimeCreated);
+		URHO3D_LOGDEBUG(String("Socket try to connect to the server. ") + m_TimeCreated);
 	}
 	else
 	{
@@ -73,7 +69,13 @@ bool NetSocket::Connect(String ip, unsigned short port, Scene* scene, const Vari
 	}
 
 	m_pConnection = m_pNetwork->GetServerConnection();
-	return true;
+	
+	if (!m_pConnection)
+	{
+		return false;
+	}
+
+	return m_pConnection->IsConnectPending();
 }
 
 void NetSocket::Disconnect(int waitMSec)
@@ -147,12 +149,6 @@ void NetSocket::VInitializeAllDelegates()
 	SubscribeToEvent(E_NETWORKMESSAGE, URHO3D_HANDLER(NetSocket, HandleNetworkMessage));
 	SubscribeToEvent(E_REMOTEEVENTDATA, URHO3D_HANDLER(NetSocket, HandleRemoteEventNetworkMessage));
 	SubscribeToEvent(E_CLIENTDISCONNECTED, URHO3D_HANDLER(NetSocket, HandleDisconnect));
-	
-	if (g_pApp->GetGameLogic()->IsProxy())
-	{
-		SubscribeToEvent(Event_Data_Network_Player_Login_Result::g_EventType, URHO3D_HANDLER(NetSocket, HandleLoginRequest));
-		m_pNetwork->RegisterRemoteEvent(Event_Data_Network_Player_Login_Result::g_EventType);
-	}
 
 }
 
@@ -214,19 +210,4 @@ void NetSocket::HandleDisconnect(StringHash eventType, VariantMap& eventData)
 	{
 
 	}
-
-}
-
-void NetSocket::HandleLoginRequest(StringHash eventType, VariantMap& eventData)
-{
-	String reason = eventData["REASON"].GetString();
-	bool success = eventData["LOGIN_SUCCESS"].GetBool();
-	
-	if (!success)
-	{
-		m_pConnection->Disconnect();
-		URHO3D_LOGERROR("Failed to login. Reason : " + reason);
-	}
-	
-	g_pApp->GetGameLogic()->SetLoginSuccess(success, reason);
 }

@@ -15,6 +15,10 @@ NetListenSocket::NetListenSocket(Context* context, unsigned short portNum) : Net
 	VInitializeAllDelegates();
 }
 
+NetListenSocket::~NetListenSocket()
+{
+	Shutdown();
+}
 
 
 void NetListenSocket::Init(unsigned short portNum)
@@ -22,7 +26,11 @@ void NetListenSocket::Init(unsigned short portNum)
 	if (m_pNetwork->StartServer(portNum))
 	{
 		m_PortNum = portNum;
-		g_pApp->GetGameLogic()->SetServerCreated(true);
+
+		if (m_pNetwork->IsServerRunning())
+		{
+			g_pApp->GetGameLogic()->SetServerCreated(true);
+		}
 		URHO3D_LOGDEBUG(String("Server was started"));
 	}
 	else
@@ -30,7 +38,6 @@ void NetListenSocket::Init(unsigned short portNum)
 		g_pApp->GetGameLogic()->SetServerCreated(false);
 		URHO3D_LOGDEBUG(String("Server starting was failed. Check port number " + String(m_PortNum) + " ?"));
 	}
-
 	m_pConnection = m_pNetwork->GetServerConnection();
 }
 
@@ -39,10 +46,6 @@ void NetListenSocket::Shutdown()
 	m_pNetwork->StopServer();
 }
 
-NetListenSocket::~NetListenSocket()
-{
-	
-}
 
 
 

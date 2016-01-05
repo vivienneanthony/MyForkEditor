@@ -1,18 +1,18 @@
 #include "EngineStd.h"
 #include "Utilities.h"
 
-Window* CreateCustomWindow(Context* context, String name, IntVector2 offset)
+Window* CreateCustomWindow(Context* context, String name, int width, int height, IntVector2 offset)
 {
 	// Create the Window and add it to the UI's root node
 	Window* window = new Window(context);
 	context->GetSubsystem<UI>()->GetRoot()->AddChild(window);
 
 	// Set Window size and layout settings
-	window->SetMinSize(692, 692);
+	window->SetMinSize(width, height);
 	window->SetLayout(LM_VERTICAL, 8);
 	window->SetAlignment(HA_CENTER, VA_CENTER);
 	window->SetName(name);
-	window->SetFixedHeight(692);
+	window->SetFixedHeight(height);
 	window->SetFixedHeightResizing(true);
 	window->SetMovable(true);
 
@@ -34,16 +34,14 @@ Window* CreateCustomWindow(Context* context, String name, IntVector2 offset)
 
 Button* CreateCloseButton(Window* window, String name)
 {
-	Text* closeText = new Text(window->GetContext());
+	Button* buttonClose = window->CreateChild<Button>();
+	buttonClose->SetName(name);
+	buttonClose->SetOpacity(0.2f);
+
+	Text* closeText = buttonClose->CreateChild<Text>();
 	closeText->SetName(String("CloseText_") + name);
 	closeText->SetText("Close");
 	closeText->SetAlignment(HA_CENTER, VA_TOP);
-
-	Button* buttonClose = new Button(window->GetContext());
-	buttonClose->SetName(name);
-	buttonClose->SetOpacity(0.2f);
-	buttonClose->AddChild(closeText);
-	window->AddChild(buttonClose);
 
 	buttonClose->SetStyleAuto();
 	buttonClose->SetFixedWidth(50);
@@ -54,18 +52,28 @@ Button* CreateCloseButton(Window* window, String name)
 	return buttonClose;
 }
 
+Text* CreateCustomText(Window* window, String text)
+{
+	Text* textUI = window->CreateChild<Text>();
+	textUI->SetName("CustomText");
+	textUI->SetText(text);
+	textUI->SetAlignment(HA_CENTER, VA_TOP);
+	textUI->SetStyleAuto();
+	textUI->SetTextAlignment(HorizontalAlignment::HA_CENTER);
+	return textUI;
+}
+
 Button* CreateCustomButton(Window* window, String name, String buttontext)
 {
-	Text* text = new Text(window->GetContext());
-	text->SetName(name);
-	text->SetText(buttontext);
-	text->SetAlignment(HA_CENTER, VA_TOP);
-
-	Button* button = new Button(window->GetContext());
+	Button* button = window->CreateChild<Button>();
 	button->SetName(name);
 	button->SetOpacity(0.2f);
-	button->AddChild(text);
-	window->AddChild(button);
+
+	Text* text = button->CreateChild<Text>();
+	text->SetName(name);
+	text->SetText(buttontext);
+	text->SetAlignment(HA_CENTER, VA_CENTER);
+
 
 	button->SetStyleAuto();
 	button->SetFixedWidth(50);

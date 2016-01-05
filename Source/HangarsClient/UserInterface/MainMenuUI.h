@@ -5,12 +5,15 @@
 
 #include "EngineStd/UserInterface/UserInterface.h"
 
+class MainMenuView;
+class ModelessWindow;
+
 class MainMenuUI : public BaseUI
 {
 	URHO3D_OBJECT(MainMenuUI, BaseUI);
 
 public:
-	MainMenuUI(Context* context);
+	MainMenuUI(Context* context, MainMenuView* menu);
 	virtual ~MainMenuUI();
 
 	virtual bool VOnRestore();
@@ -33,6 +36,9 @@ public:
 	void HandleEnterDelegate(StringHash eventType, VariantMap& eventData);
 	void HandlePlayerLoginResult(StringHash eventType, VariantMap& eventData);
 
+	// Modeless window delegate
+	void HandleModelessWindow(StringHash eventType, VariantMap& eventData);
+
 	// UI Otions delegates
 	void HandleCloseDelegate(StringHash eventType, VariantMap& eventData);
 	void HandleOptionCloseDelegate(StringHash eventType, VariantMap& eventData);
@@ -53,6 +59,8 @@ public:
 
 protected:
 	bool m_bIsInitialized;
+	MainMenuView* m_pMainMenuView;
+
 	SharedPtr<Scene> m_pMainMenuScene;
 
 	Window* m_pWindow;
@@ -62,6 +70,8 @@ protected:
 
 	LineEdit* m_pLoginEdit;
 	LineEdit* m_pPasswordEdit;
+
+	SharedPtr<ModelessWindow> m_ModelessWindow;
 };
 
 #endif //MAIN_MENU_UI_H

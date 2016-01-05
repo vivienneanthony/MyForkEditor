@@ -17,7 +17,7 @@
 
 MainMenuView::MainMenuView(Context* context, Renderer* renderer, bool intro) : HumanView(context, renderer)
 {
-    m_pMainMenu = SharedPtr<IScreenElement>(new MainMenuUI(context));
+    m_pMainMenu = SharedPtr<IScreenElement>(new MainMenuUI(context, this));
     VPushElement(m_pMainMenu);
     m_pMainMenu->VSetVisible(false);
 
