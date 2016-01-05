@@ -43,7 +43,12 @@ GameAssetSelector::GameAssetSelector(Context* context) :
     SetModalFrameColor(Color(1,1,1,1));
 
     //SetTexture(g_pApp->GetConstantResCache()->GetResource<Texture2D>("Textures/UI.png"));
-    //SetImageRect(IntRect(48, 0, 60, 16));
+//    SetImageRect(IntRect(48, 0, 60, 16));
+
+    SetBringToFront(true);
+    SetBringToBack(true);
+
+    SetFocusMode(FM_FOCUSABLE_DEFOCUSABLE);
 
     // Create title UIElement
     m_pTitleRegion = CreateChild <UIElement> ("GAS_TitleRegion");
@@ -149,6 +154,7 @@ void GameAssetSelector::UpdateGameAssetsList(void)
     // Get current path for all xml files
     currentFileSystem->ScanDir(dirs, currentPath, "*", SCAN_DIRS, true);
 
+    // Select from subdirectory
     if(dirs.Size())
     {
         for(unsigned int currentDir=0; currentDir<dirs.Size(); currentDir++)
@@ -178,6 +184,23 @@ void GameAssetSelector::UpdateGameAssetsList(void)
         }
     }
 
+    // Check local directory
+    Vector <String> dirFiles;
+
+    currentFileSystem->ScanDir(dirFiles, currentPath, "*.xml", SCAN_FILES, false);
+
+    if(dirFiles.Size())
+    {
+        // loop through each file listing
+        for(unsigned int fileListing = 0; fileListing<dirFiles.Size(); fileListing++)
+        {
+            if(dirFiles.At(fileListing).Contains("Physics")||dirFiles.At(fileListing).Contains("Chemistry"))
+                continue;
+
+            gameAssetResource.Push(currentPath+dirFiles.At(fileListing));
+        }
+    }
+
     // set color - not sure about the background
     Color HoverColor(1.0f,0.5f,0.1f);
     Color SelectionColor(0.5f,0.1f,0.2f);
@@ -185,7 +208,6 @@ void GameAssetSelector::UpdateGameAssetsList(void)
 
     // Get the name
     String resourceName;
-
 
     //  loop through  each - no way to tell if it is part of something yet
     for(unsigned int i=0; i<gameAssetResource.Size(); i++)
@@ -203,9 +225,16 @@ void GameAssetSelector::UpdateGameAssetsList(void)
         if (rootElem.IsNull())
             continue;
 
-        if (rootElem.HasAttribute("type"))
+        if (rootElem.HasAttribute("name")||rootElem.HasAttribute("resource"))
         {
-            resourceName=rootElem.GetAttribute("type");
+            if (rootElem.HasAttribute("name"))
+            {
+                resourceName=rootElem.GetAttribute("name");
+            }
+            else
+            {
+                resourceName=rootElem.GetAttribute("resource");
+            }
         }
         else
         {

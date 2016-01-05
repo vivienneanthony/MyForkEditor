@@ -1732,24 +1732,20 @@ void EPScene3D::CreateAboutTeamGDPWindow(void)
     // If the window is created setup attribute - Forced
     if(pAboutTeamGDPWindow)
     {
-        // Forced Windows Settings - Not sure why the back is not working
+           // Forced Windows Settings - Not sure why the back is not working
         pAboutTeamGDPWindow->SetResizable(true);
         pAboutTeamGDPWindow->SetMovable(true);
         pAboutTeamGDPWindow->SetDefaultStyle(editorData_->GetEditorDefaultStyle());
         pAboutTeamGDPWindow->SetStyleAuto();
 
         // More settings
-        pAboutTeamGDPWindow->SetTexture(g_pApp->GetConstantResCache()->GetResource<Texture2D>("Textures/UI.png"));
-        pAboutTeamGDPWindow->SetImageRect(IntRect(48, 0, 60, 16));
-        pAboutTeamGDPWindow->SetBorder(IntRect(2, 2, 2, 2));
-        pAboutTeamGDPWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
-        pAboutTeamGDPWindow->SetLayoutSpacing(0);
-        pAboutTeamGDPWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
-
         pAboutTeamGDPWindow->SetModal(true);
-        pAboutTeamGDPWindow->SetModalFrameColor(Color(1,1,1,1));
-        pAboutTeamGDPWindow->SetModalFrameSize(IntVector2(300,500));
-        pAboutTeamGDPWindow->SetOpacity(1.0f);
+        pAboutTeamGDPWindow->BringToFront();
+        pAboutTeamGDPWindow->SetFocus(true);
+        pAboutTeamGDPWindow->SetPriority(2);
+        pAboutTeamGDPWindow->SetOpacity(.9);
+        pAboutTeamGDPWindow->SetFocusMode(FM_FOCUSABLE_DEFOCUSABLE);
+
 
         // Event subscription
         SubscribeToEvent(pAboutTeamGDPWindow->GetOkButton(), E_RELEASED, URHO3D_HANDLER(EPScene3D,HandleAboutTeamGDPWindowClosePressed));
@@ -1798,23 +1794,19 @@ void EPScene3D::CreateGameAssetNode(void)
     if(gameAssetChooserWindow)
     {
         // Forced Windows Settings - Not sure why the back is not working
+
         gameAssetChooserWindow->SetResizable(true);
         gameAssetChooserWindow->SetMovable(true);
         gameAssetChooserWindow->SetDefaultStyle(editorData_->GetEditorDefaultStyle());
         gameAssetChooserWindow->SetStyleAuto();
 
-        // More settings
-        gameAssetChooserWindow->SetTexture(g_pApp->GetConstantResCache()->GetResource<Texture2D>("Textures/UI.png"));
-        gameAssetChooserWindow->SetImageRect(IntRect(48, 0, 60, 16));
-        gameAssetChooserWindow->SetBorder(IntRect(2, 2, 2, 2));
-        gameAssetChooserWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
-        gameAssetChooserWindow->SetLayoutSpacing(0);
-        gameAssetChooserWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
 
         gameAssetChooserWindow->SetModal(true);
-        gameAssetChooserWindow->SetModalFrameColor(Color(1,1,1,1));
-        gameAssetChooserWindow->SetModalFrameSize(IntVector2(300,500));
-        gameAssetChooserWindow->SetOpacity(1.0f);
+        gameAssetChooserWindow->BringToFront();
+        gameAssetChooserWindow->SetFocus(true);
+        gameAssetChooserWindow->SetPriority(1);
+        gameAssetChooserWindow->SetOpacity(.9);
+        gameAssetChooserWindow->SetFocusMode(FM_FOCUSABLE_DEFOCUSABLE);
 
         gameAssetChooserWindow-> SetPosition(700, 25);
 
