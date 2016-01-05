@@ -42,8 +42,15 @@ AboutTeamGDPWindow::AboutTeamGDPWindow(Context* context) :
 
     SetModalFrameColor(Color(1,1,1,1));
 
-    //SetTexture(g_pApp->GetConstantResCache()->GetResource<Texture2D>("Textures/UI.png"));
-    //SetImageRect(IntRect(48, 0, 60, 16));
+    SetTexture(g_pApp->GetConstantResCache()->GetResource<Texture2D>("Textures/UI.png"));
+    SetImageRect(IntRect(48, 0, 60, 16));
+
+    // Bring to front
+    SetBringToFront(true);
+    SetBringToBack(true);
+
+    SetFocusMode(FM_FOCUSABLE_DEFOCUSABLE);
+
 
     // Create title UIElement
     m_pTitleRegion = CreateChild <UIElement> ("ATGW_TitleRegion");
