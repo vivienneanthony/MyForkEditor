@@ -99,7 +99,7 @@ void MainEditorView::EditorInstance()
     XMLFile* xmlFile = ResCache->GetResource<XMLFile>("UI/IDEStyle.xml");
 
     // Create a root for IDE - Crashes without it
-    m_pUIRootElement = pUIRoot->CreateChild<UIElement>("IDERoot");
+    m_pUIRootElement = pUIRoot->CreateChild<UIElement>("EngineIDERoot");
     m_pUIRootElement->SetTraversalMode(TM_DEPTH_FIRST);         // This is needed for root-like element to prevent artifacts
     m_pUIRootElement->SetDefaultStyle(xmlFile);
 
