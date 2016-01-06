@@ -1850,7 +1850,11 @@ void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& even
 
         const Matrix4 * matrix;                         // blank matrix
 
-        StrongNodePtr gameNode = gameFactory->CreateNode(selectedResource, node, matrix,INVALID_GAME_NODE_ID);
+        // Added to prevent crashing
+        unsigned int  FreeID = editorData_->GetEditorScene()->GetFreeNodeID(CreateMode::REPLICATED);
+
+        // Better Fix uses the first available free ID
+        StrongNodePtr gameNode = gameFactory->CreateNode(selectedResource, node, matrix, FreeID);
 
         // If the game node was not able to be made
         if(gameNode==NULL)
@@ -1859,11 +1863,6 @@ void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& even
 
             return;
         }
-
-        // Added to prevent crashing
-        unsigned int  FreeID = editorData_->GetEditorScene()->GetFreeNodeID(CreateMode::REPLICATED);
-
-        gameNode->SetID(FreeID);
 
         // Check if selected node
         if(editorSelection_->GetEditNode() != NULL)
