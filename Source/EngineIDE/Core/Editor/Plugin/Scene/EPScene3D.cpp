@@ -1860,6 +1860,11 @@ void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& even
             return;
         }
 
+        // Added to prevent crashing
+        unsigned int  FreeID = editorData_->GetEditorScene()->GetFreeNodeID(CreateMode::REPLICATED);
+
+        gameNode->SetID(FreeID);
+
         // Check if selected node
         if(editorSelection_->GetEditNode() != NULL)
         {
