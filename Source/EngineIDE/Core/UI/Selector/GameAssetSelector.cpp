@@ -26,8 +26,11 @@
 
 #include "GameAssetSelector.h"
 
+#include "Urho3D/Container/Sort.h"
 
 using namespace Urho3D;
+
+
 
 
 GameAssetSelector::GameAssetSelector(Context* context) :
@@ -157,6 +160,11 @@ void GameAssetSelector::UpdateGameAssetsList(void)
     // Select from subdirectory
     if(dirs.Size())
     {
+
+        // Added Sort
+        Sort(dirs.Begin(),dirs.End());
+
+
         for(unsigned int currentDir=0; currentDir<dirs.Size(); currentDir++)
         {
             // Vector <String of files
@@ -172,6 +180,10 @@ void GameAssetSelector::UpdateGameAssetsList(void)
 
             if(dirFiles.Size())
             {
+                // Added Sort
+                Sort(dirFiles.Begin(),dirFiles.End());
+
+
                 // loop through each file listing
                 for(unsigned int fileListing = 0; fileListing<dirFiles.Size(); fileListing++)
                 {
@@ -191,6 +203,9 @@ void GameAssetSelector::UpdateGameAssetsList(void)
 
     if(dirFiles.Size())
     {
+        // Added Sort
+        Sort(dirFiles.Begin(),dirFiles.End());
+
         // loop through each file listing
         for(unsigned int fileListing = 0; fileListing<dirFiles.Size(); fileListing++)
         {
