@@ -53,12 +53,12 @@ void Editor::RegisterObject(Context* context)
 
 Editor::~Editor()
 {
-	DestroyAllDelegates();
+    DestroyAllDelegates();
 }
 
 Editor::Editor(Context* context) : Object(context)
     ,m_bIsVisible(false)
-	,m_bIsInitialized(false)
+    ,m_bIsInitialized(false)
     ,m_pEditorPluginMain(NULL)
     ,m_pEditorPluginOver(NULL)
 {
@@ -68,7 +68,7 @@ Editor::Editor(Context* context) : Object(context)
 // Use Engine Std
 void Editor::Initialize(void)
 {
-	m_pCache = g_pApp->GetConstantResCache();
+    m_pCache = g_pApp->GetConstantResCache();
     m_pUI = g_pApp->GetSubsystem<UI>();
     m_pGraphics = g_pApp->GetGraphics();
     m_pFileSystem = g_pApp->GetFileSystem();
@@ -100,17 +100,17 @@ void Editor::AddEditorPlugin(EditorPlugin* plugin)
     {
         // push fist because tabwindow send tabchanged event on first add and that activates the first plugin.
         m_MainEditorPlugins.Push(plugin);
-		if (m_pEditorView)
-		{
-			m_pEditorView->GetMiddleFrame()->AddTab(plugin->GetName(), plugin->GetMainScreen());
-			URHO3D_LOGDEBUG("Plugin with name : " + plugin->GetName() + " and with mainscreen has beed added.");
-		}
-		else
-		{
-			URHO3D_LOGDEBUG("Failed to get editor view in AddPlugin()");
-		}
-	}
-	URHO3D_LOGDEBUG("Plugin with name : " + plugin->GetName() + " and WITHOUT mainscreen has beed added.");
+        if (m_pEditorView)
+        {
+            m_pEditorView->GetMiddleFrame()->AddTab(plugin->GetName(), plugin->GetMainScreen());
+            URHO3D_LOGDEBUG("Plugin with name : " + plugin->GetName() + " and with mainscreen has beed added.");
+        }
+        else
+        {
+            URHO3D_LOGDEBUG("Failed to get editor view in AddPlugin()");
+        }
+    }
+    URHO3D_LOGDEBUG("Plugin with name : " + plugin->GetName() + " and WITHOUT mainscreen has beed added.");
     m_pEditorData->AddEditorPlugin(plugin);
 }
 
@@ -118,45 +118,45 @@ void Editor::RemoveEditorPlugin(EditorPlugin* plugin)
 {
     if (plugin->HasMainScreen())
     {
-		if (m_pEditorView)
-		{
-			m_pEditorView->GetMiddleFrame()->RemoveTab(plugin->GetName());
-			m_MainEditorPlugins.Remove(plugin);
-			URHO3D_LOGDEBUG("Plugin with name : " + plugin->GetName() + " and with mainscreen has beed deleted.");
-		}
-		else
-		{
-			URHO3D_LOGDEBUG("Failed to get editor view in DeletePlugin()");
-		}
+        if (m_pEditorView)
+        {
+            m_pEditorView->GetMiddleFrame()->RemoveTab(plugin->GetName());
+            m_MainEditorPlugins.Remove(plugin);
+            URHO3D_LOGDEBUG("Plugin with name : " + plugin->GetName() + " and with mainscreen has beed deleted.");
+        }
+        else
+        {
+            URHO3D_LOGDEBUG("Failed to get editor view in DeletePlugin()");
+        }
     }
-	m_pEditorData->RemoveEditorPlugin(plugin);
-	URHO3D_LOGDEBUG("Plugin with name : " + plugin->GetName() + " and WITHOUT mainscreen has beed deleted.");
+    m_pEditorData->RemoveEditorPlugin(plugin);
+    URHO3D_LOGDEBUG("Plugin with name : " + plugin->GetName() + " and WITHOUT mainscreen has beed deleted.");
 }
 
 
 bool Editor::Create(Scene* scene, UIElement* sceneUI)
 {
-	//////////////////////////////////////////////////////////////////////////
-	/// Register all objects
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    /// Register all objects
+    //////////////////////////////////////////////////////////////////////////
 
-	Editor::RegisterObject(context_);
-	ResourcePickerManager::RegisterObject(context_);
-	EditorData::RegisterObject(context_);
-	EditorView::RegisterObject(context_);
-	EditorSelection::RegisterObject(context_);
-	EPScene3DView::RegisterObject(context_);
+    Editor::RegisterObject(context_);
+    ResourcePickerManager::RegisterObject(context_);
+    EditorData::RegisterObject(context_);
+    EditorView::RegisterObject(context_);
+    EditorSelection::RegisterObject(context_);
+    EPScene3DView::RegisterObject(context_);
     ViewSettings::RegisterObject(context_);
 
-	// UI Relaated Objects
-	MenuBarUI::RegisterObject(context_);
-	ToolBarUI::RegisterObject(context_);
-	MiniToolBarUI::RegisterObject(context_);
+    // UI Relaated Objects
+    MenuBarUI::RegisterObject(context_);
+    ToolBarUI::RegisterObject(context_);
+    MiniToolBarUI::RegisterObject(context_);
 
-	// Window Related Objects
-	ModalWindow::RegisterObject(context_);
-	TabWindow::RegisterObject(context_);
-	HierarchyWindow::RegisterObject(context_);
+    // Window Related Objects
+    ModalWindow::RegisterObject(context_);
+    TabWindow::RegisterObject(context_);
+    HierarchyWindow::RegisterObject(context_);
 
     GameAssetSelector::RegisterObject(context_);
     AboutTeamGDPWindow::RegisterObject(context_);
@@ -169,9 +169,9 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 
     //URHO3D_LOGINFO(String(viewsettings_["cameraBaseSpeed_"].GetFloat()));
 
-	//////////////////////////////////////////////////////////////////////////
-	/// Create the scene
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    /// Create the scene
+    //////////////////////////////////////////////////////////////////////////
 
     // Create editable scene and ui
     m_pSceneRootUI = sceneUI;
@@ -187,414 +187,414 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     }
 
     // Create Octree or Debug
-	m_pScene->GetOrCreateComponent<Octree>();
-	m_pScene->GetOrCreateComponent<DebugRenderer>();
+    m_pScene->GetOrCreateComponent<Octree>();
+    m_pScene->GetOrCreateComponent<DebugRenderer>();
 
     // Always pause the scene, and do updates manually
-	m_pScene->SetUpdateEnabled(false);
+    m_pScene->SetUpdateEnabled(false);
 
-	//////////////////////////////////////////////////////////////////////////
-	/// Create the subsystems
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    /// Create the subsystems
+    //////////////////////////////////////////////////////////////////////////
 
-	// Create editor's resource picker manager system
+    // Create editor's resource picker manager system
     // ResourcePickerManager is needed for the Attribute Inspector, so don't forget to init it
-	ResourcePickerManager* pResourcePickerManager = new ResourcePickerManager(context_);
-	if (pResourcePickerManager)
-	{
-		context_->RegisterSubsystem(pResourcePickerManager);
-		pResourcePickerManager->Init();
-	}
-	else
-	{
-		URHO3D_LOGERROR("Failed to create ResourcePickerManager. Check memory.");
-		return false;
-	}
+    ResourcePickerManager* pResourcePickerManager = new ResourcePickerManager(context_);
+    if (pResourcePickerManager)
+    {
+        context_->RegisterSubsystem(pResourcePickerManager);
+        pResourcePickerManager->Init();
+    }
+    else
+    {
+        URHO3D_LOGERROR("Failed to create ResourcePickerManager. Check memory.");
+        return false;
+    }
 
 
-	m_pEditorData = new EditorData(context_, this);
-	if (m_pEditorData)
-	{
-		context_->RegisterSubsystem(m_pEditorData);
-		m_pEditorData->Load();
-	}
-	else
-	{
-		URHO3D_LOGERROR("Failed to create EditorData. Check memory.");
-		return false;
-	}
+    m_pEditorData = new EditorData(context_, this);
+    if (m_pEditorData)
+    {
+        context_->RegisterSubsystem(m_pEditorData);
+        m_pEditorData->Load();
+    }
+    else
+    {
+        URHO3D_LOGERROR("Failed to create EditorData. Check memory.");
+        return false;
+    }
 
-	m_pRootUI = m_pEditorData->m_pRootUI;
-	m_pEditorData->SetEditorScene(m_pScene);
+    m_pRootUI = m_pEditorData->m_pRootUI;
+    m_pEditorData->SetEditorScene(m_pScene);
 
     // Create editor's view system
-	m_pEditorView = new EditorView(context_);
-	if (m_pEditorView)
-	{
-		context_->RegisterSubsystem(m_pEditorView);
-		if (!m_pEditorView->Initialize(this, m_pEditorData))
-		{
-			URHO3D_LOGERROR("Failed to initialize Editor view.");
-			return false;
-		}
-	}
-	else
-	{
-		URHO3D_LOGERROR("Failed to create EditorView. Check memory.");
-		return false;
-	}
+    m_pEditorView = new EditorView(context_);
+    if (m_pEditorView)
+    {
+        context_->RegisterSubsystem(m_pEditorView);
+        if (!m_pEditorView->Initialize(this, m_pEditorData))
+        {
+            URHO3D_LOGERROR("Failed to initialize Editor view.");
+            return false;
+        }
+    }
+    else
+    {
+        URHO3D_LOGERROR("Failed to create EditorView. Check memory.");
+        return false;
+    }
 
-	m_pEditorSelection = new EditorSelection(context_, this);
-	if (m_pEditorSelection)
-	{
-		context_->RegisterSubsystem(m_pEditorSelection);
-	}
-	else
-	{
-		URHO3D_LOGERROR("Failed to create EditorSelection. Check memory.");
-		return false;
-	}
+    m_pEditorSelection = new EditorSelection(context_, this);
+    if (m_pEditorSelection)
+    {
+        context_->RegisterSubsystem(m_pEditorSelection);
+    }
+    else
+    {
+        URHO3D_LOGERROR("Failed to create EditorSelection. Check memory.");
+        return false;
+    }
 
-	//////////////////////////////////////////////////////////////////////////
-	/// Create editor's ui
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    /// Create editor's ui
+    //////////////////////////////////////////////////////////////////////////
 
-	// Create base menu
-	if (!CreateBaseMenu())
-	{
-		URHO3D_LOGERROR("Failed to create base menu.");
-		return false;
-	}
+    // Create base menu
+    if (!CreateBaseMenu())
+    {
+        URHO3D_LOGERROR("Failed to create base menu.");
+        return false;
+    }
 
-	// Create hierarchy window
-	if (!CreateHierarchyWindow())
-	{
-		URHO3D_LOGERROR("Failed to create hierarchy window.");
-		return false;
-	}
+    // Create hierarchy window
+    if (!CreateHierarchyWindow())
+    {
+        URHO3D_LOGERROR("Failed to create hierarchy window.");
+        return false;
+    }
 
-	// Create attribute window
-	if (!CreateAttributeWindow())
-	{
-		URHO3D_LOGERROR("Failed to create attribute window.");
-		return false;
-	}
+    // Create attribute window
+    if (!CreateAttributeWindow())
+    {
+        URHO3D_LOGERROR("Failed to create attribute window.");
+        return false;
+    }
 
-	// Create resource browser
-	if (!CreateResourceBrowser())
-	{
-		URHO3D_LOGERROR("Failed to create resource browser.");
-		return false;
-	}
+    // Create resource browser
+    if (!CreateResourceBrowser())
+    {
+        URHO3D_LOGERROR("Failed to create resource browser.");
+        return false;
+    }
 
-	// Create game asset hierarchy
-	if (!CreateGameAssetHierarchyWindow())
-	{
-		URHO3D_LOGERROR("Failed to create game asset hierarchy.");
-		return false;
-	}
+    // Create game asset hierarchy
+    if (!CreateGameAssetHierarchyWindow())
+    {
+        URHO3D_LOGERROR("Failed to create game asset hierarchy.");
+        return false;
+    }
 
-	// Create game asset inspector
-	if (!CreateGameAssetInspectorWindow())
-	{
-		URHO3D_LOGERROR("Failed to create game asset inspector.");
-		return false;
-	}
+    // Create game asset inspector
+    if (!CreateGameAssetInspectorWindow())
+    {
+        URHO3D_LOGERROR("Failed to create game asset inspector.");
+        return false;
+    }
 
-	// Create game asset inspector
-	if (!CreateViewSettingsWindow())
-	{
-		URHO3D_LOGERROR("Failed to create view settings window.");
+    // Create game asset inspector
+    if (!CreateViewSettingsWindow())
+    {
+        URHO3D_LOGERROR("Failed to create view settings window.");
 
-		return false;
-	}
+        return false;
+    }
 
     m_bIsVisible = true;
-	m_bIsInitialized = true;
+    m_bIsInitialized = true;
 
-	InitializeAllDelegates();
+    InitializeAllDelegates();
 
     return true;
 }
 
 void Editor::InitializeAllDelegates()
 {
-	if (m_pEditorView)
-	{
-		SubscribeToEvent(m_pEditorView->GetMenuBar(), E_MENUBAR_ACTION, URHO3D_HANDLER(Editor, HandleMenuBarActionDelegate));
-	}
+    if (m_pEditorView)
+    {
+        SubscribeToEvent(m_pEditorView->GetMenuBar(), E_MENUBAR_ACTION, URHO3D_HANDLER(Editor, HandleMenuBarActionDelegate));
+    }
 
-	if (m_pHierarchyWindow)
-	{
-		SubscribeToEvent(m_pHierarchyWindow->GetHierarchyList(), E_SELECTIONCHANGED, URHO3D_HANDLER(Editor, HandleHierarchyListSelectionChangeDelegate));
-		SubscribeToEvent(m_pHierarchyWindow->GetHierarchyList(), E_ITEMDOUBLECLICKED, URHO3D_HANDLER(Editor, HandleHierarchyListDoubleClickDelegate));
-	}
+    if (m_pHierarchyWindow)
+    {
+        SubscribeToEvent(m_pHierarchyWindow->GetHierarchyList(), E_SELECTIONCHANGED, URHO3D_HANDLER(Editor, HandleHierarchyListSelectionChangeDelegate));
+        SubscribeToEvent(m_pHierarchyWindow->GetHierarchyList(), E_ITEMDOUBLECLICKED, URHO3D_HANDLER(Editor, HandleHierarchyListDoubleClickDelegate));
+    }
 
-	if (m_pEditorView)
-	{
-		SubscribeToEvent(m_pEditorView->GetMiddleFrame(), E_ACTIVETABCHANGED, URHO3D_HANDLER(Editor, HandleMainEditorTabChangedDelegate));
-	}
+    if (m_pEditorView)
+    {
+        SubscribeToEvent(m_pEditorView->GetMiddleFrame(), E_ACTIVETABCHANGED, URHO3D_HANDLER(Editor, HandleMainEditorTabChangedDelegate));
+    }
 
     // Handle Update Delegate
-	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Editor, HandleUpdateDelegate));
+    SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Editor, HandleUpdateDelegate));
 }
 
 void Editor::DestroyAllDelegates()
 {
-	UnsubscribeFromAllEvents();
+    UnsubscribeFromAllEvents();
 }
 
 bool Editor::CreateBaseMenu()
 {
-	MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
+    MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
 
-	if (!pMenubar)
-	{
-		return false;
-	}
+    if (!pMenubar)
+    {
+        return false;
+    }
 
     // Set base maximum size to 1440
     pMenubar->SetMinWidth(1440);
 
-	pMenubar->CreateMenu("File");
-	pMenubar->CreateMenuItem("File", "Quit", A_QUITEDITOR_VAR);
+    pMenubar->CreateMenu("File");
+    pMenubar->CreateMenuItem("File", "Quit", A_QUITEDITOR_VAR);
 
-	return true;
+    return true;
 }
 
 
 bool Editor::CreateHierarchyWindow()
 {
-	m_pHierarchyWindow = new HierarchyWindow(context_);
+    m_pHierarchyWindow = new HierarchyWindow(context_);
 
-	if (!m_pHierarchyWindow)
-	{
-		URHO3D_LOGERROR("Failed to create HierarchyWindow. Check memory.");
-		return false;
-	}
+    if (!m_pHierarchyWindow)
+    {
+        URHO3D_LOGERROR("Failed to create HierarchyWindow. Check memory.");
+        return false;
+    }
 
-	m_pHierarchyWindow->SetResizable(true);
-	m_pHierarchyWindow->SetIconStyle(m_pEditorData->GetEditorIconStyle());
-	m_pHierarchyWindow->SetTitle("Scene Hierarchy");
-	m_pHierarchyWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
-	m_pHierarchyWindow->SetStyleAuto();
+    m_pHierarchyWindow->SetResizable(true);
+    m_pHierarchyWindow->SetIconStyle(m_pEditorData->GetEditorIconStyle());
+    m_pHierarchyWindow->SetTitle("Scene Hierarchy");
+    m_pHierarchyWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
+    m_pHierarchyWindow->SetStyleAuto();
 
-	// Dont know why the auto style does not work ...
-	m_pHierarchyWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
-	m_pHierarchyWindow->SetImageRect(IntRect(112, 0, 128, 16));
-	m_pHierarchyWindow->SetBorder(IntRect(2, 2, 2, 2));
-	m_pHierarchyWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
-	m_pHierarchyWindow->SetLayoutSpacing(0);
-	m_pHierarchyWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
+    // Dont know why the auto style does not work ...
+    m_pHierarchyWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
+    m_pHierarchyWindow->SetImageRect(IntRect(112, 0, 128, 16));
+    m_pHierarchyWindow->SetBorder(IntRect(2, 2, 2, 2));
+    m_pHierarchyWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
+    m_pHierarchyWindow->SetLayoutSpacing(0);
+    m_pHierarchyWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
 
-	// Remove the title bar from the window
-	m_pHierarchyWindow->SetTitleBarVisible(false);
+    // Remove the title bar from the window
+    m_pHierarchyWindow->SetTitleBarVisible(false);
 
-	// Add Hierarchy inspector to the left side of the editor.
-	m_pEditorView->GetLeftFrame()->AddTab("Hierarchy", m_pHierarchyWindow);
+    // Add Hierarchy inspector to the left side of the editor.
+    m_pEditorView->GetLeftFrame()->AddTab("Hierarchy", m_pHierarchyWindow);
 
-	// Connect the hierarchy with the editable scene.
-	m_pHierarchyWindow->SetScene(m_pScene);
+    // Connect the hierarchy with the editable scene.
+    m_pHierarchyWindow->SetScene(m_pScene);
 
-	// Connect the hierarchy with the editable ui.
-	m_pHierarchyWindow->SetUIElement(m_pSceneRootUI);
+    // Connect the hierarchy with the editable ui.
+    m_pHierarchyWindow->SetUIElement(m_pSceneRootUI);
 
-	return true;
+    return true;
 }
 
 
 bool Editor::CreateAttributeWindow()
 {
-	//////////////////////////////////////////////////////////////////////////
-	/// Create the attribute editor
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    /// Create the attribute editor
+    //////////////////////////////////////////////////////////////////////////
 
-	m_pAttributeWindow = new AttributeInspector(context_);
-	if (!m_pAttributeWindow)
-	{
-		URHO3D_LOGERROR("Failed to create Attribute inspector. Check memory.");
-		return false;
-	}
+    m_pAttributeWindow = new AttributeInspector(context_);
+    if (!m_pAttributeWindow)
+    {
+        URHO3D_LOGERROR("Failed to create Attribute inspector. Check memory.");
+        return false;
+    }
 
-	Window* pAttribute = (Window*)m_pAttributeWindow->Create();
-	if (!pAttribute)
-	{
-		URHO3D_LOGERROR("Failed to create Attribute window. Check m_pAttributeWindow Create() method.");
-		return false;
-	}
+    Window* pAttribute = (Window*)m_pAttributeWindow->Create();
+    if (!pAttribute)
+    {
+        URHO3D_LOGERROR("Failed to create Attribute window. Check m_pAttributeWindow Create() method.");
+        return false;
+    }
 
-	pAttribute->SetResizable(false);
-	pAttribute->SetMovable(false);
+    pAttribute->SetResizable(false);
+    pAttribute->SetMovable(false);
 
-	// Remove the title bar from the window
-	UIElement* titlebar = pAttribute->GetChild("TitleBar", true);
+    // Remove the title bar from the window
+    UIElement* titlebar = pAttribute->GetChild("TitleBar", true);
 
-	if (titlebar)
-	{
-		titlebar->SetVisible(false);
-	}
+    if (titlebar)
+    {
+        titlebar->SetVisible(false);
+    }
 
-	// Add Attribute inspector to the right side of the editor.
-	m_pEditorView->GetRightFrame()->AddTab("Inspector", pAttribute);
+    // Add Attribute inspector to the right side of the editor.
+    m_pEditorView->GetRightFrame()->AddTab("Inspector", pAttribute);
 
-	return true;
+    return true;
 }
 
 bool Editor::CreateResourceBrowser()
 {
-	//////////////////////////////////////////////////////////////////////////
-	/// create Resource Browser
+    //////////////////////////////////////////////////////////////////////////
+    /// create Resource Browser
 
-	m_pResourceBrowser = new ResourceBrowser(context_);
-	if (!m_pResourceBrowser)
-	{
-		URHO3D_LOGERROR("Failed to create Resource Browser. Check memory.");
-		return false;
-	}
+    m_pResourceBrowser = new ResourceBrowser(context_);
+    if (!m_pResourceBrowser)
+    {
+        URHO3D_LOGERROR("Failed to create Resource Browser. Check memory.");
+        return false;
+    }
 
-	m_pResourceBrowser->CreateResourceBrowser();
-	if (!m_pResourceBrowser->ShowResourceBrowserWindow())
-	{
-		URHO3D_LOGERROR("Failed to show Resource Browser. Check ShowResourceBrowserWindow() method.");
-		return false;
-	}
+    m_pResourceBrowser->CreateResourceBrowser();
+    if (!m_pResourceBrowser->ShowResourceBrowserWindow())
+    {
+        URHO3D_LOGERROR("Failed to show Resource Browser. Check ShowResourceBrowserWindow() method.");
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 
 bool Editor::CreateGameAssetHierarchyWindow()
 {
-	/// create the assetsHierarchy editor
-	m_pAssetsHierarchyWindow = new AssetsHierarchyWindow(context_);
-	m_pAssetsHierarchyWindow->SetResizable(true);
-	m_pAssetsHierarchyWindow->SetIconStyle(m_pEditorData->GetEditorIconStyle());
-	m_pAssetsHierarchyWindow->SetTitle("Assets Hierarchy");
-	m_pAssetsHierarchyWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
-	m_pAssetsHierarchyWindow->SetStyleAuto();
+    /// create the assetsHierarchy editor
+    m_pAssetsHierarchyWindow = new AssetsHierarchyWindow(context_);
+    m_pAssetsHierarchyWindow->SetResizable(true);
+    m_pAssetsHierarchyWindow->SetIconStyle(m_pEditorData->GetEditorIconStyle());
+    m_pAssetsHierarchyWindow->SetTitle("Assets Hierarchy");
+    m_pAssetsHierarchyWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
+    m_pAssetsHierarchyWindow->SetStyleAuto();
 
-	// Dont know why the auto style does not work ...
-	m_pAssetsHierarchyWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
-	m_pAssetsHierarchyWindow->SetImageRect(IntRect(112, 0, 128, 16));
-	m_pAssetsHierarchyWindow->SetBorder(IntRect(2, 2, 2, 2));
-	m_pAssetsHierarchyWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
-	m_pAssetsHierarchyWindow->SetLayoutSpacing(0);
-	m_pAssetsHierarchyWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
-	/// remove the title bar from the window
-	m_pAssetsHierarchyWindow->SetTitleBarVisible(false);
+    // Dont know why the auto style does not work ...
+    m_pAssetsHierarchyWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
+    m_pAssetsHierarchyWindow->SetImageRect(IntRect(112, 0, 128, 16));
+    m_pAssetsHierarchyWindow->SetBorder(IntRect(2, 2, 2, 2));
+    m_pAssetsHierarchyWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
+    m_pAssetsHierarchyWindow->SetLayoutSpacing(0);
+    m_pAssetsHierarchyWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
+    /// remove the title bar from the window
+    m_pAssetsHierarchyWindow->SetTitleBarVisible(false);
 
-	//SubscribeToEvent(assetsHierarchyWindow_->GetAssetsHierarchyList(), E_SELECTIONCHANGED, URHO3D_HANDLER(Editor, HandleAssetsHierarchyListSelectionChange));
-	//SubscribeToEvent(assetsHierarchyWindow_->GetAssetsHierarchyList(), E_ITEMDOUBLECLICKED, URHO3D_HANDLER(Editor, HandleAssetsHierarchyListDoubleClick));
+    //SubscribeToEvent(assetsHierarchyWindow_->GetAssetsHierarchyList(), E_SELECTIONCHANGED, URHO3D_HANDLER(Editor, HandleAssetsHierarchyListSelectionChange));
+    //SubscribeToEvent(assetsHierarchyWindow_->GetAssetsHierarchyList(), E_ITEMDOUBLECLICKED, URHO3D_HANDLER(Editor, HandleAssetsHierarchyListDoubleClick));
 
-	/// add assetsHierarchy inspector to the left side of the editor.
-	m_pEditorView->GetLeftFrame()->AddTab("Assets", m_pAssetsHierarchyWindow);
+    /// add assetsHierarchy inspector to the left side of the editor.
+    m_pEditorView->GetLeftFrame()->AddTab("Assets", m_pAssetsHierarchyWindow);
 
-	/// connect the assetsHierarchy with the editable scene.
-	m_pAssetsHierarchyWindow->SetScene(m_pScene);
-	/// connect the assetsHierarchy with the editable ui.
-	m_pAssetsHierarchyWindow->SetUIElement(m_pSceneRootUI);
+    /// connect the assetsHierarchy with the editable scene.
+    m_pAssetsHierarchyWindow->SetScene(m_pScene);
+    /// connect the assetsHierarchy with the editable ui.
+    m_pAssetsHierarchyWindow->SetUIElement(m_pSceneRootUI);
 
 
-	m_pAssetsHierarchyWindow->SetStyle("HierarchyWindow");          // Override Style to use the Hierarchy Window Style
+    m_pAssetsHierarchyWindow->SetStyle("HierarchyWindow");          // Override Style to use the Hierarchy Window Style
 
-	return true;
+    return true;
 }
 
 bool Editor::CreateGameAssetInspectorWindow()
 {
-	//////////////////////////////////////////////////////////////////////////
-	// Create game asset attribute
-	//////////////////////////////////////////////////////////////////////////
-	m_pGameAssetInspectorWindow = new GameAssetInspector(context_);
+    //////////////////////////////////////////////////////////////////////////
+    // Create game asset attribute
+    //////////////////////////////////////////////////////////////////////////
+    m_pGameAssetInspectorWindow = new GameAssetInspector(context_);
 
-	if (!m_pGameAssetInspectorWindow)
-	{
-		URHO3D_LOGERROR("Failed to create GameAsset inspector. Check memory.");
-		return false;
-	}
+    if (!m_pGameAssetInspectorWindow)
+    {
+        URHO3D_LOGERROR("Failed to create GameAsset inspector. Check memory.");
+        return false;
+    }
 
-	m_pGameAssetInspectorWindow->SetResizable(true);
-	//gameAssetInspectorWindow_->SetIconStyle(editorData_->iconStyle_);
+    m_pGameAssetInspectorWindow->SetResizable(true);
+    //gameAssetInspectorWindow_->SetIconStyle(editorData_->iconStyle_);
 //	m_pGameAssetInspectorWindow->SetTitle("Asset Inspector");
-	m_pGameAssetInspectorWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
-	m_pGameAssetInspectorWindow->SetStyleAuto();
+    m_pGameAssetInspectorWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
+    m_pGameAssetInspectorWindow->SetStyleAuto();
 
-	// Dont know why the auto style does not work ...
-	m_pGameAssetInspectorWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
-	m_pGameAssetInspectorWindow->SetImageRect(IntRect(112, 0, 128, 16));
-	m_pGameAssetInspectorWindow->SetBorder(IntRect(2, 2, 2, 2));
-	m_pGameAssetInspectorWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
-	m_pGameAssetInspectorWindow->SetLayoutSpacing(0);
-	m_pGameAssetInspectorWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
+    // Dont know why the auto style does not work ...
+    m_pGameAssetInspectorWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
+    m_pGameAssetInspectorWindow->SetImageRect(IntRect(112, 0, 128, 16));
+    m_pGameAssetInspectorWindow->SetBorder(IntRect(2, 2, 2, 2));
+    m_pGameAssetInspectorWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
+    m_pGameAssetInspectorWindow->SetLayoutSpacing(0);
+    m_pGameAssetInspectorWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
 
-	m_pEditorView->GetRightFrame()->AddTab("Asset", m_pGameAssetInspectorWindow);
+    m_pEditorView->GetRightFrame()->AddTab("Asset", m_pGameAssetInspectorWindow);
 
     /// connect the assetsHierarchy with the editable scene.
-	m_pGameAssetInspectorWindow->SetScene(m_pScene);
-	/// connect the assetsHierarchy with the editable ui.
-	m_pGameAssetInspectorWindow->SetUIElement(m_pSceneRootUI);
+    m_pGameAssetInspectorWindow->SetScene(m_pScene);
+    /// connect the assetsHierarchy with the editable ui.
+    m_pGameAssetInspectorWindow->SetUIElement(m_pSceneRootUI);
 
-	return true;
+    return true;
 }
 
 
 bool Editor::CreateViewSettingsWindow()
 {
-	//////////////////////////////////////////////////////////////////////////
-	// Create game asset attribute
-	//////////////////////////////////////////////////////////////////////////
-	m_pViewSettingsWindow = new ViewSettingsWindow(context_);
+    //////////////////////////////////////////////////////////////////////////
+    // Create game asset attribute
+    //////////////////////////////////////////////////////////////////////////
+    m_pViewSettingsWindow = new ViewSettingsWindow(context_);
 
-	if (!m_pViewSettingsWindow)
-	{
-		URHO3D_LOGERROR("Failed to create View Settings inspector. Check memory.");
-		return false;
-	}
+    if (!m_pViewSettingsWindow)
+    {
+        URHO3D_LOGERROR("Failed to create View Settings inspector. Check memory.");
+        return false;
+    }
 
-	m_pViewSettingsWindow->SetResizable(true);
-	//ViewSettingsWindow_->SetIconStyle(editorData_->iconStyle_);
-	//ViewSettingsWindow_->SetTitle("Scene Hierarchy");
-	m_pViewSettingsWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
-	m_pViewSettingsWindow->SetStyleAuto();
+    m_pViewSettingsWindow->SetResizable(true);
+    //ViewSettingsWindow_->SetIconStyle(editorData_->iconStyle_);
+    //ViewSettingsWindow_->SetTitle("Scene Hierarchy");
+    m_pViewSettingsWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
+    m_pViewSettingsWindow->SetStyleAuto();
 
-	// Dont know why the auto style does not work ...
-	m_pViewSettingsWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
-	m_pViewSettingsWindow->SetImageRect(IntRect(112, 0, 128, 16));
-	m_pViewSettingsWindow->SetBorder(IntRect(2, 2, 2, 2));
-	m_pViewSettingsWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
-	m_pViewSettingsWindow->SetLayoutSpacing(0);
-	m_pViewSettingsWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
+    // Dont know why the auto style does not work ...
+    m_pViewSettingsWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
+    m_pViewSettingsWindow->SetImageRect(IntRect(112, 0, 128, 16));
+    m_pViewSettingsWindow->SetBorder(IntRect(2, 2, 2, 2));
+    m_pViewSettingsWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
+    m_pViewSettingsWindow->SetLayoutSpacing(0);
+    m_pViewSettingsWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
 
-	//m_pViewSettingsWindow->SetStyleAuto();
+    //m_pViewSettingsWindow->SetStyleAuto();
 
-	m_pEditorView->GetRightFrame()->AddTab("View", m_pViewSettingsWindow);
+    m_pEditorView->GetRightFrame()->AddTab("View", m_pViewSettingsWindow);
 
 
     /// connect the assetsHierarchy with the editable scene.
-	m_pViewSettingsWindow->SetScene(m_pScene);
-	/// connect the assetsHierarchy with the editable ui.
-	m_pViewSettingsWindow->SetUIElement(m_pSceneRootUI);
+    m_pViewSettingsWindow->SetScene(m_pScene);
+    /// connect the assetsHierarchy with the editable ui.
+    m_pViewSettingsWindow->SetUIElement(m_pSceneRootUI);
 
     m_pViewSettingsWindow->UpdateSettings(m_pViewSettings);
 
-	return true;
+    return true;
 }
 
 // Create Settings menu
 bool Editor::CreateSettingsMenu(void)
 {
     // Create Settings Menu
-	MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
+    MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
 
-	if (!pMenubar)
-	{
-		return false;
-	}
+    if (!pMenubar)
+    {
+        return false;
+    }
 
     // Create Menu
-	pMenubar->CreateMenu("Settings");
+    pMenubar->CreateMenu("Settings");
 
-	pMenubar->CreateMenuItem("Settings", "Preferences", A_SETTINGSPREFERENCES_VAR);
+    pMenubar->CreateMenuItem("Settings", "Preferences", A_SETTINGSPREFERENCES_VAR);
 
     return true;
 }
@@ -603,35 +603,35 @@ bool Editor::CreateSettingsMenu(void)
 bool Editor::CreateAboutMenu(void)
 {
     // Create about menu
-	MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
+    MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
 
-	if (!pMenubar)
-	{
-		return false;
-	}
+    if (!pMenubar)
+    {
+        return false;
+    }
 
     // Create Menu
-	pMenubar->CreateMenu("About");
+    pMenubar->CreateMenu("About");
 
 
-	pMenubar->CreateMenuItem("About", "Garage Door Productions", A_ABOUTGDP_VAR);
-	pMenubar->CreateMenuItem("About", "Developers", A_ABOUTGDPTEAM_VAR);
+    pMenubar->CreateMenuItem("About", "Garage Door Productions", A_ABOUTGDP_VAR);
+    pMenubar->CreateMenuItem("About", "Developers", A_ABOUTGDPTEAM_VAR);
 
 
-	return true;
+    return true;
 }
 
 bool Editor::LoadScene(const String& fileName)
 {
-	if (!m_bIsInitialized)
-	{
-		return false;
-	}
+    if (!m_bIsInitialized)
+    {
+        return false;
+    }
 
-	if (fileName.Empty())
-	{
-		return false;
-	}
+    if (fileName.Empty())
+    {
+        return false;
+    }
 
     m_pUI->GetCursor()->SetShape(CS_BUSY);
 
@@ -666,39 +666,39 @@ bool Editor::LoadScene(const String& fileName)
 
     String extension = GetExtension(fileName);
     bool loaded;
-	if (extension != ".xml")
-	{
-		loaded = m_pScene->Load(file);
-	}
-	else
-	{
-		loaded = m_pScene->LoadXML(file);
-	}
+    if (extension != ".xml")
+    {
+        loaded = m_pScene->Load(file);
+    }
+    else
+    {
+        loaded = m_pScene->LoadXML(file);
+    }
 
     // Release resources which are not used by the new scene
     // This creates an bug in the attribute inspector because the loaded xml files are released
     m_pCache->ReleaseAllResources(false);
 
     // Always pause the scene, and do updates manually
-	m_pScene->SetUpdateEnabled(false);
+    m_pScene->SetUpdateEnabled(false);
 
     // 	UpdateWindowTitle();
     // 	DisableInspectorLock();
-	m_pHierarchyWindow->UpdateHierarchyItem(m_pScene, true);
+    m_pHierarchyWindow->UpdateHierarchyItem(m_pScene, true);
 
-	// 	ClearEditActions();
+    // 	ClearEditActions();
 
-	m_pHierarchyWindow->SetSuppressSceneChanges(false);
-
-
-	m_pEditorSelection->ClearSelection();
-	m_pAttributeWindow->GetEditNodes() = m_pEditorSelection->GetEditNodes();
-	m_pAttributeWindow->GetEditComponents() = m_pEditorSelection->GetEditComponents();
-	m_pAttributeWindow->GetEditUIElements() = m_pEditorSelection->GetEditUIElements();
-	m_pAttributeWindow->Update();
+    m_pHierarchyWindow->SetSuppressSceneChanges(false);
 
 
-	//
+    m_pEditorSelection->ClearSelection();
+    m_pAttributeWindow->GetEditNodes() = m_pEditorSelection->GetEditNodes();
+    m_pAttributeWindow->GetEditComponents() = m_pEditorSelection->GetEditComponents();
+    m_pAttributeWindow->GetEditUIElements() = m_pEditorSelection->GetEditUIElements();
+    m_pAttributeWindow->Update();
+
+
+    //
     // 	// global variable to mostly bypass adding mru upon importing tempscene
     // 	if (!skipMruScene)
     // 		UpdateSceneMru(fileName);
@@ -718,70 +718,70 @@ bool Editor::LoadScene(const String& fileName)
 
 Component* Editor::GetListComponentFromScene(UIElement* item)
 {
-	if (!m_bIsInitialized)
-	{
-		return NULL;
-	}
+    if (!m_bIsInitialized)
+    {
+        return NULL;
+    }
 
     if (m_pScene.Null())
-	{
-		return NULL;
-	}
+    {
+        return NULL;
+    }
 
     if (item == NULL)
-	{
-		return NULL;
-	}
+    {
+        return NULL;
+    }
 
     if (item->GetVar(TYPE_VAR).GetInt() != ITEM_COMPONENT)
-	{
-		return NULL;
-	}
+    {
+        return NULL;
+    }
 
     return m_pScene->GetComponent(item->GetVar(COMPONENT_ID_VAR).GetUInt());
 }
 
 Node* Editor::GetListNodeFromScene(UIElement* item)
 {
-	if (!m_bIsInitialized)
-	{
-		return NULL;
-	}
+    if (!m_bIsInitialized)
+    {
+        return NULL;
+    }
 
-	if (m_pScene.Null())
-	{
-		return NULL;
-	}
+    if (m_pScene.Null())
+    {
+        return NULL;
+    }
 
     if (item == NULL)
-	{
-		return NULL;
-	}
+    {
+        return NULL;
+    }
 
     if (item->GetVar(TYPE_VAR).GetInt() != ITEM_NODE)
-	{
-		return NULL;
-	}
+    {
+        return NULL;
+    }
 
     return m_pScene->GetNode(item->GetVar(NODE_ID_VAR).GetUInt());
 }
 
 UIElement* Editor::GetListUIElementFromUIScene(UIElement*  item)
 {
-	if (!m_bIsInitialized)
-	{
-		return NULL;
-	}
+    if (!m_bIsInitialized)
+    {
+        return NULL;
+    }
 
-	if (m_pScene.Null())
-	{
-		return NULL;
-	}
+    if (m_pScene.Null())
+    {
+        return NULL;
+    }
 
     if (item == NULL)
-	{
-		return NULL;
-	}
+    {
+        return NULL;
+    }
 
     // Get the text item's ID and use it to retrieve the actual UIElement the text item is associated to
     return GetUIElementByID(UIUtils::GetUIElementID(item));
@@ -797,23 +797,23 @@ void Editor::CreateFileSelector(const String& title, const String& ok, const Str
     // Within the editor UI, the file selector is a kind of a "singleton". When the previous one is overwritten, also
     // the events subscribed from it are disconnected, so new ones are safe to subscribe.
     m_pUIFileSelector = new FileSelector(context_);
-	m_pUIFileSelector->SetDefaultStyle(m_pCache->GetResource<XMLFile>("UI/IDEStyle.xml"));
-	m_pUIFileSelector->SetTitle(title);
-	m_pUIFileSelector->SetPath(initialPath);
-	m_pUIFileSelector->SetButtonTexts(ok, cancel);
-	m_pUIFileSelector->SetFilters(filters, initialFilter);
+    m_pUIFileSelector->SetDefaultStyle(m_pCache->GetResource<XMLFile>("UI/IDEStyle.xml"));
+    m_pUIFileSelector->SetTitle(title);
+    m_pUIFileSelector->SetPath(initialPath);
+    m_pUIFileSelector->SetButtonTexts(ok, cancel);
+    m_pUIFileSelector->SetFilters(filters, initialFilter);
 
-	IntVector2 size = m_pUIFileSelector->GetWindow()->GetSize();
-	m_pUIFileSelector->GetWindow()->SetPosition((m_pGraphics->GetWidth() - size.x_) / 2, (m_pGraphics->GetHeight() - size.y_) / 2);
+    IntVector2 size = m_pUIFileSelector->GetWindow()->GetSize();
+    m_pUIFileSelector->GetWindow()->SetPosition((m_pGraphics->GetWidth() - size.x_) / 2, (m_pGraphics->GetHeight() - size.y_) / 2);
 }
 
 void Editor::CloseFileSelector(unsigned int& filterIndex, String& path)
 {
     // Save filter & path for next time
-	filterIndex = m_pUIFileSelector->GetFilterIndex();
-	path = m_pUIFileSelector->GetPath();
+    filterIndex = m_pUIFileSelector->GetFilterIndex();
+    path = m_pUIFileSelector->GetPath();
 
-	m_pUIFileSelector = NULL;
+    m_pUIFileSelector = NULL;
 }
 
 void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
@@ -823,21 +823,21 @@ void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
 
     if (m_pEditorPluginMain)
     {
-		m_pEditorPluginMain->Update(timestep);
+        m_pEditorPluginMain->Update(timestep);
     }
 
     if (m_pEditorPluginOver)
     {
-		m_pEditorPluginOver->Update(timestep);
+        m_pEditorPluginOver->Update(timestep);
     }
 
-	if (m_pResourceBrowser->IsVisible())
-	{
-		m_pResourceBrowser->Update();
-	}
+    if (m_pResourceBrowser->IsVisible())
+    {
+        m_pResourceBrowser->Update();
+    }
 
-	// Handle editor keypress check
-	HandleKeyDownDelegate(eventType,eventData);
+    // Handle editor keypress check
+    HandleKeyDownDelegate(eventType,eventData);
 }
 
 void Editor::HandleMenuBarActionDelegate(StringHash eventType, VariantMap& eventData)
@@ -871,46 +871,46 @@ void Editor::HandleMainEditorTabChangedDelegate(StringHash eventType, VariantMap
 
     unsigned index = eventData[P_TABINDEX].GetUInt();
 
-	if (index >= m_MainEditorPlugins.Size())
-	{
-		URHO3D_LOGERROR("Failed to handle main editor tab change. Index is out of bound.");
-		return; // error ...
-	}
+    if (index >= m_MainEditorPlugins.Size())
+    {
+        URHO3D_LOGERROR("Failed to handle main editor tab change. Index is out of bound.");
+        return; // error ...
+    }
 
     EditorPlugin* pPlugin = m_MainEditorPlugins[index];
-	if (!pPlugin)
-	{
-		URHO3D_LOGERROR("Failed to handle main editor tab change. Can't find plugin by id.");
-		return; // error
-	}
+    if (!pPlugin)
+    {
+        URHO3D_LOGERROR("Failed to handle main editor tab change. Can't find plugin by id.");
+        return; // error
+    }
 
 
-	if (m_pEditorPluginMain == pPlugin)
-	{
-		URHO3D_LOGDEBUG("Failed to handle main editor tab change. MainEditor plugin is equal to changed plugin.");
-		return; // do nothing
-	}
+    if (m_pEditorPluginMain == pPlugin)
+    {
+        URHO3D_LOGDEBUG("Failed to handle main editor tab change. MainEditor plugin is equal to changed plugin.");
+        return; // do nothing
+    }
 
-	if (m_pEditorPluginMain)
-	{
-		m_pEditorPluginMain->SetVisible(false);
-	}
+    if (m_pEditorPluginMain)
+    {
+        m_pEditorPluginMain->SetVisible(false);
+    }
 
-	m_pEditorPluginMain = pPlugin;
-	m_pEditorPluginMain->SetVisible(true);
+    m_pEditorPluginMain = pPlugin;
+    m_pEditorPluginMain->SetVisible(true);
 
-	// editorPluginMain_->selectedNotify(); edit
+    // editorPluginMain_->selectedNotify(); edit
 }
 
 void Editor::HandleHierarchyListSelectionChangeDelegate(StringHash eventType, VariantMap& eventData)
 {
-	m_pEditorSelection->OnHierarchyListSelectionChange(m_pHierarchyWindow->GetHierarchyList()->GetItems(), m_pHierarchyWindow->GetHierarchyList()->GetSelections());
+    m_pEditorSelection->OnHierarchyListSelectionChange(m_pHierarchyWindow->GetHierarchyList()->GetItems(), m_pHierarchyWindow->GetHierarchyList()->GetSelections());
 
-	// Dont copy
-	m_pAttributeWindow->GetEditNodes() = m_pEditorSelection->GetEditNodes();
-	m_pAttributeWindow->GetEditComponents() = m_pEditorSelection->GetEditComponents();
-	m_pAttributeWindow->GetEditUIElements() = m_pEditorSelection->GetEditUIElements();
-	m_pAttributeWindow->Update();
+    // Dont copy
+    m_pAttributeWindow->GetEditNodes() = m_pEditorSelection->GetEditNodes();
+    m_pAttributeWindow->GetEditComponents() = m_pEditorSelection->GetEditComponents();
+    m_pAttributeWindow->GetEditUIElements() = m_pEditorSelection->GetEditUIElements();
+    m_pAttributeWindow->Update();
 
     // 	OnSelectionChange();
     //
@@ -929,38 +929,38 @@ void Editor::HandleHierarchyListDoubleClickDelegate(StringHash eventType, Varian
 
 void Editor::AddResourcePath(String newPath, bool usePreferredDir /*= true*/)
 {
-	if (newPath.Empty())
-	{
-		return;
-	}
+    if (newPath.Empty())
+    {
+        return;
+    }
 
-	if (!IsAbsolutePath(newPath))
-	{
-		newPath = m_pFileSystem->GetCurrentDir() + newPath;
-	}
+    if (!IsAbsolutePath(newPath))
+    {
+        newPath = m_pFileSystem->GetCurrentDir() + newPath;
+    }
 
-	if (usePreferredDir)
-	{
-		newPath = AddTrailingSlash(m_pCache->GetPreferredResourceDir(newPath));
-	}
-	else
-	{
-		newPath = AddTrailingSlash(newPath);
-	}
+    if (usePreferredDir)
+    {
+        newPath = AddTrailingSlash(m_pCache->GetPreferredResourceDir(newPath));
+    }
+    else
+    {
+        newPath = AddTrailingSlash(newPath);
+    }
 
     // If additive (path of a loaded prefab) check that the new path isn't already part of an old path
     Vector<String> resourceDirs = m_pCache->GetResourceDirs();
 
     for (unsigned int i = 0; i < resourceDirs.Size(); ++i)
     {
-		if (newPath.StartsWith(resourceDirs[i], false))
-		{
-			return;
-		}
+        if (newPath.StartsWith(resourceDirs[i], false))
+        {
+            return;
+        }
     }
 
     // Add resource path as first priority so that it takes precedence over the default data paths
-	m_pCache->AddResourceDir(newPath, 0);
+    m_pCache->AddResourceDir(newPath, 0);
     //RebuildResourceDatabase();
 }
 
@@ -975,13 +975,16 @@ void Editor::HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData)
     {
 
         // Edit nodes
-        Vector<WeakPtr<Node>>&	editNodes = m_pEditorSelection->GetEditNodes();
+        //Vector<WeakPtr<Node>>&	editNodes = m_pEditorSelection->GetEditNodes();
+        Vector<WeakPtr<Node>>&  selectedNodes = m_pEditorSelection->GetSelectedNodes();
 
         // Check if there are selected items
-        if(editNodes.Size()>0)
+        if(selectedNodes.Size()>0)
         {
+
             // Get the initial node ID
-            unsigned id=editNodes.At(0)->GetID();
+            unsigned id=selectedNodes.At(0)->GetID();
+
 
             // Check if the node is not blank or the screen
             if(id!=1&&id!=0)
@@ -998,13 +1001,15 @@ void Editor::HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData)
                     if(m_pScene)
                     {
                         // Get first valid node to delete
-                        Node * deleteNode = editNodes.At(0);
+                        Node * deleteNode = selectedNodes.At(0);
 
                         // Clear selection if not it will crash
                         m_pEditorSelection->ClearSelection();
 
                         // Remove the node
-                        m_pScene->RemoveChild(deleteNode);
+                        deleteNode->RemoveAllChildren();
+                        deleteNode->Remove();
+
                     }
 
                     // Start scene updating
