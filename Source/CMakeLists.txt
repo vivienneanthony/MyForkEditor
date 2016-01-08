@@ -117,14 +117,14 @@ endif ()
 add_subdirectory (Tools)
 
 # Build the engine
-if (Build-EngineStd)
+if (Build-AlphaEngine)
   # Add Engine
-  add_subdirectory (EngineStd)
+  add_subdirectory (AlphaEngine)
 endif()
 
-if (Build-EngineIDE)
+if (Build-AlphaEditor)
   # Add Engine
-  add_subdirectory (EngineIDE)
+  add_subdirectory (AlphaEditor)
 endif()
 
 if (Build-HangarsGame)
