@@ -1,8 +1,8 @@
 # Set project name
-project (AlphaEngine)
+project (AlphaEditor)
 
 # Define target name
-set (TARGET_NAME AlphaEngine)
+set (TARGET_NAME AlphaEditor)
 
 # Set minimum version
 cmake_minimum_required (VERSION 2.8.6)
@@ -28,40 +28,25 @@ include (Urho3D-CMake-common)
 
 # Find Urho3D library
 find_package (Urho3D REQUIRED)
-include_directories (${URHO3D_INCLUDE_DIRS})
+find_package (AlphaEngine REQUIRED)
 
-# Define files
-file(GLOB_RECURSE ENGINE_INCLUDE_FILES *.h)
-file(GLOB_RECURSE ENGINE_SOURCE_FILES *.cpp)
+# Add include directories 
+include_directories (${URHO3D_INCLUDE_DIRS})
+include_directories (${ALPHAENGINE_INCLUDE_DIRS})
 
 # Add directory as include path
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}")
 
-# Setup library output path
-if (ANDROID)
-    set (OUTPUT_PATH ${ANDROID_LIBRARY_OUTPUT_PATH})
-else ()
-    set (OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
-endif ()
-set_output_directories (${OUTPUT_PATH} ARCHIVE LIBRARY)
+# Define files
+file(GLOB_RECURSE ALPHAEDITOR_INCLUDE_FILES *.h)
+file(GLOB_RECURSE ALPHAEDITOR_SOURCE_FILES *.cpp)
 
 # Define source files
 define_source_files (GLOB_CPP_PATTERNS *.cpp ${GLOB_OBJC_PATTERN} EXTRA_H_FILES RECURSE)
 
 # Setup target with resource copying
-setup_library ()
+setup_main_executable ()
 
-# Install headers for using the Urho3D library
-set (ENGINESTD_INCLUDE_DIR include/AlphaEngine)
-
-# Generate platform specific pkg-config file for the benefit of Urho3D library users via SDK without CMake
-get_directory_property (URHO3D_COMPILE_DEFINITIONS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} COMPILE_DEFINITIONS)
-
-# Install header files
-install_header_files (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ DESTINATION ${ENGINESTD_INCLUDE_DIR} FILES_MATCHING PATTERN *.h USE_FILE_SYMLINK)  
-
-# workaround
-target_link_libraries(AlphaEngine Urho3D)
-
-
+#attempt to link
+target_link_libraries(AlphaEditor Urho3D AlphaEngine)
 
