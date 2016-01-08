@@ -16,13 +16,7 @@ class ViewSettings;
 ViewSettingsWindow::ViewSettingsWindow(Context* context) : Window(context)
     ,m_settingsinit(false)
 {
-    // Set style file
-    styleFile_ = g_pApp->GetConstantResCache()->GetResource<XMLFile>("UI/IDEStyle.xml");
-
-    // for some reason it's needed
-    SetDefaultStyle(styleFile_);
-
-    // Create settings turn off resizing
+      // Create settings turn off resizing
     SetLayout(LM_VERTICAL, 4, IntRect(6 ,6, 6, 6));
     SetResizeBorder(IntRect(6, 6, 6, 6));
     SetResizable(true);
@@ -30,40 +24,29 @@ ViewSettingsWindow::ViewSettingsWindow(Context* context) : Window(context)
     SetLayoutMode(LM_VERTICAL);
     SetAlignment(HA_LEFT,VA_TOP);
 
-    SetStyleAuto();
+    SetModalFrameColor(Color(1,1,1,1));
 
     // Create Title Bar
     titleBar_ = CreateChild<UIElement>("VSW_TitleBar");
     titleBar_->SetInternal(true);
     titleBar_->SetFixedHeight(16);
     titleBar_->SetLayoutMode(LM_HORIZONTAL);
-    titleBar_->SetStyleAuto();
 
     titleText_ = titleBar_->CreateChild<Text>("VSW_TitleText");
     titleText_->SetInternal(true);
     titleText_->SetText("View Settings Window");
-    titleText_->SetStyleAuto();
 
     closeButton_ = titleBar_->CreateChild<Button>("VSW_CloseButton");
     closeButton_->SetInternal(true);
 
     img_ = CreateChild<BorderImage>();
     img_->SetInternal(true);
-    img_->SetStyleAuto();
-
-    UIElement* toolBar_ = CreateChild<UIElement>("VSW_ToolBar");
-    toolBar_->SetInternal(true);
-    toolBar_->SetFixedHeight(0);
-    toolBar_->SetLayoutMode(LM_HORIZONTAL);
-    toolBar_->SetLayoutSpacing(4);
-    toolBar_->SetStyleAuto();
 
     // Create container
     viewSettingsContainer_ = CreateChild<UIElement>("VSW_Container");
     viewSettingsContainer_->SetInternal(true);
     viewSettingsContainer_->SetLayoutMode(LM_VERTICAL);
     viewSettingsContainer_->SetAlignment(HA_LEFT,VA_TOP);
-    viewSettingsContainer_->SetStyleAuto();
 
     // get count
     for(unsigned int i=0; i<10; i++)
@@ -75,7 +58,6 @@ ViewSettingsWindow::ViewSettingsWindow(Context* context) : Window(context)
         thisContainer_->SetFixedHeight(16);
         thisContainer_->SetFixedWidth(200);
         thisContainer_->SetLayoutMode(LM_HORIZONTAL);
-        thisContainer_->SetStyleAuto();
 
         // create text
         Text * thisContainerText_ =   thisContainer_->CreateChild<Text>("VSW_ContainerChildText");
@@ -85,7 +67,7 @@ ViewSettingsWindow::ViewSettingsWindow(Context* context) : Window(context)
         thisContainerText_->SetText("Setting");
         thisContainerText_->SetFixedWidth(120);
         thisContainerText_->SetLayoutSpacing(4);
-        thisContainerText_->SetStyleAuto();
+
 
         LineEdit * thisContainerSettingsEdit_ =   thisContainer_->CreateChild<LineEdit>("VSW_ContainerChildText");
         thisContainerSettingsEdit_->SetInternal(true);
@@ -96,7 +78,6 @@ ViewSettingsWindow::ViewSettingsWindow(Context* context) : Window(context)
         thisContainerSettingsEdit_->SetStyleAuto();
 
         SubscribeToEvent(thisContainerSettingsEdit_, E_TEXTFINISHED, URHO3D_HANDLER(ViewSettingsWindow, HandleSettingsChange));
-
 
     }
     return;
