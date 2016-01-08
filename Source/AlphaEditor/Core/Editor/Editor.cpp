@@ -487,15 +487,14 @@ bool Editor::CreateGameAssetHierarchyWindow()
 	// Dont know why the auto style does not work ...
 	m_pAssetsHierarchyWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
 	m_pAssetsHierarchyWindow->SetImageRect(IntRect(112, 0, 128, 16));
+
 	m_pAssetsHierarchyWindow->SetBorder(IntRect(2, 2, 2, 2));
 	m_pAssetsHierarchyWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
 	m_pAssetsHierarchyWindow->SetLayoutSpacing(0);
 	m_pAssetsHierarchyWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
+
 	/// remove the title bar from the window
 	m_pAssetsHierarchyWindow->SetTitleBarVisible(false);
-
-	//SubscribeToEvent(assetsHierarchyWindow_->GetAssetsHierarchyList(), E_SELECTIONCHANGED, URHO3D_HANDLER(Editor, HandleAssetsHierarchyListSelectionChange));
-	//SubscribeToEvent(assetsHierarchyWindow_->GetAssetsHierarchyList(), E_ITEMDOUBLECLICKED, URHO3D_HANDLER(Editor, HandleAssetsHierarchyListDoubleClick));
 
 	/// add assetsHierarchy inspector to the left side of the editor.
 	m_pEditorView->GetLeftFrame()->AddTab("Assets", m_pAssetsHierarchyWindow);
@@ -525,8 +524,6 @@ bool Editor::CreateGameAssetInspectorWindow()
 	}
 
 	m_pGameAssetInspectorWindow->SetResizable(true);
-	//gameAssetInspectorWindow_->SetIconStyle(editorData_->iconStyle_);
-//	m_pGameAssetInspectorWindow->SetTitle("Asset Inspector");
 	m_pGameAssetInspectorWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
 	m_pGameAssetInspectorWindow->SetStyleAuto();
 
@@ -563,23 +560,18 @@ bool Editor::CreateViewSettingsWindow()
 	}
 
 	m_pViewSettingsWindow->SetResizable(true);
-	//ViewSettingsWindow_->SetIconStyle(editorData_->iconStyle_);
-	//ViewSettingsWindow_->SetTitle("Scene Hierarchy");
 	m_pViewSettingsWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
 	m_pViewSettingsWindow->SetStyleAuto();
 
-	// Dont know why the auto style does not work ...
-	m_pViewSettingsWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
+
+    m_pViewSettingsWindow->SetTexture(m_pCache->GetResource<Texture2D>("Textures/UI.png"));
 	m_pViewSettingsWindow->SetImageRect(IntRect(112, 0, 128, 16));
 	m_pViewSettingsWindow->SetBorder(IntRect(2, 2, 2, 2));
 	m_pViewSettingsWindow->SetResizeBorder(IntRect(0, 0, 0, 0));
 	m_pViewSettingsWindow->SetLayoutSpacing(0);
 	m_pViewSettingsWindow->SetLayoutBorder(IntRect(0, 4, 0, 0));
 
-	//m_pViewSettingsWindow->SetStyleAuto();
-
 	m_pEditorView->GetRightFrame()->AddTab("View", m_pViewSettingsWindow);
-
 
     /// connect the assetsHierarchy with the editable scene.
 	m_pViewSettingsWindow->SetScene(m_pScene);
@@ -991,7 +983,7 @@ void Editor::AddResourcePath(String newPath, bool usePreferredDir /*= true*/)
 
     // Add resource path as first priority so that it takes precedence over the default data paths
 	m_pCache->AddResourceDir(newPath, 0);
-    
+
 	m_pResourceBrowser->RebuildResourceDatabase();
 	//RebuildResourceDatabase();
 }

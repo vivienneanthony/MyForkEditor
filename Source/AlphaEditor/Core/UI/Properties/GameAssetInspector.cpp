@@ -43,17 +43,6 @@ GameAssetInspector::GameAssetInspector(Context* context) : Window(context)
     img_ = CreateChild<BorderImage>();
     img_->SetInternal(true);
 
-    UIElement* toolBar_ = CreateChild<UIElement>("GAPW_ToolBar");
-    toolBar_->SetInternal(true);
-    toolBar_->SetFixedHeight(0);
-    toolBar_->SetLayoutMode(LM_HORIZONTAL);
-    toolBar_->SetLayoutSpacing(4);
-
-    // Create container
-    UIElement * inspectorContainer_ = CreateChild<UIElement>("GAPW_Container");
-    inspectorContainer_->SetInternal(true);
-    inspectorContainer_->SetLayoutMode(LM_VERTICAL);
-    inspectorContainer_->SetAlignment(HA_LEFT,VA_TOP);
 
 
     return;

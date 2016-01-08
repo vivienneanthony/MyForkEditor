@@ -123,6 +123,8 @@ GameAssetSelector::GameAssetSelector(Context* context) :
     okButtonText->SetAlignment(HA_CENTER, VA_CENTER);
     okButtonText->SetInternal(true);
     okButtonText->SetText("Ok");
+
+
     m_pOkButton->AddChild(okButtonText);
 
     m_pButtonRegion->AddChild(m_pOkButton);
@@ -130,6 +132,7 @@ GameAssetSelector::GameAssetSelector(Context* context) :
     AddChild(m_pButtonRegion);
 
     m_pOkButton->SetPosition(0,100);
+
 
 
     return;
@@ -169,7 +172,7 @@ void GameAssetSelector::UpdateGameAssetsList(void)
         {
             // Vector <String of files
             Vector <String> dirFiles;
-			
+
             // remove garbage directories
             if (dirs.At(currentDir).EndsWith("."))
                 continue;
@@ -276,7 +279,7 @@ void GameAssetSelector::UpdateGameAssetsList(void)
 		SAFE_DELETE(resourceXML);
     }
 
-	
+
 }
 
 
