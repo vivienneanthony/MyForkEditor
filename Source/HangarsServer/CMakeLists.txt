@@ -28,11 +28,11 @@ include (Urho3D-CMake-common)
 
 # Find Urho3D library
 find_package (Urho3D REQUIRED)
-find_package (EngineStd REQUIRED)
+find_package (AlphaEngine REQUIRED)
 
 # Add include directories 
 include_directories (${URHO3D_INCLUDE_DIRS})
-include_directories (${ENGINESTD_INCLUDE_DIRS})
+include_directories (${ALPHAENGINE_INCLUDE_DIRS})
 
 # Add directory as include path
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}")
@@ -48,5 +48,5 @@ define_source_files (GLOB_CPP_PATTERNS *.cpp ${GLOB_OBJC_PATTERN} EXTRA_H_FILES 
 setup_main_executable ()
 
 #attempt to link
-target_link_libraries(HangarsServer Urho3D EngineStd)
+target_link_libraries(HangarsServer Urho3D AlphaEngine)
 
