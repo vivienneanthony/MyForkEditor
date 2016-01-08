@@ -169,7 +169,7 @@ void GameAssetSelector::UpdateGameAssetsList(void)
         {
             // Vector <String of files
             Vector <String> dirFiles;
-
+			
             // remove garbage directories
             if (dirs.At(currentDir).EndsWith("."))
                 continue;
@@ -272,7 +272,11 @@ void GameAssetSelector::UpdateGameAssetsList(void)
         NewItem->SetSelectionColor(SelectionColor);
 
         NewItem->SetStyle("Text");
+
+		SAFE_DELETE(resourceXML);
     }
+
+	
 }
 
 

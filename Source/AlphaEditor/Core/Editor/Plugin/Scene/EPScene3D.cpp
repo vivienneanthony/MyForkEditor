@@ -1844,7 +1844,7 @@ void EPScene3D::HandleCreateGameAssetNodeCancelPressed(StringHash eventType, Var
 void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& eventData)
 {
     // Get Path
-    String selectedResource = gameAssetChooserWindow->GetResourceSelected();
+	    String selectedResource = gameAssetChooserWindow->GetResourceSelected();
 
     // Get the factory
     GAFactory * gameFactory = g_pApp->GetGameLogic()->GetGAFactory();
@@ -1860,7 +1860,8 @@ void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& even
         unsigned int  FreeID = editorData_->GetEditorScene()->GetFreeNodeID(CreateMode::REPLICATED);
 
         // Better Fix uses the first available free ID
-        StrongNodePtr gameNode = gameFactory->CreateNode(selectedResource, node, matrix, FreeID);
+		StrongNodePtr gameNode = g_pApp->GetGameLogic()->VCreateGameNode(selectedResource, pugi::xml_node(), NULL, FreeID);
+        //StrongNodePtr gameNode = gameFactory->CreateNode(selectedResource, node, matrix, FreeID);
 
         // If the game node was not able to be made
         if(gameNode==NULL)

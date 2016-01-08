@@ -8,6 +8,8 @@
 //
 #include "AlphaEditorStd.h"
 
+// Network
+#include "EventManager/Client/ClientEvents.h"
 
 // EngineStd Additional Headers
 #include "AlphaEngine/Mainloop/Activity/ActivityManager.h"
@@ -129,6 +131,8 @@ void MainEditorView::EditorInstance()
     {
         URHO3D_LOGERROR("Failed to create about menu.");
     }
+
+	SendEvent(Event_Data_Request_Start_Game::g_EventType);
 
     return;
 }

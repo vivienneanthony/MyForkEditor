@@ -37,7 +37,7 @@ void EditorGameLogic::VChangeState(enum BaseGameState newState)
 	{
 		VSetProxy();
 
-		g_pApp->AttachAsClient();
+		//g_pApp->AttachAsClient();
 	}
 
 }
