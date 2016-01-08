@@ -1,7 +1,7 @@
 #include <HangarsServerStd.h>
 #include <GameLogic/HangarsGameLogic.h>
 #include <iostream>
-#include "Test.h"
+#include "test.h"
 
 extern void TestDatabase()
 {

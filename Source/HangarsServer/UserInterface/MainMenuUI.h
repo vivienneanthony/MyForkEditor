@@ -1,9 +1,9 @@
 #ifndef MAIN_MENU_UI_H
 #define MAIN_MENU_UI_H
 
-#include "EngineStd/GameLogic/LevelManager/LevelManager.h"
+#include "AlphaEngine/GameLogic/LevelManager/LevelManager.h"
 
-#include "EngineStd/UserInterface/UserInterface.h"
+#include "AlphaEngine/UserInterface/UserInterface.h"
 
 class MainMenuUI : public BaseUI
 {

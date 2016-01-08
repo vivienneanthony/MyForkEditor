@@ -1,7 +1,7 @@
 #include <HangarsServerStd.h>
-#include "EngineStd/EventManager/Server/ServerEvents.h"
-#include "EngineStd/Network/Managers/BaseSocketManager.h"
-#include "EngineStd/Network/Sockets/GameServerListenSocket.h"
+#include "AlphaEngine/EventManager/Server/ServerEvents.h"
+#include "AlphaEngine/Network/Managers/BaseSocketManager.h"
+#include "AlphaEngine/Network/Sockets/GameServerListenSocket.h"
 
 #include "Database/Test.h"
 
@@ -63,8 +63,8 @@ void HangarsGameLogic::VChangeState(enum BaseGameState newState)
 	if (m_State == BGS_WaitingForServerCreating)
 	{ 
 		// Get connection to database
-		m_pDatabaseConnection = NULL;
-		//g_pApp->ConnectToDB("DSN=Hangars");
+		//m_pDatabaseConnection = NULL;
+		g_pApp->ConnectToDB("DSN=Hangars");
 		
 		BaseSocketManager *pServer = new BaseSocketManager(context_);
 		if (!pServer->Init())

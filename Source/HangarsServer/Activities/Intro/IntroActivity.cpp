@@ -1,6 +1,6 @@
 #include "HangarsServerStd.h"
-#include "EngineStd/Mainloop/Activity/Activity.h"
-#include "EngineStd/GameLogic/BaseGameLogic.h"
+#include "AlphaEngine/Mainloop/Activity/Activity.h"
+#include "AlphaEngine/GameLogic/BaseGameLogic.h"
 
 #include "GameView/MainMenuView.h"
 #include "IntroActivity.h"

@@ -1,7 +1,7 @@
 #ifndef HANGARS_GAME_LOGIC_H
 #define HANGARS_GAME_LOGIC_H
 
-#include <EngineStd/GameLogic/BaseGameLogic.h>
+#include <AlphaEngine/GameLogic/BaseGameLogic.h>
 
 class HangarsGameLogic : public BaseGameLogic
 {

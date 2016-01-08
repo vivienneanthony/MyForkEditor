@@ -3,7 +3,7 @@
 
 class BaseSocketManager;
 
-class HangarsServerApp : public EngineApp
+class HangarsServerApp : public AlphaEngineApp
 {
 public:
 	// Constructors

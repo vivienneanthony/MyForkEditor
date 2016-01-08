@@ -1,7 +1,7 @@
 #ifndef REMOTE_HUMANS_VIEW_H
 #define REMOTE_HUMANS_VIEW_H
 
-#include "EngineStd/Network/GameView/NetworkGameView.h"
+#include "AlphaEngine/Network/GameView/NetworkGameView.h"
 
 class RemoteHangarsHumanView : public NetworkGameView
 {
