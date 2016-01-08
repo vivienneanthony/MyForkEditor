@@ -1,11 +1,11 @@
 #include <HangarsServerStd.h>
 #include <GameLogic/HangarsGameLogic.h>
 #include <iostream>
-#include "test.h"
+#include "Test.h"
 
 extern void TestDatabase()
 {
-	String input = 
+	String input =
 		"CREATE TABLE hangarsdb.Accounts"
 		"("
 		    "AccountIdx int NOT NULL AUTO_INCREMENT PRIMARY KEY, "
