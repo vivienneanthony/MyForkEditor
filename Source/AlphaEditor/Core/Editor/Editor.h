@@ -155,6 +155,8 @@ protected:
 	void HandleHierarchyListDoubleClickDelegate(StringHash eventType, VariantMap& eventData);
 	// Handle set project directory
 	void HandleSetProjectDirectoryDelegate(StringHash eventType, VariantMap& eventData);
+	// Handle Key Down
+    void HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData);
 protected:
 	// Cached pointer from Engine
 	ResourceCache* m_pCache;

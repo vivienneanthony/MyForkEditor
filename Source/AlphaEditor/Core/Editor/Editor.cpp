@@ -31,6 +31,8 @@
 #include "../UI/Attribute/AttributeInspector.h"
 #include "../UI/Modal/ModalWindow.h"
 #include "../UI/Settings/ViewSettingsWindow.h"
+#include "../UI/About/AboutTeamGDPWindow.h"
+#include "../UI/Selector/GameAssetSelector.h"
 
 #include "../UI/UIUtils.h"
 #include "../UI/UIGlobals.h"
@@ -158,6 +160,9 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 	ModalWindow::RegisterObject(context_);
 	TabWindow::RegisterObject(context_);
 	HierarchyWindow::RegisterObject(context_);
+
+    GameAssetSelector::RegisterObject(context_);
+    AboutTeamGDPWindow::RegisterObject(context_);
 
 
     // InitializeSettings
@@ -842,6 +847,9 @@ void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
 	{
 		m_pResourceBrowser->Update();
 	}
+
+    // Handle editor keypress check
+    HandleKeyDownDelegate(eventType,eventData);
 }
 
 void Editor::HandleMenuBarActionDelegate(StringHash eventType, VariantMap& eventData)
@@ -999,4 +1007,61 @@ bool Editor::ExportToAlphaEngine(Vector<WeakPtr<Node>>& nodes)
 		g_pApp->GetGameLogic()->GetGameAssetXml(document, nodeId, m_pScene);
 	}
 	return true;
+}
+
+// Handle Key Presses
+void Editor::HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData)
+{
+    // Get input subsystem
+    Input * input_ = g_pApp->GetSubsystem<Input>();
+
+    // Check for delete key was pressed
+    if (input_->GetKeyPress(KEY_DELETE)==true)
+    {
+
+        // Edit nodes
+        //Vector<WeakPtr<Node>>&	editNodes = m_pEditorSelection->GetEditNodes();
+        Vector<WeakPtr<Node>>&  selectedNodes = m_pEditorSelection->GetSelectedNodes();
+
+        // Check if there are selected items
+        if(selectedNodes.Size()>0)
+        {
+
+            // Get the initial node ID
+            unsigned id=selectedNodes.At(0)->GetID();
+
+
+            // Check if the node is not blank or the screen
+            if(id!=1&&id!=0)
+            {
+
+                // if the plugin is set
+                if(m_pEditorPluginMain)
+                {
+
+                    // Stop any plugin from update to execute delete
+                    m_pEditorPluginMain->StopSceneUpdate();
+
+                    // Should stop some scene updating
+                    if(m_pScene)
+                    {
+                        // Get first valid node to delete
+                        Node * deleteNode = selectedNodes.At(0);
+
+                        // Clear selection if not it will crash
+                        m_pEditorSelection->ClearSelection();
+
+                        // Remove the node
+                        deleteNode->RemoveAllChildren();
+                        deleteNode->Remove();
+
+                    }
+
+                    // Start scene updating
+                    m_pEditorPluginMain->StopSceneUpdate();
+                }
+            }
+        }
+    }
+    return;
 }

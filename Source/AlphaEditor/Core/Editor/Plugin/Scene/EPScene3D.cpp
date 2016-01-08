@@ -16,7 +16,8 @@
 #include "../../../UI/Menu/MiniToolBarUI.h"
 #include "../../../UI/Menu/ToolBarUI.h"
 #include "../../../UI/UIUtils.h"
-
+#include "../../../UI/Selector/GameAssetSelector.h"
+#include "../../../UI/About/AboutTeamGDPWindow.h"
 
 // Urho3d
 #ifdef WIN32
@@ -37,10 +38,17 @@
 
 #include "GizmoScene3D.h"
 
+// Game Asset Factory System
+#include "AlphaEngine/GameLogic/BaseGameLogic.h"
+#include "AlphaEngine/GameAsset/GAFactory.h"
+
 #include "EPScene3D.h"
 
 
 using namespace Urho3D;
+
+
+class GAFactory;
 
 const int pickModeDrawableFlags[] =
 {
@@ -581,6 +589,9 @@ void EPScene3D::Start()
     {
         editorView_->GetMenuBar()->CreatePopupMenuItem(childPopup, objects[i], A_CREATEBUILTINOBJ_VAR);
     }
+
+    // Create game asset menu add to menubar
+    editorView_->GetMenuBar()->CreateMenuItem("Create", "Game Asset", A_CREATEGAMEASSETNODE_VAR, 0, 0, false, "Create Game Asset Node");
 
     SubscribeToEvent(editorView_->GetMenuBar(), E_MENUBAR_ACTION, URHO3D_HANDLER(EPScene3D, HandleMenuBarAction));
 
@@ -1385,6 +1396,14 @@ void EPScene3D::HandleMenuBarAction(StringHash eventType, VariantMap& eventData)
         String uiname = eventData[P_UINAME].GetString();
         CreateBuiltinObject(uiname);
     }
+    else if (action == A_CREATEGAMEASSETNODE_VAR)
+    {
+        CreateGameAssetNode();
+    }
+    else if (action == A_ABOUTGDPTEAM_VAR)
+    {
+        CreateAboutTeamGDPWindow();
+    }
 }
 
 void EPScene3D::HandleMessageAcknowledgement(StringHash eventType, VariantMap& eventData)
@@ -1703,6 +1722,172 @@ Node* EPScene3D::InstantiateNodeFromFile(File* file, const Vector3& position, co
 
     return newNode;
 }
+
+// Create About Team Window
+void EPScene3D::CreateAboutTeamGDPWindow(void)
+{
+    // Check if window is created
+    if(pAboutTeamGDPWindow)
+    {
+        return;
+    }
+
+    // Create window in mainframe
+    pAboutTeamGDPWindow = editorView_->GetMainFrame()->CreateChild<AboutTeamGDPWindow>("AboutTeamGDPWindow");
+
+    // If the window is created setup attribute - Forced
+    if(pAboutTeamGDPWindow)
+    {
+           // Forced Windows Settings - Not sure why the back is not working
+        pAboutTeamGDPWindow->SetResizable(true);
+        pAboutTeamGDPWindow->SetMovable(true);
+        pAboutTeamGDPWindow->SetDefaultStyle(editorData_->GetEditorDefaultStyle());
+        pAboutTeamGDPWindow->SetStyleAuto();
+
+        // More settings
+        pAboutTeamGDPWindow->SetModal(true);
+        pAboutTeamGDPWindow->BringToFront();
+        pAboutTeamGDPWindow->SetFocus(true);
+        pAboutTeamGDPWindow->SetPriority(2);
+        pAboutTeamGDPWindow->SetOpacity(.9);
+        pAboutTeamGDPWindow->SetFocusMode(FM_FOCUSABLE_DEFOCUSABLE);
+
+
+        // Event subscription
+        SubscribeToEvent(pAboutTeamGDPWindow->GetOkButton(), E_RELEASED, URHO3D_HANDLER(EPScene3D,HandleAboutTeamGDPWindowClosePressed));
+        SubscribeToEvent(pAboutTeamGDPWindow->GetCloseButton(),E_RELEASED,URHO3D_HANDLER(EPScene3D,HandleAboutTeamGDPWindowClosePressed));
+
+        // Get frame width and height
+        int Width = editorView_->GetMainFrame()->GetWidth();
+        int Height = editorView_->GetMainFrame()->GetHeight();
+
+        // Set position to the middle of the screen
+        pAboutTeamGDPWindow-> SetPosition(Width/2-pAboutTeamGDPWindow->GetWidth()/2, Height/2-pAboutTeamGDPWindow->GetHeight()/2);
+
+    }
+
+    return;
+}
+
+// Handle about team closed pressed
+void EPScene3D::HandleAboutTeamGDPWindowClosePressed(StringHash eventType, VariantMap& eventData)
+{
+    // Remove window
+    pAboutTeamGDPWindow->Remove();
+
+    // Set to NULL
+    pAboutTeamGDPWindow=NULL;
+
+    return;
+}
+
+//  Create a game asset node
+void EPScene3D::CreateGameAssetNode(void)
+{
+    // Create a null node
+    Node* newNode = NULL;
+
+    // Check if the window exist
+    if(gameAssetChooserWindow)
+    {
+        return;
+    }
+
+    // Create a game asset chooser in the main window
+    gameAssetChooserWindow = editorView_->GetMainFrame()->CreateChild<GameAssetSelector>("GameAssetSelector");
+
+    // If the window is created
+    if(gameAssetChooserWindow)
+    {
+        // Forced Windows Settings - Not sure why the back is not working
+
+        gameAssetChooserWindow->SetResizable(true);
+        gameAssetChooserWindow->SetMovable(true);
+        gameAssetChooserWindow->SetDefaultStyle(editorData_->GetEditorDefaultStyle());
+        gameAssetChooserWindow->SetStyleAuto();
+
+
+        gameAssetChooserWindow->SetModal(true);
+        gameAssetChooserWindow->BringToFront();
+        gameAssetChooserWindow->SetFocus(true);
+        gameAssetChooserWindow->SetPriority(1);
+        gameAssetChooserWindow->SetOpacity(.9);
+        gameAssetChooserWindow->SetFocusMode(FM_FOCUSABLE_DEFOCUSABLE);
+
+        gameAssetChooserWindow-> SetPosition(700, 25);
+
+        gameAssetChooserWindow->UpdateGameAssetsList();
+
+        /// Attach okresponse
+        SubscribeToEvent(gameAssetChooserWindow->GetOkButton(), E_RELEASED, URHO3D_HANDLER(EPScene3D,HandleCreateGameAssetNode));
+        SubscribeToEvent(gameAssetChooserWindow->GetCloseButton(),E_RELEASED,URHO3D_HANDLER(EPScene3D,HandleCreateGameAssetNodeCancelPressed));
+        SubscribeToEvent(gameAssetChooserWindow->GetCancelButton(), E_RELEASED,URHO3D_HANDLER(EPScene3D,HandleCreateGameAssetNodeCancelPressed));
+
+    }
+
+    return;
+}
+
+// Hande create game asset window cancled or closed
+void EPScene3D::HandleCreateGameAssetNodeCancelPressed(StringHash eventType, VariantMap& eventData)
+{
+    // Remove window
+    gameAssetChooserWindow->Remove();
+
+    // Null window pointer
+    gameAssetChooserWindow=NULL;
+
+    return;
+}
+
+// Handle create window
+void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& eventData)
+{
+    // Get Path
+    String selectedResource = gameAssetChooserWindow->GetResourceSelected();
+
+    // Get the factory
+    GAFactory * gameFactory = g_pApp->GetGameLogic()->GetGAFactory();
+
+    // If the factory exist then utilize
+    if(gameFactory)
+    {
+        pugi::xml_node node;                            // blank node
+
+        const Matrix4 * matrix;                         // blank matrix
+
+        // Added to prevent crashing
+        unsigned int  FreeID = editorData_->GetEditorScene()->GetFreeNodeID(CreateMode::REPLICATED);
+
+        // Better Fix uses the first available free ID
+        StrongNodePtr gameNode = gameFactory->CreateNode(selectedResource, node, matrix, FreeID);
+
+        // If the game node was not able to be made
+        if(gameNode==NULL)
+        {
+            URHO3D_LOGERROR ("Could not create game asset node");
+
+            return;
+        }
+
+        // Check if selected node
+        if(editorSelection_->GetEditNode() != NULL)
+        {
+            // Add to selected node
+            editorSelection_->GetEditNode()->AddChild(gameNode);
+        }
+        else
+        {
+            // Add to scene node
+            editorData_->GetEditorScene()->AddChild(gameNode);
+        }
+
+        sceneModified=true;
+    }
+
+    return;
+}
+
 
 Node* EPScene3D::CreateNode(CreateMode mode)
 {
