@@ -1,14 +1,11 @@
 #include "HangarsClientStd.h"
 
-#include "EngineStd/Mainloop/Activity/ActivityManager.h"
-#include "EngineStd/GameLogic/BaseGameLogic.h"
+#include "AlphaEngine/Mainloop/Activity/ActivityManager.h"
+#include "AlphaEngine/GameLogic/BaseGameLogic.h"
 
-#include "EngineStd/EventManager/Local/LocalEvents.h"
+#include "AlphaEngine/EventManager/Local/LocalEvents.h"
 
-#include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
-#include "EngineStd/GameAssetManager/GameAssetManager.h"
-
-#include "EngineStd/GameLogic/LevelManager/LevelManager.h"
+#include "AlphaEngine/GameLogic/LevelManager/LevelManager.h"
 
 #include "MainMenuView.h"
 #include "UserInterface/MainMenuUI.h"

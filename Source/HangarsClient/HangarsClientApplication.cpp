@@ -12,7 +12,7 @@
 // Application entry-point
 URHO3D_DEFINE_APPLICATION_MAIN(HangarsClientApp)
 
-HangarsClientApp::HangarsClientApp(Context* context) : EngineApp(context)
+HangarsClientApp::HangarsClientApp(Context* context) : AlphaEngineApp(context)
 {
 	g_pApp = this;
 	m_bIsInit = false;
@@ -27,7 +27,7 @@ HangarsClientApp::~HangarsClientApp()
 
 void HangarsClientApp::Setup()
 {
-	EngineApp::Setup();
+	AlphaEngineApp::Setup();
 
 
 }
@@ -35,20 +35,20 @@ void HangarsClientApp::Setup()
 
 void HangarsClientApp::Start()
 {
-	EngineApp::Start();
+	AlphaEngineApp::Start();
 
 	m_bIsInit = true;
 }
 
 void HangarsClientApp::Stop()
 {
-	EngineApp::Stop();
+	AlphaEngineApp::Stop();
 
 }
 
 bool HangarsClientApp::CreateCursor()
 {
-	EngineApp::CreateCursor();
+	AlphaEngineApp::CreateCursor();
 
 	return true;
 }
@@ -74,13 +74,13 @@ bool HangarsClientApp::VCreateViewLogic()
 
 void HangarsClientApp::VInitializeAllDelegates()
 {
-	EngineApp::VInitializeAllDelegates();
+	AlphaEngineApp::VInitializeAllDelegates();
 
 }
 
 void HangarsClientApp::VDestroyAllDelegates()
 {
-	EngineApp::VDestroyAllDelegates();
+	AlphaEngineApp::VDestroyAllDelegates();
 
 }
 

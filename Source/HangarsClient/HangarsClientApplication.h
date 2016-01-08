@@ -1,9 +1,9 @@
 #ifndef HANGARS_CLIENT_APPLICATION_H
 #define HANGARS_CLIENT_APPLICATION_H
 
-class HangarsClientApp : public EngineApp
+class HangarsClientApp : public AlphaEngineApp
 {
-	URHO3D_OBJECT(HangarsClientApp, EngineApp)
+	URHO3D_OBJECT(HangarsClientApp, AlphaEngineApp)
 public:
 	// Constructors
 	HangarsClientApp(Context* context);

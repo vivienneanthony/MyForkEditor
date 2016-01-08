@@ -1,7 +1,7 @@
 #ifndef MAIN_MENU_VIEW_H
 #define MAIN_MENU_VIEW_H
 
-#include "EngineStd/UserInterface/HumanView/HumanView.h"
+#include "AlphaEngine/UserInterface/HumanView/HumanView.h"
 
 class MainMenuView : public HumanView
 {

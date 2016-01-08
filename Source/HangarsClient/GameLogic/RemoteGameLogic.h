@@ -1,7 +1,7 @@
 #ifndef REMOTE_GAME_LOGIC_H
 #define REMOTE_GAME_LOGIC_H
 
-#include "EngineStd/GameLogic/BaseGameLogic.h"
+#include "AlphaEngine/GameLogic/BaseGameLogic.h"
 
 class RemoteGameLogic : public BaseGameLogic
 {

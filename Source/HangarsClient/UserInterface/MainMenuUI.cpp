@@ -1,17 +1,15 @@
 #include "HangarsClientStd.h"
 
-#include "EngineStd/UserInterface/UserInterface.h"
-#include "EngineStd/UserInterface/Urho3D/Utilities.h"
-#include "EngineStd/UserInterface/ScreenElement/Windows/ModelessWindow.h"
+#include "AlphaEngine/UserInterface/UserInterface.h"
+#include "AlphaEngine/UserInterface/Urho3D/Utilities.h"
+#include "AlphaEngine/UserInterface/ScreenElement/Windows/ModelessWindow.h"
 
-#include "EngineStd/EventManager/Client/ClientEvents.h"
+#include "AlphaEngine/EventManager/Client/ClientEvents.h"
 
-#include "EngineStd/GameLogic/BaseGameLogic.h"
-#include "EngineStd/GameLogic/LevelManager/LevelManager.h"
-#include "EngineStd/Resources/ResHandle.h"
-#include "EngineStd/Resources/ResourceCache.h"
-
-#include "EngineStd/GameAssetManager/GameAssetManager.h"
+#include "AlphaEngine/GameLogic/BaseGameLogic.h"
+#include "AlphaEngine/GameLogic/LevelManager/LevelManager.h"
+#include "AlphaEngine/Resources/ResHandle.h"
+#include "AlphaEngine/Resources/ResourceCache.h"
 
 #include "GameView/MainMenuView.h"
 #include "MainMenuUI.h"

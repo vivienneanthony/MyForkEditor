@@ -3,9 +3,6 @@
 
 #include "EventManager/Server/ServerEvents.h"
 
-#include "EngineStd/GameAssetManager/Factory/GameAssetFactory.h"
-#include "EngineStd/GameAssetManager/GameAssetManager.h"
-
 RemoteGameLogic::RemoteGameLogic(Context* context) : BaseGameLogic(context)
 {
 

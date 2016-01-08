@@ -1,14 +1,11 @@
 #include "HangarsClientStd.h"
-#include "EngineStd/Mainloop/Activity/Activity.h"
-#include "EngineStd/GameLogic/BaseGameLogic.h"
+#include "AlphaEngine/Mainloop/Activity/Activity.h"
+#include "AlphaEngine/GameLogic/BaseGameLogic.h"
 
-#include "EngineStd/EventManager/Local/LocalEvents.h"
+#include "AlphaEngine/EventManager/Local/LocalEvents.h"
 
 #include "GameView/MainMenuView.h"
 #include "IntroActivity.h"
-
-#include "EngineStd/GameAssetManager/GameAssetManager.h"
-
 
 IntroActivity::IntroActivity(Context* context) : Activity(context)
 {
