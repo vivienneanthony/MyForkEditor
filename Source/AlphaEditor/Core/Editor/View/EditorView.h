@@ -99,6 +99,8 @@ protected:
 
 	// Root UI
     SharedPtr<UIElement> m_pUIRoot;
+	// Main menu bar
+	SharedPtr<UIElement> m_pMainmenuBar;
 	// Menu bar
     SharedPtr<MenuBarUI> m_pMenubar;
 	// Tool bar

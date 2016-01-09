@@ -132,7 +132,7 @@ public:
 
 protected:
 	// Export to AlphaEngine selected GameAssets
-	bool ExportToAlphaEngine(Vector<WeakPtr<Node>>& nodes);
+	bool ExportToAlphaEngine();
 
 	// Add Resource Path
 	void AddResourcePath(String newPath, bool usePreferredDir = true);
@@ -157,6 +157,9 @@ protected:
 	void HandleSetProjectDirectoryDelegate(StringHash eventType, VariantMap& eventData);
 	// Handle Key Down
     void HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData);
+	// Handle game asset export
+	void HandleExportGameAssetDelegate(StringHash eventType, VariantMap& eventData);
+
 protected:
 	// Cached pointer from Engine
 	ResourceCache* m_pCache;
@@ -218,5 +221,8 @@ protected:
 
 	// View Settings
 	SharedPtr<ViewSettings>m_pViewSettings;
+
+	// Export directory
+	String m_ExportDirectory;
 
 };

@@ -530,7 +530,6 @@ void EPScene3D::Start()
 
     editorView_->GetMenuBar()->CreateMenuItem("Create", "Replicated node", A_CREATEREPNODE_VAR, 0, 0, true, "Create Replicated node");
     editorView_->GetMenuBar()->CreateMenuItem("Create", "Local node", A_CREATELOCALNODE_VAR, 0, 0, true, "Create Local node");
-	editorView_->GetMenuBar()->CreateMenuItem("Create", "Alpha engine node", A_CREATEALPHAENGINENODE_VAR, 0, 0, true, "Create Alpha Engine node");
 
 
     Menu* childMenu = editorView_->GetMenuBar()->CreateMenuItem("Create", "Component", StringHash::ZERO, SHOW_POPUP_INDICATOR);
@@ -1382,10 +1381,6 @@ void EPScene3D::HandleMenuBarAction(StringHash eventType, VariantMap& eventData)
     {
         CreateNode(LOCAL);
     }
-	else if (action == A_CREATEALPHAENGINENODE_VAR)
-	{
-		CreateAlphaNode();
-	}
     else if (action == A_CREATECOMPONENT_VAR)
     {
         String uiname = eventData[P_UINAME].GetString();
@@ -1951,6 +1946,28 @@ void EPScene3D::CreateComponent(const String& componentType)
     //	HandleHierarchyListSelectionChange();
 
     editor_->GetAttributeWindow()->Update();
+}
+
+void EPScene3D::CreateGameAssetComponent(pugi::xml_node data)
+{
+
+	//// For now, make a local node's all components local
+	///// \todo Allow to specify the createmode
+	//for (unsigned int i = 0; i < editorSelection_->GetNumEditNodes(); ++i)
+	//{
+	//	Component* newComponent = editorSelection_->GetEditNodes()[i]->CreateComponent(componentType, editorSelection_->GetEditNodes()[i]->GetID() < FIRST_LOCAL_ID ? REPLICATED : LOCAL);
+	//	if (newComponent != NULL)
+	//	{
+	//		// Some components such as CollisionShape do not create their internal object before the first call to ApplyAttributes()
+	//		// to prevent unnecessary initialization with default values. Call now
+	//		newComponent->ApplyAttributes();
+
+	//		// 				CreateComponentAction action;
+	//		// 				action.Define(newComponent);
+	//		// 				group.actions.Push(action);
+	//	}
+	//}
+
 }
 
 void EPScene3D::CreateBuiltinObject(const String& name)
@@ -2843,7 +2860,3 @@ void EPScene3DView::Update(float timeStep)
     cameraPosText->SetSize(cameraPosText->GetMinSize());
 }
 
-StrongNodePtr EPScene3D::CreateAlphaNode()
-{
-	return StrongNodePtr();
-}

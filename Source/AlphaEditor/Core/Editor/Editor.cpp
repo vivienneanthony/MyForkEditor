@@ -861,7 +861,7 @@ void Editor::HandleMenuBarActionDelegate(StringHash eventType, VariantMap& event
 	else if (action == A_EXPORTTOALPHAENGINE_VAR)
 	{
 		// Get selected node
-		if (!ExportToAlphaEngine(m_pEditorSelection->GetSelectedNodes()))
+		if (!ExportToAlphaEngine())
 		{
 			URHO3D_LOGERROR("Failed to export GameAsset to AlphaEngine");
 		}
@@ -983,21 +983,15 @@ void Editor::AddResourcePath(String newPath, bool usePreferredDir /*= true*/)
 
     // Add resource path as first priority so that it takes precedence over the default data paths
 	m_pCache->AddResourceDir(newPath, 0);
-
+    
 	m_pResourceBrowser->RebuildResourceDatabase();
 	//RebuildResourceDatabase();
 }
 
-bool Editor::ExportToAlphaEngine(Vector<WeakPtr<Node>>& nodes)
+bool Editor::ExportToAlphaEngine()
 {
-	pugi::xml_document document;
-	Vector<WeakPtr<Node>>::ConstIterator it = nodes.Begin();
-	for (; it != nodes.End(); it++)
-	{
-		String nodeName = (*it)->GetName();
-		GameNodeId nodeId = (*it)->GetID();
-		g_pApp->GetGameLogic()->GetGameAssetXml(document, nodeId, m_pScene);
-	}
+	CreateFileSelector("Select directory", "Save", "Cancel", m_pEditorData->GetProgramDirPath(), m_pEditorData->GetUIAllFilters(), m_pEditorData->GetUIImportFilter(), true);
+	SubscribeToEvent(GetUIFileSelector(), E_FILESELECTED, URHO3D_HANDLER(Editor, HandleExportGameAssetDelegate));
 	return true;
 }
 
@@ -1056,4 +1050,21 @@ void Editor::HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData)
         }
     }
     return;
+}
+
+void Editor::HandleExportGameAssetDelegate(StringHash eventType, VariantMap& eventData)
+{
+	CloseFileSelector(m_pEditorData->GetUIImportFilter(), m_pEditorData->GetProgramDirPath());
+	m_ExportDirectory = UIUtils::ExtractFileName(eventData);
+
+	Vector<WeakPtr<Node>>& nodes = m_pEditorSelection->GetSelectedNodes();
+	Vector<WeakPtr<Node>>::ConstIterator it = nodes.Begin();
+	for (; it != nodes.End(); it++)
+	{
+		pugi::xml_document document;
+		String nodeName = (*it)->GetName();
+		GameNodeId nodeId = (*it)->GetID();
+		g_pApp->GetGameLogic()->GetGameAssetXml(document, nodeId, m_pScene);
+		document.save_file((m_ExportDirectory + nodeName + ".xml").CString());
+	}
 }

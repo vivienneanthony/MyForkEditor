@@ -292,9 +292,11 @@ protected:
     Node* InstantiateNodeFromFile(File* file, const Vector3& position, const Quaternion& rotation, float scaleMod = 1.0f, Node* parent = NULL, CreateMode mode = REPLICATED);
 
     Node* CreateNode(CreateMode mode);
-	StrongNodePtr CreateAlphaNode();
 
     void CreateComponent(const String& componentType);
+
+	void CreateGameAssetComponent(pugi::xml_node data);
+
     void CreateBuiltinObject(const String& name);
     bool CheckForExistingGlobalComponent(Node* node, const String& typeName);
 

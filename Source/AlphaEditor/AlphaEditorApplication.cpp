@@ -8,7 +8,7 @@
 // Vivienne Anthony - Copyright (c) 2008-2015
 //
 
-#include "AlphaEngine/AlphaEngineStd.h"
+#include "AlphaEditorStd.h"
 
 #include "GameLogic/EditorGameLogic.h"
 

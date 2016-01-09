@@ -51,8 +51,6 @@ const StringHash A_SAVENODEAS_VAR("SaveNodeAs");
 
 const StringHash A_CREATELOCALNODE_VAR("CreateLocalNode");
 const StringHash A_CREATEREPNODE_VAR("CreateRepNode");
-const StringHash A_CREATEALPHAENGINENODE_VAR("CreateAENode");
-
 
 const StringHash A_CREATECOMPONENT_VAR("CreateComponent");
 const StringHash A_CREATEBUILTINOBJ_VAR("CreateBuiltinObject");
