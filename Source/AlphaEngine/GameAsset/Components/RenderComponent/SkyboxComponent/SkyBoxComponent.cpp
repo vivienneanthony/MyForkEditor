@@ -7,6 +7,10 @@ const String SkyBoxComponent::g_Name = String("SkyBoxComponent");
 unsigned int SkyBoxComponent::m_SkyboxCount = 0;
 
 SkyBoxComponent::SkyBoxComponent(Context* context) : MainComponent(context)
+,m_SkyboxModel(String::EMPTY)
+,m_SkyboxMaterial(String::EMPTY)
+,m_pNodeSkybox(NULL)
+
 {
 	m_bIsApplyMaterial = false;
 }
@@ -14,6 +18,11 @@ SkyBoxComponent::SkyBoxComponent(Context* context) : MainComponent(context)
 SkyBoxComponent::SkyBoxComponent()
 {
 	m_bIsApplyMaterial = false;
+
+	// rest of defaults
+	m_SkyboxModel.Clear();
+    m_SkyboxMaterial.Clear();
+    m_pNodeSkybox = NULL;
 }
 
 SkyBoxComponent::~SkyBoxComponent()
@@ -76,7 +85,7 @@ void SkyBoxComponent::VOnChanged(void)
 		ResourceCache* cache = g_pApp->GetConstantResCache();
 
 		m_pNodeSkybox->SetModel(cache->GetResource<Model>(m_SkyboxModel));
-	
+
 		if (m_bIsApplyMaterial)
 		{
 			m_pNodeSkybox->SetMaterial(cache->GetResource<Material>(m_SkyboxMaterial));

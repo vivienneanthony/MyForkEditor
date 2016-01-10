@@ -4,11 +4,17 @@
 const String TransformComponent::g_Name = "TransformComponent";
 
 TransformComponent::TransformComponent(Context* context) : MainComponent(context)
+,m_Scale(Vector3::ONE)
+,m_Position(Vector3::ZERO)
+,m_Rotation(Quaternion::IDENTITY)
 {
 
 }
 
 TransformComponent::TransformComponent() : MainComponent()
+,m_Scale(Vector3::ONE)
+,m_Position(Vector3::ZERO)
+,m_Rotation(Quaternion::IDENTITY)
 {
 
 }
@@ -49,7 +55,7 @@ bool TransformComponent::VInit(pugi::xml_node pData)
 		float z_s = node.attribute("z").as_float();
 		m_Scale = Vector3(x_s, y_s, z_s);
 	}
-	
+
 	return true;
 }
 

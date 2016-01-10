@@ -31,7 +31,7 @@ protected:
 
 	bool m_bIsApplyMaterial;
 	bool m_CastShadow;
-	unsigned int m_LightMask;
+	int m_LightMask;
 	bool m_bCastShadow;
 
 	static unsigned int m_ModelCount;				// How many model has this node ?

@@ -6,14 +6,15 @@ const String BaseLightComponent::g_Name = String("BaseLightComponent");
 unsigned int BaseLightComponent::m_LightCount = 0;
 
 BaseLightComponent::BaseLightComponent(Context* context) : MainComponent(context)
+,m_pNodeLight(NULL)
+,m_Brightness(0.0f)
+,m_Specular(0.0f)
+,m_LookAt(Vector3::ZERO)
+,m_LightType(LightType::LIGHT_DIRECTIONAL)
+,m_LightMask(-1)
+,m_bCastShadow(false)
 {
-	m_pNodeLight = NULL;
-	m_Brightness = 0.0f;
-	m_Specular = 0.0f;
-	m_LookAt = Vector3::ZERO;
-	m_LightType = LightType::LIGHT_DIRECTIONAL;
-	m_LightMask = 1;
-	m_bCastShadow = false;
+    // Blank
 }
 
 BaseLightComponent::BaseLightComponent()
@@ -23,12 +24,12 @@ BaseLightComponent::BaseLightComponent()
 	m_Specular = 0.0f;
 	m_LookAt = Vector3::ZERO;
 	m_LightType = LightType::LIGHT_DIRECTIONAL;
-	m_LightMask = 1;
+	m_LightMask = -1;
 	m_bCastShadow = false;
 }
 
 BaseLightComponent::~BaseLightComponent()
-{	
+{
 	m_LightCount--;
 }
 
@@ -36,7 +37,7 @@ BaseLightComponent::~BaseLightComponent()
 bool BaseLightComponent::VInit(pugi::xml_node pData)
 {
 	m_LightCount++;
-	
+
 	pugi::xml_node node = pData.child("Brightness");
 	if (node)
 	{
@@ -93,7 +94,7 @@ bool BaseLightComponent::VInit(pugi::xml_node pData)
 		m_LookAt = Vector3(x, y, z);
 	}
 
-	
+
 
 	return true;
 }
@@ -143,7 +144,7 @@ pugi::xml_node BaseLightComponent::VGenerateXML(pugi::xml_node root)
 	pugi::xml_node childNode = componentNode.append_child("Brightness");
 	pugi::xml_attribute attribute = childNode.append_attribute("value");
 	attribute.set_value(m_Brightness);
-	
+
 	childNode = componentNode.append_child("Specular");
 	attribute = childNode.append_attribute("value");
 	attribute.set_value(m_Specular);

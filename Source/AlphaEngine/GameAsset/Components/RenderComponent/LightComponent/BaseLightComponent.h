@@ -45,12 +45,12 @@ protected:
 
 protected:
 	Light* m_pNodeLight;							// Save associated Light component
-	
+
 	float m_Brightness;
 	float m_Specular;
 	LightType m_LightType;
 	bool m_bCastShadow;
-	unsigned int m_LightMask;
+	int m_LightMask;
 	Vector3 m_LookAt;
 
 	static unsigned int m_LightCount;				// How many lights has this node ?
