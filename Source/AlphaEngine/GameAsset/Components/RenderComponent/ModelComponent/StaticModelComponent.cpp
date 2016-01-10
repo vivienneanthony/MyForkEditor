@@ -7,6 +7,12 @@ const String StaticModelComponent::g_Name = String("StaticModelComponent");
 unsigned int StaticModelComponent::m_ModelCount = 0;
 
 StaticModelComponent::StaticModelComponent(Context* context) : MainComponent(context)
+  , m_bIsApplyMaterial(false)
+  , m_CastShadow(false)
+  , m_LightMask(-1)
+  , m_bCastShadow(false)
+  , m_ModelResource(String::EMPTY)
+  , m_MaterialResource(String::EMPTY)
 {
 	m_bIsApplyMaterial = false;
 }
@@ -14,6 +20,14 @@ StaticModelComponent::StaticModelComponent(Context* context) : MainComponent(con
 StaticModelComponent::StaticModelComponent()
 {
 	m_bIsApplyMaterial = false;
+
+    m_CastShadow= false;
+    m_LightMask=-1;
+    m_bCastShadow=false;
+
+    m_ModelResource.Clear();
+	m_MaterialResource.Clear();
+
 }
 
 StaticModelComponent::~StaticModelComponent()
@@ -29,7 +43,7 @@ bool StaticModelComponent::VInit(pugi::xml_node pData)
 	{
 		m_ModelResource = node.attribute("path").as_string();
 	}
-	
+
 	node = pData.child("Material");
 	if (node)
 	{
