@@ -1870,12 +1870,12 @@ void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& even
         if(editorSelection_->GetEditNode() != NULL)
         {
             // Add to selected node
-            editorSelection_->GetEditNode()->AddChild(gameNode);
+            editorSelection_->GetEditNode()->AddChild(gameNode, FreeID);
         }
         else
         {
             // Add to scene node
-            editorData_->GetEditorScene()->AddChild(gameNode);
+            editorData_->GetEditorScene()->AddChild(gameNode, FreeID);
         }
 
         sceneModified=true;
