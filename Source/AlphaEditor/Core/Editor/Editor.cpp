@@ -525,6 +525,7 @@ bool Editor::CreateGameAssetInspectorWindow()
 
 	m_pGameAssetInspectorWindow->SetResizable(true);
 	m_pGameAssetInspectorWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
+	m_pGameAssetInspectorWindow->SetIconStyle(m_pEditorData->GetEditorIconStyle());
 	m_pGameAssetInspectorWindow->SetStyleAuto();
 
 	// Dont know why the auto style does not work ...
@@ -561,6 +562,7 @@ bool Editor::CreateViewSettingsWindow()
 
 	m_pViewSettingsWindow->SetResizable(true);
 	m_pViewSettingsWindow->SetDefaultStyle(m_pEditorData->GetEditorDefaultStyle());
+	m_pViewSettingsWindow->SetIconStyle(m_pEditorData->GetEditorIconStyle());
 	m_pViewSettingsWindow->SetStyleAuto();
 
 
@@ -983,7 +985,7 @@ void Editor::AddResourcePath(String newPath, bool usePreferredDir /*= true*/)
 
     // Add resource path as first priority so that it takes precedence over the default data paths
 	m_pCache->AddResourceDir(newPath, 0);
-    
+
 	m_pResourceBrowser->RebuildResourceDatabase();
 	//RebuildResourceDatabase();
 }

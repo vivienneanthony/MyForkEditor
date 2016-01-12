@@ -20,10 +20,10 @@ public:
     void SetScene(Scene* scene);
     void SetUIElement(UIElement* rootui);
 
+    void SetIconStyle(XMLFile* iconstyle);
 
 protected:
     void			Update();
-
 
     // UI Attributes
     SharedPtr<Text>		titleText_;
@@ -31,10 +31,11 @@ protected:
     SharedPtr<UIElement>	titleBar_;
     SharedPtr<BorderImage>	img_;
 
-        /// \todo use weakptr
+    SharedPtr<XMLFile> m_pIconStyle;
+
+    /// \todo use weakptr
     WeakPtr<Scene> scene_;
     WeakPtr<UIElement> mainUI_;
 
-
- SharedPtr<XMLFile>	styleFile_;
+    SharedPtr<XMLFile>	styleFile_;
 };

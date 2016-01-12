@@ -58,6 +58,9 @@ protected:
     SharedPtr<BorderImage> img_;
     SharedPtr<UIElement>    toolBar_;
 
+      // Serializable Attributes
+    SharedPtr<XMLFile> m_pIconStyle;
+
     Vector<SharedPtr<UIElement>>   ViewUIContainer;
 
   /// \todo use weakptr
