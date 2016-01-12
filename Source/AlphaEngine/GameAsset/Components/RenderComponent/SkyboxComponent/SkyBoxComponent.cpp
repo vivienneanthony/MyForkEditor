@@ -53,7 +53,7 @@ void SkyBoxComponent::VPostInit(void)
 {
 	m_SkyboxCount++;
 
-	m_pNodeSkybox = GetNode()->CreateComponent<Skybox>(m_CreateMode, MainComponent::GetUniqueIdForURHO(GetNode()->GetID(), g_Name, m_SkyboxCount));
+	m_pNodeSkybox = GetNode()->CreateComponent<Skybox>(m_CreateMode, GetUniques::GetUniqueIdForURHO(GetNode()->GetID(), g_Name, m_SkyboxCount));
 	if (!m_pNodeSkybox)
 	{
 		URHO3D_LOGDEBUG("Failed to create Urho3D::Skybox component in SkyBoxComponent to Node with ID " + String(GetNode()->GetID()));

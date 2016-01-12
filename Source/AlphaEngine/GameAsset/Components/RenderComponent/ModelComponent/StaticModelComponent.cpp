@@ -71,7 +71,7 @@ void StaticModelComponent::VPostInit(void)
 {
 	m_ModelCount++;
 
-	m_pModel = GetNode()->CreateComponent<StaticModel>(m_CreateMode, MainComponent::GetUniqueIdForURHO(GetNode()->GetID(), g_Name, m_ModelCount));
+	m_pModel = GetNode()->CreateComponent<StaticModel>(m_CreateMode, GetUniques::GetUniqueIdForURHO(GetNode()->GetID(), g_Name, m_ModelCount));
 	if (!m_pModel)
 	{
 		URHO3D_LOGDEBUG("Failed to create Urho3D::StaticModel component in StaticModelComponent to Node with ID " + String(GetNode()->GetID()));

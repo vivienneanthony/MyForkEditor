@@ -101,7 +101,7 @@ bool BaseLightComponent::VInit(pugi::xml_node pData)
 
 void BaseLightComponent::VPostInit(void)
 {
-	m_pNodeLight = this->GetNode()->CreateComponent<Light>(m_CreateMode, MainComponent::GetUniqueIdForURHO(GetNode()->GetID(), g_Name, m_LightCount));
+	m_pNodeLight = this->GetNode()->CreateComponent<Light>(m_CreateMode, GetUniques::GetUniqueIdForURHO(GetNode()->GetID(), g_Name, m_LightCount));
 	if (!m_pNodeLight)
 	{
 		URHO3D_LOGERROR("Failed to create Urho3D::Light component in BaseLightComponent to Node with ID " + String(GetNode()->GetID()));

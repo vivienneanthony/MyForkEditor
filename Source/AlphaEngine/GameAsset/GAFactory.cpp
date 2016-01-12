@@ -47,36 +47,36 @@ GAFactory::GAFactory(Context* context) : Object(context)
 	m_LastGameNodeId = 10;
 
 	// Render components
-	m_ComponentFactory.Register<TransformComponent>(MainComponent::GetIdFromName(TransformComponent::g_Name));
-	m_ComponentFactory.Register<BaseLightComponent>(MainComponent::GetIdFromName(BaseLightComponent::g_Name));
-	m_ComponentFactory.Register<StaticModelComponent>(MainComponent::GetIdFromName(StaticModelComponent::g_Name));
-	m_ComponentFactory.Register<SkyBoxComponent>(MainComponent::GetIdFromName(SkyBoxComponent::g_Name));
+	m_ComponentFactory.Register<TransformComponent>(GetUniques::GetIdFromName(TransformComponent::g_Name));
+	m_ComponentFactory.Register<BaseLightComponent>(GetUniques::GetIdFromName(BaseLightComponent::g_Name));
+	m_ComponentFactory.Register<StaticModelComponent>(GetUniques::GetIdFromName(StaticModelComponent::g_Name));
+	m_ComponentFactory.Register<SkyBoxComponent>(GetUniques::GetIdFromName(SkyBoxComponent::g_Name));
 
 	// Station
-	m_ComponentFactory.Register<OSBaseComponent>(MainComponent::GetIdFromName(OSBaseComponent::g_Name));
-	m_ComponentFactory.Register<OSOrcasComponent>(MainComponent::GetIdFromName(OSOrcasComponent::g_Name));
+	m_ComponentFactory.Register<OSBaseComponent>(GetUniques::GetIdFromName(OSBaseComponent::g_Name));
+	m_ComponentFactory.Register<OSOrcasComponent>(GetUniques::GetIdFromName(OSOrcasComponent::g_Name));
 
 	// Station modules
-	m_ComponentFactory.Register<OSBaseModuleComponent>(MainComponent::GetIdFromName(OSBaseModuleComponent::g_Name));
-	m_ComponentFactory.Register<OSHub1Component>(MainComponent::GetIdFromName(OSHub1Component::g_Name));
-	m_ComponentFactory.Register<OSHubCoreComponent>(MainComponent::GetIdFromName(OSHubCoreComponent::g_Name));
-	m_ComponentFactory.Register<OSHubCommArray2Component>(MainComponent::GetIdFromName(OSHubCommArray2Component::g_Name));
-	m_ComponentFactory.Register<OSTrussTriple1Component>(MainComponent::GetIdFromName(OSTrussTriple1Component::g_Name));
-	m_ComponentFactory.Register<OSHubHangar2Component>(MainComponent::GetIdFromName(OSHubHangar2Component::g_Name));
-	m_ComponentFactory.Register<OSHubHangar1Component>(MainComponent::GetIdFromName(OSHubHangar1Component::g_Name));
-	m_ComponentFactory.Register<OSHub1Component>(MainComponent::GetIdFromName(OSHub1Component::g_Name));
+	m_ComponentFactory.Register<OSBaseModuleComponent>(GetUniques::GetIdFromName(OSBaseModuleComponent::g_Name));
+	m_ComponentFactory.Register<OSHub1Component>(GetUniques::GetIdFromName(OSHub1Component::g_Name));
+	m_ComponentFactory.Register<OSHubCoreComponent>(GetUniques::GetIdFromName(OSHubCoreComponent::g_Name));
+	m_ComponentFactory.Register<OSHubCommArray2Component>(GetUniques::GetIdFromName(OSHubCommArray2Component::g_Name));
+	m_ComponentFactory.Register<OSTrussTriple1Component>(GetUniques::GetIdFromName(OSTrussTriple1Component::g_Name));
+	m_ComponentFactory.Register<OSHubHangar2Component>(GetUniques::GetIdFromName(OSHubHangar2Component::g_Name));
+	m_ComponentFactory.Register<OSHubHangar1Component>(GetUniques::GetIdFromName(OSHubHangar1Component::g_Name));
+	m_ComponentFactory.Register<OSHub1Component>(GetUniques::GetIdFromName(OSHub1Component::g_Name));
 
 	// Station Deck
-	m_ComponentFactory.Register<OSBaseDeckComponent>(MainComponent::GetIdFromName(OSBaseDeckComponent::g_Name));
-	m_ComponentFactory.Register<OSSpaceShipDeckComponent>(MainComponent::GetIdFromName(OSSpaceShipDeckComponent::g_Name));
+	m_ComponentFactory.Register<OSBaseDeckComponent>(GetUniques::GetIdFromName(OSBaseDeckComponent::g_Name));
+	m_ComponentFactory.Register<OSSpaceShipDeckComponent>(GetUniques::GetIdFromName(OSSpaceShipDeckComponent::g_Name));
 
 	// Station rooms
-	m_ComponentFactory.Register<OSBaseRoomComponent>(MainComponent::GetIdFromName(OSBaseRoomComponent::g_Name));
-	m_ComponentFactory.Register<OSReserveRoomComponent>(MainComponent::GetIdFromName(OSReserveRoomComponent::g_Name));
+	m_ComponentFactory.Register<OSBaseRoomComponent>(GetUniques::GetIdFromName(OSBaseRoomComponent::g_Name));
+	m_ComponentFactory.Register<OSReserveRoomComponent>(GetUniques::GetIdFromName(OSReserveRoomComponent::g_Name));
 
 	// Chemistry
-	m_ComponentFactory.Register<RawMaterialComponent>(MainComponent::GetIdFromName(RawMaterialComponent::g_Name));
-	m_ComponentFactory.Register<ChemicalComponent>(MainComponent::GetIdFromName(ChemicalComponent::g_Name));
+	m_ComponentFactory.Register<RawMaterialComponent>(GetUniques::GetIdFromName(RawMaterialComponent::g_Name));
+	m_ComponentFactory.Register<ChemicalComponent>(GetUniques::GetIdFromName(ChemicalComponent::g_Name));
 
 	// Basic components
 	context_->RegisterFactory<MainComponent>();
@@ -154,7 +154,7 @@ StrongNodePtr GAFactory::CreateNode(String resource, pugi::xml_node overrides, c
 		StrongGameNodeComponentPtr pComponent(VCreateComponent(pNode));
 		if (pComponent)
 		{
-			pGameNode->AddComponent(pComponent, MainComponent::GetUniqueIdForEngine(pGameNode->GetID(), pComponent->VGetName()), pComponent->GetCreateMode());
+			pGameNode->AddComponent(pComponent, GetUniques::GetUniqueIdForEngine(pGameNode->GetID(), pComponent->VGetName()), pComponent->GetCreateMode());
 			m_Components.Push(pComponent);
 		}
 		else
@@ -205,7 +205,7 @@ void GAFactory::ModifyGameNode(StrongNodePtr node, pugi::xml_node overrides, boo
 			pComponent = VCreateComponent(pNode);
 			if (pComponent)
 			{
-				node->AddComponent(MakeStrongPtr(pComponent), MainComponent::GetUniqueIdForEngine(node->GetID(), pComponent->VGetName()), pComponent->GetCreateMode());
+				node->AddComponent(MakeStrongPtr(pComponent), GetUniques::GetUniqueIdForEngine(node->GetID(), pComponent->VGetName()), pComponent->GetCreateMode());
 			}
 
 			m_Components.Push(MakeStrongPtr(pComponent));
@@ -242,14 +242,14 @@ bool GAFactory::InitNode(StrongNodePtr node, pugi::xml_node pData)
 	}
 
 
-	
+
 	return false;
 }
 
 StrongGameNodeComponentPtr GAFactory::VCreateComponent(pugi::xml_node pData)
 {
 	String name = pData.attribute("name").as_string();
-	StrongGameNodeComponentPtr pComponent(m_ComponentFactory.Create(MainComponent::GetIdFromName(name)));
+	StrongGameNodeComponentPtr pComponent(m_ComponentFactory.Create(GetUniques::GetIdFromName(name)));
 
 	if (pComponent)
 	{
@@ -274,7 +274,7 @@ void GAFactory::ToXML(pugi::xml_document& document, StrongNodePtr node)
 {
 	// GameNode element
 	pugi::xml_node nodeXML = document.append_child("GameAsset");
-	
+
 	pugi::xml_attribute nodeAttribute = nodeXML.append_attribute("type");
 	nodeAttribute.set_value(node->GetVar("type").ToString().CString());
 
