@@ -69,3 +69,8 @@ void GameAssetInspector::SetUIElement(UIElement* rootui)
 {
     mainUI_ = rootui;
 }
+
+void GameAssetInspector::SetIconStyle(XMLFile* iconstyle)
+{
+    m_pIconStyle = iconstyle;
+}

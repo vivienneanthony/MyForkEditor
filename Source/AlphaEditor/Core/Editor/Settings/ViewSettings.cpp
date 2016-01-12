@@ -75,3 +75,4 @@ bool ViewSettings::SetFromVariantMap(const VariantMap & newSettings)
 }
 
 
+

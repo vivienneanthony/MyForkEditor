@@ -308,3 +308,8 @@ void ViewSettingsWindow::HandleSettingsChange(StringHash eventType, VariantMap& 
     return;
 }
 
+
+void ViewSettingsWindow::SetIconStyle(XMLFile* iconstyle)
+{
+    m_pIconStyle = iconstyle;
+}
