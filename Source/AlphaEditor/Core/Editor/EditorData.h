@@ -107,7 +107,10 @@ public:
 
 protected:
 	// Editor
-	Editor* m_pEditor;;
+	// Editor* m_pEditor;;
+	// Made a weak ptr Strong Ptr causes segfaults;
+	WeakPtr<Editor> m_pEditor;
+
 	// Editor's default XML style
 	SharedPtr<XMLFile> m_pEditorDefaultStyle;
 	// Editor's icon XML style
