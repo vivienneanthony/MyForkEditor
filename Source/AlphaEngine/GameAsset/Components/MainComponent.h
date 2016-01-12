@@ -19,7 +19,7 @@ public:
 	virtual bool VInit(pugi::xml_node pData) { return true; }
 	virtual void VPostInit(void) { }
 	virtual void VUpdate(float timeStep) { }
-	virtual void VOnChanged(void) { }	
+	virtual void VOnChanged(void) { }
 
 	// These function can be used for edtior
 	// In order to save game node in .XML file.
@@ -48,5 +48,28 @@ public:
 
 protected:
 	Urho3D::CreateMode m_CreateMode;		// Local or replicated ?
+
+};
+
+// Get unique class
+// Allows proper passing of uniqueid
+// Bug fix - Recording of MainComponent might be required
+class GetUniques
+{
+public:
+    static unsigned int GetUniqueIdForEngine(unsigned int nodeId, String componentName)
+    {
+        return MainComponent::GetUniqueIdForEngine(nodeId, componentName);
+    };
+
+    static unsigned int GetUniqueIdForURHO(unsigned int nodeId, String componentName, unsigned int number)
+    {
+        return MainComponent::GetUniqueIdForURHO(nodeId, componentName, number);
+    };
+
+    static unsigned int GetIdFromName(String g_Name)
+    {
+        return MainComponent::GetIdFromName(g_Name);
+    };
 
 };

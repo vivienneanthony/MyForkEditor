@@ -67,7 +67,7 @@ bool Component::SaveXML(XMLElement& dest) const
     // Write type and ID
     if (!dest.SetString("type", GetTypeName()))
         return false;
-    if (!dest.SetInt("id", id_))
+    if (!dest.SetUInt("id", id_))
         return false;
 
     // Write attributes
