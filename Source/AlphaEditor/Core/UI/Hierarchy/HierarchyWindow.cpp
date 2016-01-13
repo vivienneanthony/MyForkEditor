@@ -411,8 +411,9 @@ void HierarchyWindow::HandleUIElementAdded(StringHash eventType, VariantMap& eve
     if (suppressUIElementChanges_)
         return;
     UIElement* element = dynamic_cast<UIElement*>(eventData[P_ELEMENT].GetPtr());
-//*edit    if ((showInternalUIElement_ || !element->IsInternal()) && (showTemporaryObject_ || !element->IsTemporary()))
-    //*edit UpdateHierarchyItem(element);
+
+    if ((showInternalUIElement_ || !element->IsInternal()) && (showTemporaryObject_ || !element->IsTemporary()))
+        UpdateHierarchyItem(element);
 }
 
 void HierarchyWindow::HandleUIElementRemoved(StringHash eventType, VariantMap& eventData)

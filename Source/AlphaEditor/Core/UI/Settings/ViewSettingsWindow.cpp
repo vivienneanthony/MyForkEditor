@@ -138,8 +138,6 @@ bool ViewSettingsWindow::UpdateSettings(ViewSettings * thisViewSettings)
     // convert to variant map
     VariantMap viewSettings_ = m_pViewSettings->ToVariantMap();
 
-    URHO3D_LOGINFO(String(viewSettings_["cameraBaseSpeed_"].GetFloat()));
-
     // set blank values
     UIElement * thisSetting = NULL;
     Text * thisSettingTitle = NULL;
