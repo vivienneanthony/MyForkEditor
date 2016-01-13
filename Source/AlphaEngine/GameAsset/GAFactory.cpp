@@ -13,6 +13,9 @@
 #include "Components/RenderComponent/ModelComponent/StaticModelComponent.h"
 #include "Components/RenderComponent/SkyboxComponent/SkyBoxComponent.h"
 
+// Markers
+#include "Components/MarkerComponent/SpawnComponent.h"
+
 // Station
 #include "Components/HangarsComponent/OSComponent/OSBaseComponent/OSBaseComponent.h"
 #include "Components/HangarsComponent/OSComponent/OSOrcasComponent/OSOrcasComponent.h"
@@ -77,6 +80,9 @@ GAFactory::GAFactory(Context* context) : Object(context)
 	// Chemistry
 	m_ComponentFactory.Register<RawMaterialComponent>(GetUniques::GetIdFromName(RawMaterialComponent::g_Name));
 	m_ComponentFactory.Register<ChemicalComponent>(GetUniques::GetIdFromName(ChemicalComponent::g_Name));
+
+    // Marker
+    m_ComponentFactory.Register<SpawnComponent>(GetUniques::GetIdFromName(SpawnComponent::g_Name));
 
 	// Basic components
 	context_->RegisterFactory<MainComponent>();
