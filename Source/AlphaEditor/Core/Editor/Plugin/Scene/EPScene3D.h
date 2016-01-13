@@ -309,6 +309,7 @@ protected:
     void CreateAboutTeamGDPWindow(void);
     void HandleAboutTeamGDPWindowClosePressed(StringHash eventType, VariantMap& eventData);
 
+
     // Mini Tool Bar actions
     void MiniToolBarCreateLocalNode(StringHash eventType, VariantMap& eventData);
     void MiniToolBarCreateReplNode(StringHash eventType, VariantMap& eventData);
@@ -338,6 +339,8 @@ protected:
     void ToolBarFillModePoint(StringHash eventType, VariantMap& eventData);
     void ToolBarFillModeWireFrame(StringHash eventType, VariantMap& eventData);
     void ToolBarFillModeSolid(StringHash eventType, VariantMap& eventData);
+
+    void Update3DViewSettings(void);
 
     SharedPtr<UIElement>		window_;
     SharedPtr<EPScene3DView>	activeView;

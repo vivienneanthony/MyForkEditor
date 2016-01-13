@@ -130,6 +130,10 @@ public:
     // Close file selector
 	void CloseFileSelector() { m_pUIFileSelector.Reset(); }
 
+	// Refresh editor
+	void Refresh3DViewSettings(void);
+
+
 protected:
 	// Export to AlphaEngine selected GameAssets
 	bool ExportToAlphaEngine();

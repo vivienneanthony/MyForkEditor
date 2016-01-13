@@ -6,6 +6,7 @@
 #include "../EditorPlugin.h"
 #include "../../Selection/EditorSelection.h"
 #include "../../Browser/ResourceBrowser.h"
+#include "../../Settings/ViewSettings.h"
 
 #include "../../../UI/Picker/ResourcePicker.h"
 #include "../../../UI/Menu/MenuBarUI.h"
@@ -21,7 +22,7 @@
 
 // Urho3d
 #ifdef WIN32
-	#undef MessageBox
+#undef MessageBox
 #endif
 
 #include <Urho3D/UI/MessageBox.h>
@@ -152,6 +153,9 @@ EPScene3D::EPScene3D(Context* context) : EditorPlugin(context),
     /// set base speed
     cameraBaseSpeed=1.0;
     cameraBaseRotationSpeed=1.0;
+
+    // change settings to initial
+    Update3DViewSettings();
 
 }
 
@@ -318,7 +322,7 @@ void EPScene3D::Update(float timeStep)
 
     // Rotate/orbit/pan camera
     if (input_->GetMouseButtonDown(MOUSEB_RIGHT) || input_->GetMouseButtonDown(MOUSEB_MIDDLE))
-        {
+    {
         SetMouseLock();
 
         IntVector2 mouseMove = input_->GetMouseMove();
@@ -1343,32 +1347,32 @@ void EPScene3D::HandleMenuBarAction(StringHash eventType, VariantMap& eventData)
     }
     else if (action == A_OPENSCENE_VAR)
     {
-		editor_->CreateFileSelector("Open scene", "Open", "Cancel", editorData_->GetUIScenePath(), editorData_->GetUISceneFilters(), editorData_->GetUISceneFilter());
+        editor_->CreateFileSelector("Open scene", "Open", "Cancel", editorData_->GetUIScenePath(), editorData_->GetUISceneFilters(), editorData_->GetUISceneFilter());
         SubscribeToEvent(editor_->GetUIFileSelector(), E_FILESELECTED, URHO3D_HANDLER(EPScene3D, HandleOpenSceneFile));
     }
     else if (action == A_SAVESCENE_VAR || action == A_SAVESCENEAS_VAR)
     {
-		editor_->CreateFileSelector("Save scene as", "Save", "Cancel", editorData_->GetUIScenePath(), editorData_->GetUISceneFilters(), editorData_->GetUISceneFilter());
+        editor_->CreateFileSelector("Save scene as", "Save", "Cancel", editorData_->GetUIScenePath(), editorData_->GetUISceneFilters(), editorData_->GetUISceneFilter());
         editor_->GetUIFileSelector()->SetFileName(GetFileNameAndExtension(editorData_->GetEditorScene()->GetFileName()));
         SubscribeToEvent(editor_->GetUIFileSelector(), E_FILESELECTED, URHO3D_HANDLER(EPScene3D, HandleSaveSceneFile));
     }
     else if (action == A_LOADNODEASREP_VAR)
     {
         instantiateMode = REPLICATED;
-		editor_->CreateFileSelector("Load node", "Load", "Cancel", editorData_->GetUINodePath(), editorData_->GetUISceneFilters(), editorData_->GetUINodeFilter());
+        editor_->CreateFileSelector("Load node", "Load", "Cancel", editorData_->GetUINodePath(), editorData_->GetUISceneFilters(), editorData_->GetUINodeFilter());
         SubscribeToEvent(editor_->GetUIFileSelector(), E_FILESELECTED, URHO3D_HANDLER(EPScene3D, HandleLoadNodeFile));
     }
     else if (action == A_LOADNODEASLOCAL_VAR)
     {
         instantiateMode = LOCAL;
-		editor_->CreateFileSelector("Load node", "Load", "Cancel", editorData_->GetUINodePath(), editorData_->GetUISceneFilters(), editorData_->GetUINodeFilter());
+        editor_->CreateFileSelector("Load node", "Load", "Cancel", editorData_->GetUINodePath(), editorData_->GetUISceneFilters(), editorData_->GetUINodeFilter());
         SubscribeToEvent(editor_->GetUIFileSelector(), E_FILESELECTED, URHO3D_HANDLER(EPScene3D, HandleLoadNodeFile));
     }
     else if (action == A_SAVENODEAS_VAR)
     {
         if (editorSelection_->GetEditNode() != NULL && editorSelection_->GetEditNode() != editorData_->GetEditorScene())
         {
-			editor_->CreateFileSelector("Save node", "Save", "Cancel", editorData_->GetUINodePath(), editorData_->GetUISceneFilters(), editorData_->GetUINodeFilter());
+            editor_->CreateFileSelector("Save node", "Save", "Cancel", editorData_->GetUINodePath(), editorData_->GetUISceneFilters(), editorData_->GetUINodeFilter());
             editor_->GetUIFileSelector()->SetFileName(GetFileNameAndExtension(instantiateFileName));
             SubscribeToEvent(editor_->GetUIFileSelector(), E_FILESELECTED, URHO3D_HANDLER(EPScene3D, HandleSaveNodeFile));
         }
@@ -1472,19 +1476,19 @@ void EPScene3D::HandleOpenSceneFile(StringHash eventType, VariantMap& eventData)
 
 void EPScene3D::HandleSaveSceneFile(StringHash eventType, VariantMap& eventData)
 {
-	editor_->CloseFileSelector(editorData_->GetUISceneFilter(), editorData_->GetUIScenePath());
+    editor_->CloseFileSelector(editorData_->GetUISceneFilter(), editorData_->GetUIScenePath());
     SaveScene(UIUtils::ExtractFileName(eventData, true));
 }
 
 void EPScene3D::HandleLoadNodeFile(StringHash eventType, VariantMap& eventData)
 {
-	editor_->CloseFileSelector(editorData_->GetUISceneFilter(), editorData_->GetUIScenePath());
+    editor_->CloseFileSelector(editorData_->GetUISceneFilter(), editorData_->GetUIScenePath());
     LoadNode(UIUtils::ExtractFileName(eventData));
 }
 
 void EPScene3D::HandleSaveNodeFile(StringHash eventType, VariantMap& eventData)
 {
-	editor_->CloseFileSelector(editorData_->GetUISceneFilter(), editorData_->GetUIScenePath());
+    editor_->CloseFileSelector(editorData_->GetUISceneFilter(), editorData_->GetUIScenePath());
     SaveNode(UIUtils::ExtractFileName(eventData, true));
 }
 
@@ -1733,7 +1737,7 @@ void EPScene3D::CreateAboutTeamGDPWindow(void)
     // If the window is created setup attribute - Forced
     if(pAboutTeamGDPWindow)
     {
-           // Forced Windows Settings - Not sure why the back is not working
+        // Forced Windows Settings - Not sure why the back is not working
         pAboutTeamGDPWindow->SetResizable(true);
         pAboutTeamGDPWindow->SetMovable(true);
         pAboutTeamGDPWindow->SetDefaultStyle(editorData_->GetEditorDefaultStyle());
@@ -1839,7 +1843,7 @@ void EPScene3D::HandleCreateGameAssetNodeCancelPressed(StringHash eventType, Var
 void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& eventData)
 {
     // Get Path
-	    String selectedResource = gameAssetChooserWindow->GetResourceSelected();
+    String selectedResource = gameAssetChooserWindow->GetResourceSelected();
 
     // Get the factory
     GAFactory * gameFactory = g_pApp->GetGameLogic()->GetGAFactory();
@@ -1855,7 +1859,7 @@ void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& even
         unsigned int  FreeID = editorData_->GetEditorScene()->GetFreeNodeID(CreateMode::REPLICATED);
 
         // Better Fix uses the first available free ID
-		StrongNodePtr gameNode = g_pApp->GetGameLogic()->VCreateGameNode(selectedResource, pugi::xml_node(), NULL, FreeID);
+        StrongNodePtr gameNode = g_pApp->GetGameLogic()->VCreateGameNode(selectedResource, pugi::xml_node(), NULL, FreeID);
         //StrongNodePtr gameNode = gameFactory->CreateNode(selectedResource, node, matrix, FreeID);
 
         // If the game node was not able to be made
@@ -1888,14 +1892,14 @@ void EPScene3D::HandleCreateGameAssetNode(StringHash eventType, VariantMap& even
 Node* EPScene3D::CreateNode(CreateMode mode)
 {
     Node* newNode = NULL;
-	if (editorSelection_->GetEditNode() != NULL)
-	{
-		newNode = editorSelection_->GetEditNode()->CreateChild("", mode);
-	}
-	else
-	{
-		newNode = editorData_->GetEditorScene()->CreateChild("", mode);
-	}
+    if (editorSelection_->GetEditNode() != NULL)
+    {
+        newNode = editorSelection_->GetEditNode()->CreateChild("", mode);
+    }
+    else
+    {
+        newNode = editorData_->GetEditorScene()->CreateChild("", mode);
+    }
 
     // Set the new node a certain distance from the camera
     //	newNode.position = GetNewNodePosition();
@@ -1951,22 +1955,22 @@ void EPScene3D::CreateComponent(const String& componentType)
 void EPScene3D::CreateGameAssetComponent(pugi::xml_node data)
 {
 
-	//// For now, make a local node's all components local
-	///// \todo Allow to specify the createmode
-	//for (unsigned int i = 0; i < editorSelection_->GetNumEditNodes(); ++i)
-	//{
-	//	Component* newComponent = editorSelection_->GetEditNodes()[i]->CreateComponent(componentType, editorSelection_->GetEditNodes()[i]->GetID() < FIRST_LOCAL_ID ? REPLICATED : LOCAL);
-	//	if (newComponent != NULL)
-	//	{
-	//		// Some components such as CollisionShape do not create their internal object before the first call to ApplyAttributes()
-	//		// to prevent unnecessary initialization with default values. Call now
-	//		newComponent->ApplyAttributes();
+    //// For now, make a local node's all components local
+    ///// \todo Allow to specify the createmode
+    //for (unsigned int i = 0; i < editorSelection_->GetNumEditNodes(); ++i)
+    //{
+    //	Component* newComponent = editorSelection_->GetEditNodes()[i]->CreateComponent(componentType, editorSelection_->GetEditNodes()[i]->GetID() < FIRST_LOCAL_ID ? REPLICATED : LOCAL);
+    //	if (newComponent != NULL)
+    //	{
+    //		// Some components such as CollisionShape do not create their internal object before the first call to ApplyAttributes()
+    //		// to prevent unnecessary initialization with default values. Call now
+    //		newComponent->ApplyAttributes();
 
-	//		// 				CreateComponentAction action;
-	//		// 				action.Define(newComponent);
-	//		// 				group.actions.Push(action);
-	//	}
-	//}
+    //		// 				CreateComponentAction action;
+    //		// 				action.Define(newComponent);
+    //		// 				group.actions.Push(action);
+    //	}
+    //}
 
 }
 
@@ -2488,6 +2492,36 @@ void EPScene3D::HandleEditorInstanceEvent(StringHash eventType, VariantMap& even
         // abort game exit
         g_pApp->AbortGame();
     }
+
+
+    return;
+}
+
+// Update view settings
+void EPScene3D::Update3DViewSettings(void)
+{
+
+    // if no editorData return
+    if(!editorData_)
+    {
+        return;
+    }
+
+    // change camera settings
+    cameraBaseSpeed = editorData_->GetViewSettings()->GetCameraBaseSpeed();
+    cameraBaseRotationSpeed =editorData_->GetViewSettings()->GetCameraRotationSpeed();
+    cameraShiftSpeedMultiplier= editorData_->GetViewSettings()->GetCameraShiftSpeedMultiplier();
+
+    // change clipping
+    viewNearClip =editorData_->GetViewSettings()->GetViewNearClip();
+    viewFarClip = editorData_->GetViewSettings()->GetViewFarClip();
+    viewFov = editorData_->GetViewSettings()->GetViewFov();
+
+    // Step and scale
+    moveStep =editorData_->GetViewSettings()->GetMoveStep();
+    rotateStep = editorData_->GetViewSettings()->GetRotateStep();
+    scaleStep = editorData_->GetViewSettings()->GetScaleStep();
+    snapScale = editorData_->GetViewSettings()->GetSnapScale();
 
 
     return;

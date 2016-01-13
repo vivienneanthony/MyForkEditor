@@ -72,6 +72,8 @@ public:
     // Scene start update
     virtual void StartSceneUpdate();
 
+    virtual void Update3DViewSettings ();
+
 
 protected:
     bool visible_;

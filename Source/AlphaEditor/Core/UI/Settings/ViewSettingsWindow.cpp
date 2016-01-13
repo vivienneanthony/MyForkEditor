@@ -1,6 +1,8 @@
 #include "AlphaEditorStd.h"
 
 
+#include "../../Editor/Editor.h"
+
 #include "../../Editor/Settings/ViewSettings.h"
 
 #include "ViewSettingsWindow.h"
@@ -249,7 +251,7 @@ void ViewSettingsWindow::HandleSettingsChange(StringHash eventType, VariantMap& 
     // Get Data
     LineEdit * thisElement = (LineEdit *)eventData[TextFinished::P_ELEMENT].GetPtr();
 
-        //if no element then return which should always be true
+    //if no element then return which should always be true
     if(!thisElement)
     {
         return;
@@ -312,14 +314,15 @@ void ViewSettingsWindow::HandleSettingsChange(StringHash eventType, VariantMap& 
         settingMap_.Push({String("snapScale_"),thisFloat});
     }
 
-
     // do the conversion
     if(m_pViewSettings->SetFromVariantMap(settingMap_))
     {
-        // if success send a event -should always be success ful
+        // refresh
+        if(m_pEditor)
+        {
+            m_pEditor->Refresh3DViewSettings();
+        }
     }
-
-    // send event to 3DPlugin to reload the settings
 
     return;
 }

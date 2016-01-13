@@ -4,7 +4,6 @@
 
 #include "ViewSettings.h"
 
-
 using namespace Urho3D;
 
 
