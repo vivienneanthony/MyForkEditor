@@ -10,6 +10,9 @@
 using namespace Urho3D;
 
 
+
+class EditorView;
+
 /// \todo redirect Double/Click, SelectionChange  ... event
 class ViewSettingsWindow : public Window
 {
@@ -30,6 +33,11 @@ public:
     void SetUIElement(UIElement* rootui);
     void SetIconStyle(XMLFile* iconstyle);
 
+    void SetEditor(Editor * setEditor)
+    {
+        m_pEditor = setEditor;
+    }
+
     /// use this to update
     bool UpdateSettings(ViewSettings * thisViewSettings);
 
@@ -48,7 +56,7 @@ protected:
     /// Update
     void			UpdateDirtyUI();
 
- SharedPtr<XMLFile>	styleFile_;
+    SharedPtr<XMLFile>	styleFile_;
 
     /// UI Elements
     SharedPtr<Text>		titleText_;
@@ -68,6 +76,8 @@ protected:
     WeakPtr<UIElement> mainUI_;
 
     SharedPtr<ViewSettings> m_pViewSettings;
+    Editor *  m_pEditor;
+
 
     bool m_settingsinit;
 };

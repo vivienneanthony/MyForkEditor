@@ -25,4 +25,6 @@ void EditorPlugin::StopSceneUpdate()
 {
 }
 
-
+void EditorPlugin::Update3DViewSettings (void)
+{
+}

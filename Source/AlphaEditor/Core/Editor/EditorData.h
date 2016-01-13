@@ -50,6 +50,11 @@ public:
 	EditorPlugin* GetEditorPlugin(const String& name);
 
 
+    ViewSettings* GetViewSettings(void)
+    {
+        return m_pViewSettings;
+    }
+
 	// Get editor's global variables by name
 	const Variant& GetGlobalVarNames(StringHash& name) { return m_GlobalVarNames[name]; }
 	// Set editor's global variables by name
