@@ -36,7 +36,7 @@ void ViewSettings::RegisterObject(Context* context)
     URHO3D_ATTRIBUTE("viewFarClip_", float, viewFarClip_, 2000.0f, AM_DEFAULT&&AM_FILE);
     URHO3D_ATTRIBUTE("viewFov_", float, viewFov_, 45.0f, AM_DEFAULT&&AM_FILE);
 
-	// move steps
+    // move steps
     URHO3D_ATTRIBUTE("moveStep_", float, moveStep_, 0.5f, AM_DEFAULT&&AM_FILE);
     URHO3D_ATTRIBUTE("rotateStep_", float, rotateStep_, 5.0f, AM_DEFAULT&&AM_FILE);
     URHO3D_ATTRIBUTE("scaleStep_", float, scaleStep_, 0.1f, AM_DEFAULT&&AM_FILE);
@@ -67,11 +67,72 @@ VariantMap ViewSettings::ToVariantMap()
 }
 
 
-
-bool ViewSettings::SetFromVariantMap(const VariantMap & newSettings)
+// change settings based on variant map
+bool ViewSettings::SetFromVariantMap(Vector<SettingMap> newSettings)
 {
-	return true;
+    // loop
+    for(unsigned int i=0; i<newSettings.Size(); i++)
+    {
+        // camera speed
+        if(newSettings.At(i).Name.Contains("cameraBaseSpeed_"))
+        {
+            cameraBaseSpeed_ = newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("cameraRotationSpeed_"))
+        {
+            cameraRotationSpeed_= newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("cameraShiftSpeedMultiplier_"))
+        {
+            cameraShiftSpeedMultiplier_ = newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("viewNearClip_"))
+        {
+            viewNearClip_ = newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("viewFarClip_"))
+        {
+            viewFarClip_ = newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("viewFov_"))
+        {
+            viewFov_= newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("moveStep_"))
+        {
+            moveStep_ = newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("rotateStep_"))
+        {
+            rotateStep_ = newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("scaleStep_"))
+        {
+            scaleStep_= newSettings.At(i).Value.GetFloat();
+        }
+
+        // camera speed
+        if(newSettings.At(i).Name.Contains("snapScale_"))
+        {
+            snapScale_= newSettings.At(i).Value.GetFloat();
+        }
+    }
+
+    return true;
 }
-
-
-
