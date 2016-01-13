@@ -13,7 +13,6 @@ ViewSettings::ViewSettings(Context* context) :Serializable(context)
 {
     ResetToDefault();
 
-    //URHO3D_LOGINFO(String(cameraBaseSpeed_));
 }
 
 // closing

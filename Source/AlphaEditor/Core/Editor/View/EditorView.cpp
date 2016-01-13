@@ -287,9 +287,6 @@ void EditorView::HandleScreenUpdateDelegate(StringHash eventType, VariantMap& ev
     // Change fixed size
     m_pMainFrame->SetFixedSize(windowWidth, m_MiniToolHeight);
 
-    //String LineOne = String("m_pUIRoot_ "+String(m_pUIRoot->GetSize()) +"m_pMainFrame "+String(m_pMainFrame->GetSize()));
-    //URHO3D_LOGINFO(LineOne);
-
     if (m_pToolbar->IsVisible())
     {
         m_MiniToolHeight -= m_pToolbar->GetMinHeight();

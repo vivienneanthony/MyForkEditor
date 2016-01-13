@@ -170,8 +170,6 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 
     VariantMap viewsettings_ = m_pViewSettings->ToVariantMap();
 
-    //URHO3D_LOGINFO(String(viewsettings_["cameraBaseSpeed_"].GetFloat()));
-
 	//////////////////////////////////////////////////////////////////////////
 	/// Create the scene
 	//////////////////////////////////////////////////////////////////////////
