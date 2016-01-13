@@ -16,7 +16,7 @@ class ViewSettings;
 ViewSettingsWindow::ViewSettingsWindow(Context* context) : Window(context)
     ,m_settingsinit(false)
 {
-      // Create settings turn off resizing
+    // Create settings turn off resizing
     SetLayout(LM_VERTICAL, 4, IntRect(6 ,6, 6, 6));
     SetResizeBorder(IntRect(6, 6, 6, 6));
     SetResizable(true);
@@ -69,15 +69,20 @@ ViewSettingsWindow::ViewSettingsWindow(Context* context) : Window(context)
         thisContainerText_->SetLayoutSpacing(4);
 
 
-        LineEdit * thisContainerSettingsEdit_ =   thisContainer_->CreateChild<LineEdit>("VSW_ContainerChildText");
+        LineEdit * thisContainerSettingsEdit_ =   thisContainer_->CreateChild<LineEdit>("VSW_ContainerChildText:"+String(i));
         thisContainerSettingsEdit_->SetInternal(true);
         thisContainerSettingsEdit_->SetFixedWidth(40);
 
         // thisContainerText_->SetFont(Anonymous,12);          // temporary
         thisContainerSettingsEdit_->SetText("test");
-        thisContainerSettingsEdit_->SetStyleAuto();
+        thisContainerSettingsEdit_->SetStyle("LineEdit");
+
+        thisContainerSettingsEdit_->SetEditable(true);
+        thisContainerSettingsEdit_->SetEnabled(true);
 
         SubscribeToEvent(thisContainerSettingsEdit_, E_TEXTFINISHED, URHO3D_HANDLER(ViewSettingsWindow, HandleSettingsChange));
+        //SubscribeToEvent(thisContainerSettingsEdit_, E_TEXTCHANGED, URHO3D_HANDLER(ViewSettingsWindow, HandleSettingsChange));
+
 
     }
     return;
@@ -243,60 +248,73 @@ void ViewSettingsWindow::HandleSettingsChange(StringHash eventType, VariantMap& 
 {
     // Get Data
     LineEdit * thisElement = (LineEdit *)eventData[TextFinished::P_ELEMENT].GetPtr();
-    float thisFloat = eventData[TextFinished::P_VALUE].GetFloat();
 
-    //if no element then return which should always be true
+        //if no element then return which should always be true
     if(!thisElement)
     {
         return;
     }
 
+    // Convert float to number
+    String thisString = eventData[TextFinished::P_TEXT].GetString();
+
+    float thisFloat =  atof(thisString.CString());
+
     // this can directly change settings so the event might not be needed but the 3dview needs to know to reload the data so might as well set it here
-    VariantMap setSetting_;
+    Vector<SettingMap> settingMap_;
 
     if(thisElement->GetName().Contains(":0"))
     {
-        setSetting_["cameraBaseSpeed_"] = thisFloat;
+        settingMap_.Push({String("cameraBaseSpeed_"),thisFloat});
     }
     else if(thisElement->GetName().Contains(":1"))
     {
-        setSetting_["cameraRotationSpeed_"] = thisFloat;
+        settingMap_.Push({String("cameraRotationSpeed_"),thisFloat});
     }
     else  if(thisElement->GetName().Contains(":2"))
     {
-        setSetting_["cameraShiftSpeedMultiplier_"] = thisFloat;
+
+        settingMap_.Push({String("cameraShiftSpeedMultiplier_"),thisFloat});
     }
     else if(thisElement->GetName().Contains(":3"))
     {
-        setSetting_["viewNearClip_"] = thisFloat;
+
+        settingMap_.Push({String("viewNearClip_"),thisFloat});
     }
     else if(thisElement->GetName().Contains(":4"))
     {
-        setSetting_["viewFarClip_"] = thisFloat;
+
+        settingMap_.Push({String("viewFarClip_"),thisFloat});
     }
     else if(thisElement->GetName().Contains(":5"))
     {
-        setSetting_["viewFOV_"] = thisFloat;
+
+        settingMap_.Push({String("viewFOV_"),thisFloat});
     }
     else if(thisElement->GetName().Contains(":6"))
     {
-        setSetting_["moveStep_"] = thisFloat;
+
+        settingMap_.Push({String("cameraBaseSpeed_"),thisFloat});
     }
     else if(thisElement->GetName().Contains(":7"))
     {
-        setSetting_["rotateStep_"] = thisFloat;
+
+        settingMap_.Push({String("rotateStep_"),thisFloat});
     }
     else if(thisElement->GetName().Contains(":8"))
     {
-        setSetting_["scaleStep_"] = thisFloat;
+
+        settingMap_.Push({String("scaleStep_"),thisFloat});
     }
     else if(thisElement->GetName().Contains(":9"))
     {
-        setSetting_["snapScale_"] = thisFloat;
+
+        settingMap_.Push({String("snapScale_"),thisFloat});
     }
 
+
     // do the conversion
-    if(m_pViewSettings->SetFromVariantMap(setSetting_))
+    if(m_pViewSettings->SetFromVariantMap(settingMap_))
     {
         // if success send a event -should always be success ful
     }

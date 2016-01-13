@@ -10,6 +10,12 @@
  */
 
 
+struct SettingMap
+{
+    String Name;
+    Variant Value;
+};
+
 class ViewSettings : public Serializable
 {
     URHO3D_OBJECT(ViewSettings,Serializable);
@@ -25,7 +31,7 @@ public:
 
     VariantMap	ToVariantMap();
 
-    bool SetFromVariantMap(const VariantMap & newSettings);
+    bool SetFromVariantMap(Vector<SettingMap> newSettingsnewSettings);
 
 private:
     /// Parameters
