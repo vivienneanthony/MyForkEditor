@@ -675,9 +675,9 @@ static void RegisterSpline(asIScriptEngine* engine)
     engine->RegisterObjectMethod("Spline", "Variant GetPoint(float)", asMETHOD(Spline, GetPoint), asCALL_THISCALL);
 }
 
-static CScriptArray* StringSplit(char separator, const String* str)
+static CScriptArray* StringSplit(char separator, bool keepEmptyStrings, const String* str)
 {
-    Vector<String> result = str->Split(separator);
+    Vector<String> result = str->Split(separator, keepEmptyStrings);
     return VectorToArray<String>(result, "Array<String>");
 }
 
@@ -695,7 +695,7 @@ static String StringJoined(CScriptArray* arr, const String& glue)
 
 static void RegisterStringUtils(asIScriptEngine* engine)
 {
-    engine->RegisterObjectMethod("String", "Array<String>@ Split(uint8) const", asFUNCTION(StringSplit), asCALL_CDECL_OBJLAST);
+    engine->RegisterObjectMethod("String", "Array<String>@ Split(uint8, bool keepEmptyStrings = false) const", asFUNCTION(StringSplit), asCALL_CDECL_OBJLAST);
     engine->RegisterObjectMethod("String", "void Join(String[]&, const String&in)", asFUNCTION(StringJoin), asCALL_CDECL_OBJLAST);
     engine->RegisterObjectMethod("String", "bool ToBool() const", asFUNCTIONPR(ToBool, (const String&), bool), asCALL_CDECL_OBJLAST);
     engine->RegisterObjectMethod("String", "float ToFloat() const", asFUNCTIONPR(ToFloat, (const String&), float), asCALL_CDECL_OBJLAST);
@@ -778,6 +778,8 @@ static void RegisterProcessUtils(asIScriptEngine* engine)
     engine->RegisterGlobalFunction("String GetPlatform()", asFUNCTION(GetPlatform), asCALL_CDECL);
     engine->RegisterGlobalFunction("uint GetNumPhysicalCPUs()", asFUNCTION(GetNumPhysicalCPUs), asCALL_CDECL);
     engine->RegisterGlobalFunction("uint GetNumLogicalCPUs()", asFUNCTION(GetNumLogicalCPUs), asCALL_CDECL);
+    engine->RegisterGlobalFunction("void SetMiniDumpDir(const String&in)", asFUNCTION(SetMiniDumpDir), asCALL_CDECL);
+    engine->RegisterGlobalFunction("String GetMiniDumpDir()", asFUNCTION(GetMiniDumpDir), asCALL_CDECL);
 }
 
 static void ConstructAttributeInfo(AttributeInfo* ptr)
@@ -867,6 +869,18 @@ static void UnsubscribeFromAllEventsExcept(CScriptArray* exceptions)
     listener->RemoveEventHandlersExcept(destExceptions);
 }
 
+static bool HasSubscribedToEvent(const String& eventType)
+{
+    ScriptEventListener* listener = GetScriptContextEventListener();
+    return listener ? listener->HasEventHandler(StringHash(eventType)) : false;
+}
+
+static bool HasSubscribedToSenderEvent(Object* sender, const String& eventType)
+{
+    ScriptEventListener* listener = GetScriptContextEventListener();
+    return listener ? listener->HasEventHandler(sender, StringHash(eventType)) : false;
+}
+
 static Object* GetEventSender()
 {
     return GetScriptContext()->GetEventSender();
@@ -920,6 +934,8 @@ void RegisterObject(asIScriptEngine* engine)
     engine->RegisterGlobalFunction("void UnsubscribeFromEvents(Object@+)", asFUNCTION(UnsubscribeFromSenderEvents), asCALL_CDECL);
     engine->RegisterGlobalFunction("void UnsubscribeFromAllEvents()", asFUNCTION(UnsubscribeFromAllEvents), asCALL_CDECL);
     engine->RegisterGlobalFunction("void UnsubscribeFromAllEventsExcept(Array<String>@+)", asFUNCTION(UnsubscribeFromAllEventsExcept), asCALL_CDECL);
+    engine->RegisterGlobalFunction("bool HasSubscribedToEvent(const String&in)", asFUNCTION(HasSubscribedToEvent), asCALL_CDECL);
+    engine->RegisterGlobalFunction("bool HasSubscribedToEvent(Object@+, const String&in)", asFUNCTION(HasSubscribedToSenderEvent), asCALL_CDECL);
     engine->RegisterGlobalFunction("Object@+ GetEventSender()", asFUNCTION(GetEventSender), asCALL_CDECL);
     engine->RegisterGlobalFunction("const String& GetTypeName(StringHash)", asFUNCTION(GetTypeName), asCALL_CDECL);
 

@@ -3,6 +3,7 @@
 #include "Transform.hlsl"
 #include "ScreenPos.hlsl"
 #include "Lighting.hlsl"
+#include "DeferredGBuffer.hlsl"
 
 void VS(float4 iPos : POSITION,
     #ifdef DIRLIGHT
@@ -44,6 +45,9 @@ void PS(
     #ifdef ORTHO
         float3 iNearRay : TEXCOORD2,
     #endif
+    #ifdef PBR
+        float2 iFragPos : VPOS,
+    #endif
     out float4 oColor : OUTCOLOR0)
 {
     // If rendering a directional light quad, optimize out the w divide
@@ -73,7 +77,27 @@ void PS(
         float4 normalInput = Sample2DProj(NormalBuffer, iScreenPos);
     #endif
     
-    float3 normal = normalize(normalInput.rgb * 2.0 - 1.0);
+    #ifdef PBR
+        float3 normal = DecodeGBufferNormal(normalInput.xy, iFarRay);
+        const float roughness = normalInput.b;
+        #ifdef DIRLIGHT
+            float3 specColor = 0;
+            float3 albedoColor = 0;
+            DecodeYCoCgElements(iScreenPos.xy, albedoInput, albedoColor, specColor);
+            albedoInput.rgb = albedoColor;
+            albedoInput.a = 1;
+        #else
+            float3 specColor = 0;
+            float3 albedoColor = 0;
+            DecodeYCoCgElements(iScreenPos.xy/iScreenPos.w, albedoInput, albedoColor, specColor);
+            albedoInput.rgb = albedoColor;
+            albedoInput.a = 1;
+        #endif
+        albedoInput.a = 1.0;
+    #else
+        float3 normal = normalize(normalInput.rgb * 2.0 - 1.0);
+    #endif
+    
     float4 projWorldPos = float4(worldPos, 1.0);
     float3 lightColor;
     float3 lightDir;
@@ -93,10 +117,28 @@ void PS(
         lightColor = cLightColor.rgb;
     #endif
 
-    #ifdef SPECULAR
-        float spec = GetSpecular(normal, -worldPos, lightDir, normalInput.a * 255.0);
-        oColor = diff * float4(lightColor * (albedoInput.rgb + spec * cLightColor.a * albedoInput.aaa), 0.0);
+    #ifdef PBR          
+        float3 toCamera = normalize(-worldPos.xyz);
+        
+        const float3 Hn = normalize(toCamera + lightDir);
+        const float vdh = max(0.0, dot(toCamera, Hn));
+        const float ndh = max(0.0, dot(normal, Hn));
+        const float ndl = max(0.0, dot(normal, lightDir));
+        const float ndv = max(1e-5, dot(normal, toCamera));
+        
+        const float3 diffuseTerm = LambertianDiffuse(albedoInput.rgb, roughness, ndv, ndl, vdh) * lightColor * diff;
+        const float3 fresnelTerm = SchlickFresnel(specColor, vdh);
+        const float distTerm = GGXDistribution(ndh, roughness);
+        const float visTerm = SchlickVisibility(ndl, ndv, roughness);
+        
+        oColor.a = 1;
+        oColor.rgb = LinearFromSRGB((diffuseTerm + distTerm * visTerm * fresnelTerm * lightColor) * diff);
     #else
-        oColor = diff * float4(lightColor * albedoInput.rgb, 0.0);
+        #ifdef SPECULAR
+            float spec = GetSpecular(normal, -worldPos, lightDir, normalInput.a * 255.0);
+            oColor = diff * float4(lightColor * (albedoInput.rgb + spec * cLightColor.a * albedoInput.aaa), 0.0);
+        #else
+            oColor = diff * float4(lightColor * albedoInput.rgb, 0.0);
+        #endif
     #endif
 }

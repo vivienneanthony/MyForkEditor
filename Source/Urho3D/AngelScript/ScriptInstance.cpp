@@ -363,6 +363,16 @@ void ScriptInstance::RemoveEventHandlersExcept(const PODVector<StringHash>& exce
     UnsubscribeFromAllEventsExcept(exceptions, true);
 }
 
+bool ScriptInstance::HasEventHandler(StringHash eventType) const
+{
+    return HasSubscribedToEvent(eventType);
+}
+
+bool ScriptInstance::HasEventHandler(Object* sender, StringHash eventType) const
+{
+    return HasSubscribedToEvent(sender, eventType);
+}
+
 bool ScriptInstance::IsA(const String& className) const
 {
     // Early out for the easiest case where that's what we are
@@ -593,12 +603,12 @@ void ScriptInstance::GetScriptAttributes()
     {
         const char* name;
         int typeId;
-        bool isPrivate, isHandle;
+        bool isPrivate, isProtected, isHandle;
 
-        scriptObject_->GetObjectType()->GetProperty(i, &name, &typeId, &isPrivate);
+        scriptObject_->GetObjectType()->GetProperty(i, &name, &typeId, &isPrivate, &isProtected);
 
         // Hide private variables or ones that begin with an underscore
-        if (isPrivate || name[0] == '_')
+        if (isPrivate || isProtected || name[0] == '_')
             continue;
 
         String typeName = engine->GetTypeDeclaration(typeId);
