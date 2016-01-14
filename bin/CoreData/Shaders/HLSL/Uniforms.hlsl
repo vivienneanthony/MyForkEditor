@@ -62,6 +62,9 @@ uniform float2 cShadowIntensity;
 uniform float2 cShadowMapInvSize;
 uniform float4 cShadowSplits;
 uniform float4x4 cLightMatricesPS[4];
+#ifdef PBR
+    uniform float2 cRoughnessControl; //x = add, y = multiply if > 0
+#endif
 #endif
 
 #else
@@ -173,6 +176,9 @@ cbuffer MaterialPS : register(b4)
     float3 cMatEmissiveColor;
     float3 cMatEnvMapColor;
     float4 cMatSpecColor;
+    #ifdef PBR
+        float2 cRoughnessControl; //x = add, y = multiply if > 0
+    #endif
 }
 #endif
 

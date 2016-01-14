@@ -51,6 +51,7 @@ namespace Urho3D
 static const char* scriptObjectMethodNames[] = {
     "Start",
     "Stop",
+    "DelayedStart",
     "Update",
     "PostUpdate",
     "FixedUpdate",
@@ -361,6 +362,16 @@ void LuaScriptInstance::RemoveEventHandlersExcept(const Vector<String>& exceptio
     eventInvoker_->UnsubscribeFromAllEventsExcept(exceptionTypes, true);
 }
 
+bool LuaScriptInstance::HasEventHandler(const String& eventName) const
+{
+    return eventInvoker_->HasSubscribedToEvent(eventName);
+}
+
+bool LuaScriptInstance::HasEventHandler(Object* sender, const String& eventName) const
+{
+    return eventInvoker_->HasSubscribedToEvent(sender, eventName);
+}
+
 bool LuaScriptInstance::CreateObject(const String& scriptObjectType)
 {
     SetScriptFile(0);
@@ -601,7 +612,7 @@ void LuaScriptInstance::SubscribeToScriptMethodEvents()
 {
     Scene* scene = GetScene();
 
-    if (scene && scriptObjectMethods_[LSOM_UPDATE])
+    if (scene && (scriptObjectMethods_[LSOM_UPDATE] || scriptObjectMethods_[LSOM_DELAYEDSTART]))
         SubscribeToEvent(scene, E_SCENEUPDATE, URHO3D_HANDLER(LuaScriptInstance, HandleUpdate));
 
     if (scene && scriptObjectMethods_[LSOM_POSTUPDATE])
@@ -639,6 +650,14 @@ void LuaScriptInstance::HandleUpdate(StringHash eventType, VariantMap& eventData
 {
     using namespace Update;
     float timeStep = eventData[P_TIMESTEP].GetFloat();
+
+    // Execute delayed start before first update
+    if (scriptObjectMethods_[LSOM_DELAYEDSTART])
+    {
+        if (scriptObjectMethods_[LSOM_DELAYEDSTART]->BeginCall(this))
+            scriptObjectMethods_[LSOM_DELAYEDSTART]->EndCall();
+        scriptObjectMethods_[LSOM_DELAYEDSTART] = 0;  // Only execute once
+    }
 
     LuaFunction* function = scriptObjectMethods_[LSOM_UPDATE];
     if (function && function->BeginCall(this))

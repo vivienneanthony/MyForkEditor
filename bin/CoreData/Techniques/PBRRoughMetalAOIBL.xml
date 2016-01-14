@@ -1,0 +1,8 @@
+<technique vs="LitSolid" ps="LitSolid" psdefines="DIFFMAP NORMALMAP PBR ROUGHNESS AO IBL" vsdefines="PBR NORMALMAP IBL">
+    <pass name="base" />
+    <pass name="light" depthtest="equal" depthwrite="false" blend="add" />
+    <pass name="deferred" psdefines="DEFERRED" />
+    <pass name="pbrdeferred" psdefines="DEFERRED PBR" />
+    <pass name="depth" vs="Depth" ps="Depth" />
+    <pass name="shadow" vs="Shadow" ps="Shadow" />
+</technique>

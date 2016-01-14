@@ -3,6 +3,7 @@
 #include "Transform.glsl"
 #include "ScreenPos.glsl"
 #include "Lighting.glsl"
+#include "DeferredGBuffer.glsl"
 
 #ifdef DIRLIGHT
     varying vec2 vScreenPos;
@@ -65,8 +66,28 @@ void PS()
         vec4 albedoInput = texture2DProj(sAlbedoBuffer, vScreenPos);
         vec4 normalInput = texture2DProj(sNormalBuffer, vScreenPos);
     #endif
+    
+    #ifdef PBR
+        vec3 normal = DecodeGBufferNormal(normalInput.xy, vFarRay);
+        float roughness = normalInput.b;
+        #ifdef DIRLIGHT
+            vec3 specColor = vec3(0,0,0);
+            vec3 albedoColor = vec3(0,0,0);
+            DecodeYCoCgElements(vScreenPos.xy, albedoInput, albedoColor, specColor);
+            albedoInput.rgb = albedoColor;
+            albedoInput.a = 1.0;
+        #else
+            vec3 specColor = vec3(0,0,0);
+            vec3 albedoColor = vec3(1,1,1);
+            DecodeYCoCgElements(vScreenPos.xy / vScreenPos.w, albedoInput, albedoColor, specColor);
+            albedoInput.rgb = albedoColor;
+            albedoInput.a = 1.0;
+        #endif
+        albedoInput.a = 1.0;
+    #else
+        vec3 normal = normalize(normalInput.rgb * 2.0 - 1.0);
+    #endif
 
-    vec3 normal = normalize(normalInput.rgb * 2.0 - 1.0);
     vec4 projWorldPos = vec4(worldPos, 1.0);
     vec3 lightColor;
     vec3 lightDir;
@@ -87,10 +108,33 @@ void PS()
         lightColor = cLightColor.rgb;
     #endif
 
-    #ifdef SPECULAR
-        float spec = GetSpecular(normal, -worldPos, lightDir, normalInput.a * 255.0);
-        gl_FragColor = diff * vec4(lightColor * (albedoInput.rgb + spec * cLightColor.a * albedoInput.aaa), 0.0);
+    #ifdef PBR          
+        vec3 toCamera = normalize(-worldPos.xyz);
+        
+        float ndl = clamp(dot(normal, lightDir), 0.0, 1.0);
+        if (ndl > 0.0)
+        {
+            vec3 Hn = normalize(toCamera + lightDir);
+            float vdh = max(0.0, dot(toCamera, Hn));
+            float ndh = max(0.0, dot(normal, Hn));
+            float ndv = max(1e-5, dot(normal, toCamera));
+            
+            vec3 diffuseTerm = LambertianDiffuse(albedoInput.rgb, roughness, ndv, ndl, vdh) * lightColor * diff;
+            vec3 fresnelTerm = SchlickFresnel(specColor, vdh);
+            float distTerm = GGXDistribution(ndh, roughness);
+            float visTerm = SchlickVisibility(ndl, ndv, roughness);
+            
+            gl_FragColor.a = 1;
+            gl_FragColor.rgb = LinearFromSRGB(diff * (diffuseTerm + distTerm * visTerm * fresnelTerm * lightColor));
+        }
+        else
+            gl_FragColor = vec4(0,0,0,0);
     #else
-        gl_FragColor = diff * vec4(lightColor * albedoInput.rgb, 0.0);
+        #ifdef SPECULAR
+            float spec = GetSpecular(normal, -worldPos, lightDir, normalInput.a * 255.0);
+            gl_FragColor = diff * vec4(lightColor * (albedoInput.rgb + spec * cLightColor.a * albedoInput.aaa), 0.0);
+        #else
+            gl_FragColor = diff * vec4(lightColor * albedoInput.rgb, 0.0);
+        #endif
     #endif
 }

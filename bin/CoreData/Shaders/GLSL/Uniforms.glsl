@@ -73,6 +73,9 @@ uniform vec2 cShadowIntensity;
 uniform vec2 cShadowMapInvSize;
 uniform vec4 cShadowSplits;
 uniform mat4 cLightMatricesPS[4];
+#ifdef PBR
+    uniform vec2 cRoughnessControl; // x = add, y = multiply if > 0
+#endif
 
 #endif
 
@@ -185,6 +188,9 @@ uniform MaterialPS
     vec3 cMatEmissiveColor;
     vec3 cMatEnvMapColor;
     vec4 cMatSpecColor;
+    #ifdef PBR
+        vec2 cRoughnessControl;
+    #endif
 };
 #endif
 

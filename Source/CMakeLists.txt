@@ -22,13 +22,13 @@
 
 # Check existence of stdint.h for LibCpuId
 include (CheckIncludeFiles)
-CHECK_INCLUDE_FILES (stdint.h HAVE_STDINT_H)
+check_include_files (stdint.h HAVE_STDINT_H)
 if (HAVE_STDINT_H)
     add_definitions (-DHAVE_STDINT_H)
 endif ()
 
 # Setup RPATH settings
-if (URHO3D_LIB_TYPE STREQUAL SHARED AND NOT WIN32 AND NOT ANDROID AND NOT IOS AND NOT EMSCRIPTEN)
+if (URHO3D_LIB_TYPE STREQUAL SHARED AND NOT WIN32 AND NOT ANDROID AND NOT IOS AND NOT WEB)
     # Add RPATH entries when building
     set (CMAKE_SKIP_BUILD_RPATH FALSE)
     # But don't set them yet in the build tree
@@ -43,7 +43,9 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND NOT WIN32 AND NOT ANDROID AND NOT IOS AN
     endif ()
     # When installing/packaging set the first RPATH entry to the library location relative to the executable
     set (CMAKE_INSTALL_RPATH ${ORIGIN}/../lib${LIB_SUFFIX}/${PATH_SUFFIX})    # The library location is based on SDK install destination
-    # The second entry to the install destination of the library, if the destination location is not in the system default search path
+    # The second entry to the library location relative to the executable in the tool directory
+    list (APPEND CMAKE_INSTALL_RPATH ${ORIGIN}/../../lib${LIB_SUFFIX}/${PATH_SUFFIX})    # The tools are installed one directory further down from normal executable
+    # The last entry to the install destination of the library, if the destination location is not in the system default search path
     list (FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX} isSystemDir)
     if (isSystemDir STREQUAL -1)
         list (APPEND CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${DEST_LIBRARY_DIR})
@@ -51,7 +53,7 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND NOT WIN32 AND NOT ANDROID AND NOT IOS AN
 endif ()
 
 # Add targets
-foreach (TARGET FreeType JO LZ4 PugiXml rapidjson SDL StanHull STB)
+foreach (TARGET FreeType JO LZ4 PugiXml rapidjson SDL StanHull STB imgui)
     add_subdirectory (ThirdParty/${TARGET})
 endforeach ()
 
@@ -96,7 +98,7 @@ if (URHO3D_PHYSICS)
     add_subdirectory (ThirdParty/Bullet)
 endif ()
 
-if (NOT IOS AND NOT ANDROID AND NOT RPI AND NOT EMSCRIPTEN)
+if (NOT IOS AND NOT ANDROID AND NOT RPI AND NOT WEB)
     if (URHO3D_OPENGL)
         add_subdirectory (ThirdParty/GLEW)
     elseif (NOT URHO3D_D3D11)
@@ -115,6 +117,13 @@ endif ()
 
 # Urho3D tools
 add_subdirectory (Tools)
+
+# Urho3D samples
+# Samples are built on iOS platform too when enabled. Currently there is no available mechanism to package each sample apps into individual *.apk
+# for Android platform, so we deploy all samples into one apk and use a simple list view activity launcher to select the sample to run
+if (URHO3D_SAMPLES)
+    add_subdirectory (Samples)
+endif ()
 
 # Build the engine
 if (Build-AlphaEngine)
@@ -137,5 +146,3 @@ endif()
 if (URHO3D_EXTRAS)
     add_subdirectory (Extras)
 endif ()
-
-
