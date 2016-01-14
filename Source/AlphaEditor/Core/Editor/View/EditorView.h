@@ -128,4 +128,7 @@ protected:
 	U_PROPERTY_IMP(int, m_MinRightFrameWidth, MinRightFrameWidth);
 	U_PROPERTY_IMP(int, m_MaxLeftFrameWidth, MaxLeftFrameWidth);
 	U_PROPERTY_IMP(int, m_MaxRightFrameWidth, MaxRightFrameWidth);
+
+	unsigned int m_PreviousWidth;
+	unsigned int m_PreviousHeight;
 };

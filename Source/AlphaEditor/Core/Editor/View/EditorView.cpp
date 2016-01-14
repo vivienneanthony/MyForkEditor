@@ -391,6 +391,12 @@ void EditorView::HandleScreenUpdateDelegate(StringHash eventType, VariantMap& ev
             m_pMiddleFrame->SetWidth(m_pMainFrame->GetWidth() - m_pMiniToolbar->GetWidth());
         }
     }
+
+    // Store height and width
+    m_PreviousHeight= windowHeight;
+    m_PreviousWidth = windowWidth;
+
+    return;
 }
 
 
