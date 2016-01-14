@@ -27,10 +27,14 @@ project (Urho3D-Tools)
 find_package (Urho3D REQUIRED)
 include_directories (${URHO3D_INCLUDE_DIRS})
 
+# Removed player from building Uncomment to enable
+
 # Urho3DPlayer target is rather special, although it is here, it is not a tool because it is built into target platform binary as opposed to host platform
-if (NOT WEB)
-    add_subdirectory (Urho3DPlayer)
-endif ()
+#if (NOT WEB)
+#    add_subdirectory (Urho3DPlayer)
+#endif ()
+
+
 
 # Build PackageTool using host compiler toolchain
 if (CMAKE_CROSSCOMPILING AND URHO3D_PACKAGING)
