@@ -30,6 +30,8 @@ class ResourceBrowser;
 
 #include <Urho3D/UI/FileSelector.h>
 
+class ImGuiInterface;
+
 class Editor : public Object
 {
     URHO3D_OBJECT(Editor, Object);
@@ -228,5 +230,7 @@ protected:
 
 	// Export directory
 	String m_ExportDirectory;
+
+	ImGuiInterface * m_pGuiInterface;
 
 };

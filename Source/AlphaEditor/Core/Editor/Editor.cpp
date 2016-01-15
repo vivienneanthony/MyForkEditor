@@ -40,6 +40,10 @@
 // Urho3d
 #include <Urho3D/UI/FileSelector.h>
 
+#include <Urho3D/ThirdParty/imgui/imgui.h>
+#include <AlphaEngine/UserInterface/ImGuiInterface/ImGuiSettings.h>
+#include <AlphaEngine/UserInterface/ImGuiInterface/ImGuiInterface.h>
+
 // Engine
 #include "AlphaEngine/GameLogic/BaseGameLogic.h"
 
@@ -151,6 +155,7 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     EPScene3DView::RegisterObject(context_);
     ViewSettings::RegisterObject(context_);
 
+
     // UI Relaated Objects
     MenuBarUI::RegisterObject(context_);
     ToolBarUI::RegisterObject(context_);
@@ -163,6 +168,39 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 
     GameAssetSelector::RegisterObject(context_);
     AboutTeamGDPWindow::RegisterObject(context_);
+    ImGuiInterface::RegisterObject(context_);
+
+    // Register IMGUI
+
+    m_pGuiInterface = new ImGuiInterface(context_);
+
+    //context_->RegisterFactory(m_pGuiInterface);
+
+    //m_pGuiInterface->Initialize();
+
+    /// create custom imgui settings.
+    ImGuiSettings CustomSettings;
+    CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
+    CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
+
+    Vector<ImWchar> iconRanges;
+    iconRanges.Push(0xf000);
+    iconRanges.Push(0xf3ff);
+    iconRanges.Push(0);
+    // Basic Latin + Latin Supplement
+    Vector<ImWchar> defaultranges;
+    defaultranges.Push(0x0020);
+    defaultranges.Push(0x00FF);
+    defaultranges.Push(0);
+
+    CustomSettings.fontGlyphRanges("fontawesome-webfont", iconRanges);
+    CustomSettings.fontConfig("fontawesome-webfont", true, true, true, 1, 1);
+    CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
+    CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
+
+    m_pGuiInterface->SetSettings(CustomSettings);
+
+
 
 
     // InitializeSettings
@@ -314,6 +352,19 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     m_bIsInitialized = true;
 
     InitializeAllDelegates();
+
+	// check if window "hello" is collapsed, dubble clicked on the header/title
+	if (ImGui::Begin("Hello"))
+	{
+		// normal text
+		ImGui::Text("Hallo world! ...");
+		// if font icons are loaded, use u8"" to place them.
+
+		// ImGui::Text("\uF04B"); isn't correct it is 16-bit unicode whereas ImGui takes UTF-8.
+		// so use in c++11 use u8"\uf016" or
+		ImGui::Text("\xef\x80\x96" " File"); // use string literal concatenation, ouputs a file icon and File as a string
+		ImGui::Button("test", ImVec2(100.0f, 20.0f));
+	}
 
     return true;
 }

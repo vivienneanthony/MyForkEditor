@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<EngineIDESettings>
+	<attribute name="WindowTitle" value="EngineStd IDE" />
+	<attribute name="WindowIcon" value="Textures/EngineIDE.png" />
+	<attribute name="WindowWidth" value="1024" />
+	<attribute name="WindowHeight" value="768" />
+	<attribute name="ResourcePaths" value="Data;CoreData;GameData" />
+	<attribute name="ResourcePackages" value="Data.pak;CoreData.pak;GameData.pak" />
+	<attribute name="AutoloadPaths" value="Extra" />
+	<attribute name="WindowResizable" value="true" />
+	<attribute name="FullScreen" value="false" />
+</EngineIDESettings>
