@@ -34,6 +34,11 @@ include_directories (${URHO3D_INCLUDE_DIRS})
 file(GLOB_RECURSE ENGINE_INCLUDE_FILES *.h)
 file(GLOB_RECURSE ENGINE_SOURCE_FILES *.cpp)
 
+# Add targets
+foreach (TARGET ImGui)
+    add_subdirectory (ThirdParty/${TARGET})
+endforeach ()
+
 # Add directory as include path
 include_directories ("${CMAKE_CURRENT_SOURCE_DIR}")
 

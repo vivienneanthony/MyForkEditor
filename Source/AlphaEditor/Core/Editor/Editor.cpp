@@ -6,6 +6,12 @@
 // Alpha engine
 #include "GameLogic/EditorGameLogic.h"
 
+#include <AlphaEngine/ThirdParty/ImGui/imgui.h>
+#include <AlphaEngine/Interfaces/ImGui/ImGuiSettings.h>
+#include <AlphaEngine/Interfaces/ImGui/ImGuiInterface.h>
+
+
+
 // Editor Core
 #include "Editor.h"
 #include "EditorData.h"
@@ -46,10 +52,6 @@
 
 using namespace Urho3D;
 
-
-#include <Urho3D/ThirdParty/imgui/imgui.h>
-#include <AlphaEngine/UserInterface/ImGuiInterface/ImGuiSettings.h>
-#include <AlphaEngine/UserInterface/ImGuiInterface/ImGuiInterface.h>
 
 
 // Register
@@ -171,8 +173,8 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     GameAssetSelector::RegisterObject(context_);
     AboutTeamGDPWindow::RegisterObject(context_);
 
-    // regsiterr
-    context_->RegisterFactory<ImGuiInterface>();
+    // Regiite ImGuiSystem
+    ImGuiInterface::RegisterObject(context_);
 
     m_pGuiInterface = new ImGuiInterface(context_);
 
@@ -199,7 +201,7 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
     CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
 
-    m_pGuiInterface->SetSettings(CustomSettings);
+  //  m_pGuiInterface->SetSettings(CustomSettings);
 
     // InitializeSettings
     m_pViewSettings = new ViewSettings(context_);

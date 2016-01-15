@@ -19,15 +19,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#include "AlphaEngineStd.h"
 
-// Load Alpha Engine
-#include <AlphaEngineStd.h>
+#include <Urho3D/Precompiled.h>
 
-// Load Imgui Related
-#include <Urho3D/ThirdParty/imgui/imgui.h>
+#include <Urho3D/Core/Context.h>
+#include <Urho3D/Core/CoreEvents.h>
+#include <Urho3D/Core/Profiler.h>
+#include <Urho3D/Container/Vector.h>
+#include <Urho3D/Graphics/Graphics.h>
+#include <Urho3D/Graphics/GraphicsEvents.h>
+#include <Urho3D/Graphics/ShaderVariation.h>
+#include <Urho3D/Graphics/Texture2D.h>
+#include <Urho3D/Graphics/VertexBuffer.h>
+#include <Urho3D/Input/Input.h>
+#include <Urho3D/Input/InputEvents.h>
+#include <Urho3D/IO/Log.h>
+#include <Urho3D/Math/Matrix3x4.h>
+#include <Urho3D/Resource/ResourceCache.h>
+#include <Urho3D/UI/Cursor.h>
+#include <Urho3D/Resource/Image.h>
+#include <Urho3D/Network/Network.h>
+#include <Urho3D/Graphics/IndexBuffer.h>
+#include <Urho3D/IO/Log.h>
+#include <Urho3D/IO/FileSystem.h>
+#include <SDL/SDL.h>
+
+#include "AlphaEngine/ThirdParty/ImGui/imgui.h"
 
 #include "ImGuiSettings.h"
 
+#include "../DebugNew.h"
+
+
+using namespace Urho3D;
 
 void SetImVec2(ImVec2& dest ,const Vector2 & src)
 {
@@ -52,7 +77,6 @@ ImGuiSettings::ImGuiSettings():
     mDisplayVisibleMax(0.0f, 0.0f)
 {
 
-    return;
 }
 
 ImGuiSettings& ImGuiSettings::IniSavingRate(float value)
@@ -362,4 +386,3 @@ ImGuiSettings& ImGuiSettings::color(ImGuiCol option, const Color &color)
     mStyle.Colors[option].w = color.a_;
     return *this;
 }
-

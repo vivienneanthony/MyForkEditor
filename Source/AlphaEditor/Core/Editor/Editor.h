@@ -3,6 +3,11 @@
 
 #include "AlphaEditorStd.h"
 
+
+#include <AlphaEngine/ThirdParty/ImGui/imgui.h>
+#include <AlphaEngine/Interfaces/ImGui/ImGuiInterface.h>
+#include <AlphaEngine/Interfaces/ImGui/ImGuiInterface.h>
+
 /// Menu selected.
 URHO3D_EVENT(E_EDITORINSTANCE, EditorInstanceEvent)
 {
@@ -26,11 +31,14 @@ class MenuBarUI;
 class TabWindow;
 class ResourceBrowser;
 
+
+
+
 #include "Plugin/EditorPlugin.h"
 
 #include <Urho3D/UI/FileSelector.h>
 
-class ImGuiInterface;
+
 
 class Editor : public Object
 {
@@ -231,6 +239,6 @@ protected:
 	// Export directory
 	String m_ExportDirectory;
 
-	ImGuiInterface * m_pGuiInterface;
+	SharedPtr<ImGuiInterface> m_pGuiInterface;
 
 };

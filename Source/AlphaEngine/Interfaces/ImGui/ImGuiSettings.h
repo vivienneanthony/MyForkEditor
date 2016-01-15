@@ -22,16 +22,15 @@
 
 #pragma once
 
-class ImGuiInterface;
+//#include "ImGuiInterface.h"
+
 
 using namespace Urho3D;
 
-// Settings class
 struct ImGuiSettings
 {
     friend class ImGuiInterface;
 
-public:
     struct FontConfig
     {
         String filename_;
