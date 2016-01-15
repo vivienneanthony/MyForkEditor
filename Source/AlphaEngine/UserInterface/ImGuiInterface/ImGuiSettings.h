@@ -24,6 +24,8 @@
 
 class ImGuiInterface;
 
+using namespace Urho3D;
+
 // Settings class
 struct ImGuiSettings
 {
@@ -165,3 +167,4 @@ protected:
     ImVec2 mDisplayVisibleMax;        // <unset> (0.0f,0.0f)  // If the values are the same, we defaults to Min=(0.0f) and Max=DisplaySize
 
 };
+

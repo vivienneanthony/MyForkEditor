@@ -19,6 +19,11 @@
 #include "ImGuiInterface.h"
 
 
+using namespace Urho3D;
+
+#define TOUCHID_MASK(id) (1 << id)
+
+
 ImVec2 ToImVec2(const String& source)
 {
     ImVec2 ret;
@@ -78,21 +83,20 @@ static void ImGui_SetClipboardText(const char* text)
 
 
 
-using namespace Urho3D;
 
-static ImGuiInterface * m_pImGuiInterface = NULL;
+static ImGuiInterface * m_pImGui = NULL;
 
 static void ImGui_RenderDrawLists(ImDrawData* data)
 {
-    if (m_pImGuiInterface)
+    if (m_pImGui)
     {
-        m_pImGuiInterface->RenderDrawLists(data);
+        m_pImGui->RenderDrawLists(data);
     }
-};
+}
 
 // Constructor
 ImGuiInterface::ImGuiInterface(Context * context):Object(context)
-   , bInitialized(false)
+    , bInitialized(false)
     ,iniFilename(String::EMPTY)
     ,logFilename(String::EMPTY)
     ,screenSize(IntRect::ZERO)
@@ -103,10 +107,10 @@ ImGuiInterface::ImGuiInterface(Context * context):Object(context)
     ,pIndexBuffer(NULL)
 {
 
-    assert(!m_pImGuiInterface);
+    assert(!m_pImGui);
 
     // set interface to this
-    m_pImGuiInterface = this;
+    m_pImGui = this;
     bInitialized = false;
 
     // get grpahics system
@@ -114,6 +118,8 @@ ImGuiInterface::ImGuiInterface(Context * context):Object(context)
     m_pGraphics = g_pApp->GetGraphics();
 
     //m_pFileSystem = g_pApp->GetFileSystem();
+
+    SubscribeToEvent(E_SCREENMODE, URHO3D_HANDLER(ImGuiInterface, HandleScreenMode));
 
     Initialize();
 
@@ -129,18 +135,11 @@ ImGuiInterface::~ImGuiInterface(void)
     return;
 }
 
-// RegisterObject
-void ImGuiInterface::RegisterObject(Context * context)
-{
-    context->RegisterFactory<ImGuiInterface>();
-    return;
-}
-
 // Initialize
 bool ImGuiInterface::Initialize(void)
 {
     // Verify a renderer and graphics system
-    if(m_pRenderer==NULL||m_pGraphics==NULL||bInitialized)
+    if(bInitialized)
     {
         return false;
     }
@@ -149,6 +148,11 @@ bool ImGuiInterface::Initialize(void)
     screenSize = IntRect(0, 0, m_pGraphics->GetWidth(), m_pGraphics->GetHeight());
     pVertexBuffer = new VertexBuffer(context_);
     pIndexBuffer = new IndexBuffer(context_);
+
+    input_ = GetSubsystem<Input>();
+
+    SubscribeToEvent(E_BEGINFRAME, URHO3D_HANDLER(ImGuiInterface, HandleBeginFrame));
+    SubscribeToEvent(E_ENDRENDERING, URHO3D_HANDLER(ImGuiInterface, HandleEndRendering));
 
     /// init imgui
     ImGuiIO& io = ImGui::GetIO();
@@ -244,7 +248,6 @@ bool ImGuiInterface::SaveStyleXML(Serializer& dest, ImGuiStyle* outStyle, const 
     return xml->Save(dest, indentation);
 }
 
-
 void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
 {
     // set GuiSettings
@@ -257,12 +260,10 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
     {
         ImGuiIO& io = ImGui::GetIO();
 
-        String m_CurrentWorkDirectory = g_pApp->GetFileSystem()->GetProgramDir();
-        m_CurrentWorkDirectory += String("Data");
+        ResourceCache* Rescache = GetSubsystem<ResourceCache>();
 
-        String dataAssetPath;
-
-        dataAssetPath.Append(m_CurrentWorkDirectory);
+        // TODO: is a hack!
+        String dataAssetPath = Rescache->GetResourceDirs()[0];
 
         // setup core imgui settings
         io.IniSavingRate = settings.mIniSavingRate;
@@ -288,7 +289,7 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
 
         // if no fonts added, add default font
         if (settings.mFonts.Empty())  // does not work if font provied by settings are all in merge mode, need one font already loaded
-        io.Fonts->AddFontDefault();
+            io.Fonts->AddFontDefault();
 
         const HashMap< StringHash, ImGuiSettings::FontConfig >& fontconfigs_map = settings.getFonts();
         HashMap< StringHash, ImGuiSettings::FontConfig >::ConstIterator it;
@@ -353,7 +354,6 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
     }
 }
 
-
 bool ImGuiInterface::LoadStyleXML(Deserializer& source, ImGuiStyle* outStyle)
 {
     SharedPtr<XMLFile> xml(new XMLFile(context_));
@@ -403,7 +403,6 @@ bool ImGuiInterface::LoadStyleXML(const XMLElement& source, ImGuiStyle* outStyle
 
     return true;
 }
-
 
 void ImGuiInterface::RenderDrawLists(ImDrawData* data)
 {
@@ -559,8 +558,8 @@ void ImGuiInterface::RenderDrawLists(ImDrawData* data)
 #ifdef GL_ES_VERSION_2_0
                 m_pGraphics->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, 0, cmd_list->VtxBuffer.size());
 #else
-    //            m_pGraphics->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, vtx_offset, 0, cmd_list->VtxBuffer.size());                m_pGraphics->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, 0, cmd_list->VtxBuffer.size());
-          m_pGraphics->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, 0, cmd_list->VtxBuffer.size());
+                //            m_pGraphics->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, vtx_offset, 0, cmd_list->VtxBuffer.size());                m_pGraphics->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, 0, cmd_list->VtxBuffer.size());
+                m_pGraphics->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, 0, cmd_list->VtxBuffer.size());
 #endif
 #else
                 m_pGraphics->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, vtx_offset, 0, cmd_list->VtxBuffer.size());
@@ -607,3 +606,67 @@ bool ImGuiInterface::VOnMsgProc(AppMsg message) {};
 
 // Shutdown view.
 void ImGuiInterface::VShutdown() {};
+
+
+void ImGuiInterface::HandleScreenMode(StringHash eventType, VariantMap& eventData)
+{
+    using namespace ScreenMode;
+
+    if (!bInitialized)
+        Initialize();
+    else
+    {
+        screenSize = IntRect(0, 0, eventData[P_WIDTH].GetInt(), eventData[P_HEIGHT].GetInt());
+    }
+}
+
+void ImGuiInterface::HandleBeginFrame(StringHash eventType, VariantMap& eventData)
+{
+    URHO3D_PROFILE(IMUI_BeginFrame);
+    using namespace BeginFrame;
+    float timeStep = eventData[P_TIMESTEP].GetFloat();
+
+    // Setup display size (every frame to accommodate for window resizing)
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2((float)m_pGraphics->GetWidth(), (float)m_pGraphics->GetHeight());
+
+    // Setup time step
+    io.DeltaTime = timeStep > 0.0f ? timeStep : 1.0f / 60.0f;
+
+    // Setup inputs
+    // mouse input handling
+    if (input_->IsMouseVisible() && !input_->GetTouchEmulation())
+    {
+        IntVector2 pos = input_->GetMousePosition();
+        // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
+        io.MousePos.x = (float)pos.x_;
+        io.MousePos.y = (float)pos.y_;
+    }
+    else
+    {
+        io.MousePos.x = -1.0f;
+        io.MousePos.y = -1.0f;
+    }
+    // TODO: Joystick input handling
+    io.MouseDown[0] = input_->GetMouseButtonDown(MOUSEB_LEFT);
+
+    io.MouseDown[1] = input_->GetMouseButtonDown(MOUSEB_RIGHT);
+    io.MouseDown[2] = input_->GetMouseButtonDown(MOUSEB_MIDDLE);
+    io.MouseWheel = (float)input_->GetMouseMoveWheel();
+
+    io.KeyCtrl = input_->GetQualifierDown(QUAL_CTRL);
+    io.KeyShift = input_->GetQualifierDown(QUAL_SHIFT);
+    io.KeyAlt = input_->GetQualifierDown(QUAL_ALT);
+
+    // Start the frame
+    ImGui::NewFrame();
+
+
+}
+
+
+void ImGuiInterface::HandleEndRendering(StringHash eventType, VariantMap& eventData)
+{
+    URHO3D_PROFILE(IMUI_Rendering);
+    ImGui::Render();
+}

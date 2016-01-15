@@ -40,15 +40,17 @@
 // Urho3d
 #include <Urho3D/UI/FileSelector.h>
 
-#include <Urho3D/ThirdParty/imgui/imgui.h>
-#include <AlphaEngine/UserInterface/ImGuiInterface/ImGuiSettings.h>
-#include <AlphaEngine/UserInterface/ImGuiInterface/ImGuiInterface.h>
-
 // Engine
 #include "AlphaEngine/GameLogic/BaseGameLogic.h"
 
 
 using namespace Urho3D;
+
+
+#include <Urho3D/ThirdParty/imgui/imgui.h>
+#include <AlphaEngine/UserInterface/ImGuiInterface/ImGuiSettings.h>
+#include <AlphaEngine/UserInterface/ImGuiInterface/ImGuiInterface.h>
+
 
 // Register
 void Editor::RegisterObject(Context* context)
@@ -168,15 +170,14 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 
     GameAssetSelector::RegisterObject(context_);
     AboutTeamGDPWindow::RegisterObject(context_);
-    ImGuiInterface::RegisterObject(context_);
 
-    // Register IMGUI
+    // regsiterr
+    context_->RegisterFactory<ImGuiInterface>();
 
     m_pGuiInterface = new ImGuiInterface(context_);
 
-    //context_->RegisterFactory(m_pGuiInterface);
-
-    //m_pGuiInterface->Initialize();
+    // Register IMGUI
+    context_ -> RegisterSubsystem(m_pGuiInterface);
 
     /// create custom imgui settings.
     ImGuiSettings CustomSettings;
@@ -199,9 +200,6 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
 
     m_pGuiInterface->SetSettings(CustomSettings);
-
-
-
 
     // InitializeSettings
     m_pViewSettings = new ViewSettings(context_);

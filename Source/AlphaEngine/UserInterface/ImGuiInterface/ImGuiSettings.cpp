@@ -21,7 +21,7 @@
 //
 
 // Load Alpha Engine
-#include <AlphaEngine/AlphaEngineStd.h>
+#include <AlphaEngineStd.h>
 
 // Load Imgui Related
 #include <Urho3D/ThirdParty/imgui/imgui.h>

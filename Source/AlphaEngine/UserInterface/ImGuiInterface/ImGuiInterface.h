@@ -1,11 +1,11 @@
 #pragma once
 
-using namespace Urho3D;
+using  namespace Urho3D;
 
 // ImGui Interface for the editor
 class ImGuiInterface : public Object
 {
-    URHO3D_OBJECT(ImGuiInterface, Object)
+    URHO3D_OBJECT(ImGuiInterface, Object);
 public:
     // Constructors
     ImGuiInterface(Context *context);
@@ -42,14 +42,22 @@ public:
     // Load from XML data. Return true if successful.
     bool LoadStyleXML(const XMLElement& source, ImGuiStyle* outStyle = NULL, bool setInstanceDefault = false);
 
-     /// imgui render
+    /// imgui render
     void RenderDrawLists(ImDrawData* data);
 
 
-		/// Push font
-		void PushFont(const String& name);
-		/// Pop font
-		void PopFont();
+    /// Push font
+    void PushFont(const String& name);
+    /// Pop font
+    void PopFont();
+
+    /// Handle screen mode event.
+    void HandleScreenMode(StringHash eventType, VariantMap& eventData);
+    /// Handle frame begin event.
+    void HandleBeginFrame(StringHash eventType, VariantMap& eventData);
+    /// Handle end rendering event.
+    void HandleEndRendering(StringHash eventType, VariantMap& eventData);
+
 
 private:
 
@@ -77,15 +85,12 @@ private:
     Texture2D* fontTexture;
 
     // Subsystemssss
-    WeakPtr<Graphics> m_pGraphics;
-    WeakPtr<Renderer> m_pRenderer;
+    SharedPtr<Graphics> m_pGraphics;
+    SharedPtr<Renderer> m_pRenderer;
+    SharedPtr<Input> input_;
 
-    WeakPtr<VertexBuffer> pVertexBuffer;
-    WeakPtr<IndexBuffer> pIndexBuffer;
+
+    SharedPtr<VertexBuffer> pVertexBuffer;
+    SharedPtr<IndexBuffer> pIndexBuffer;
 
 };
-
-
-
-
-
