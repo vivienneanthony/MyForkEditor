@@ -796,6 +796,72 @@ void Graphics::Draw(PrimitiveType type, unsigned indexStart, unsigned indexCount
     ++numBatches_;
 }
 
+//// Added code to support IMGUI
+
+
+	void Graphics::ImGuiEnabledDraw(PrimitiveType type, unsigned vertexStart, unsigned vertexCount)
+	{
+		if (!vertexCount)
+			return;
+
+		PrepareDraw();
+
+		unsigned primitiveCount;
+		GLenum glPrimitiveType;
+
+		GetGLPrimitiveType(vertexCount, type, primitiveCount, glPrimitiveType);
+		glDrawArrays(glPrimitiveType, vertexStart, vertexCount);
+
+		numPrimitives_ += primitiveCount;
+		++numBatches_;
+	}
+
+	void Graphics::ImGuiEnabledDraw(PrimitiveType type, unsigned indexStart, unsigned indexCount, unsigned minVertex, unsigned vertexCount)
+	{
+		if (!indexCount || !indexBuffer_ || !indexBuffer_->GetGPUObject())
+			return;
+
+		PrepareDraw();
+
+		unsigned indexSize = indexBuffer_->GetIndexSize();
+		unsigned primitiveCount;
+		GLenum glPrimitiveType;
+
+		GetGLPrimitiveType(indexCount, type, primitiveCount, glPrimitiveType);
+		GLenum indexType = indexSize == sizeof(unsigned short) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+		glDrawElements(glPrimitiveType, indexCount, indexType, reinterpret_cast<const GLvoid*>(indexStart * indexSize));
+
+		numPrimitives_ += primitiveCount;
+		++numBatches_;
+	}
+
+	void Graphics::ImGuiEnabledDraw(PrimitiveType type, unsigned indexStart, unsigned indexCount, unsigned baseVertexIndex, unsigned minVertexIndex, unsigned vertexCount)
+	{
+#ifdef DESKTOP_GRAPHICS
+		if (!indexCount || !indexBuffer_ || !indexBuffer_->GetGPUObject())
+			return;
+
+		PrepareDraw();
+
+		unsigned indexSize = indexBuffer_->GetIndexSize();
+		unsigned primitiveCount;
+		GLenum glPrimitiveType;
+
+		GetGLPrimitiveType(indexCount, type, primitiveCount, glPrimitiveType);
+		GLenum indexType = indexSize == sizeof(unsigned short) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+		glDrawElementsBaseVertex(glPrimitiveType, indexCount, indexType, reinterpret_cast<GLvoid*>(indexStart * indexSize), baseVertexIndex);
+
+		numPrimitives_ += primitiveCount;
+		++numBatches_;
+#else
+		// TODO: glDrawElementsBaseVertex for mobile platforms ? OpenGL es 3 ?
+		assert(0);
+
+#endif
+	}
+
+////
+
 void Graphics::DrawInstanced(PrimitiveType type, unsigned indexStart, unsigned indexCount, unsigned minVertex, unsigned vertexCount,
     unsigned instanceCount)
 {

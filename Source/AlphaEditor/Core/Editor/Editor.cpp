@@ -173,15 +173,14 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     GameAssetSelector::RegisterObject(context_);
     AboutTeamGDPWindow::RegisterObject(context_);
 
-    // Regiite ImGuiSystem
+    // Register ImGuiSystem
     ImGuiInterface::RegisterObject(context_);
 
-    m_pGuiInterface = new ImGuiInterface(context_);
+    // Get the game client context
+    context_->RegisterSubsystem(new ImGuiInterface(context_));
+    m_pGuiInterface = context_->GetSubsystem<ImGuiInterface>();
 
-    // Register IMGUI
-    context_ -> RegisterSubsystem(m_pGuiInterface);
-
-    /// create custom imgui settings.
+    // create custom imgui settings.
     ImGuiSettings CustomSettings;
     CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
     CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
@@ -201,7 +200,7 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
     CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
 
-  //  m_pGuiInterface->SetSettings(CustomSettings);
+    m_pGuiInterface->SetSettings(CustomSettings);
 
     // InitializeSettings
     m_pViewSettings = new ViewSettings(context_);
@@ -353,18 +352,18 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 
     InitializeAllDelegates();
 
-	// check if window "hello" is collapsed, dubble clicked on the header/title
-	if (ImGui::Begin("Hello"))
-	{
-		// normal text
-		ImGui::Text("Hallo world! ...");
-		// if font icons are loaded, use u8"" to place them.
+    // check if window "hello" is collapsed, dubble clicked on the header/title
+    if (ImGui::Begin("Hello"))
+    {
+        // normal text
+        ImGui::Text("Hallo world! ...");
+        // if font icons are loaded, use u8"" to place them.
 
-		// ImGui::Text("\uF04B"); isn't correct it is 16-bit unicode whereas ImGui takes UTF-8.
-		// so use in c++11 use u8"\uf016" or
-		ImGui::Text("\xef\x80\x96" " File"); // use string literal concatenation, ouputs a file icon and File as a string
-		ImGui::Button("test", ImVec2(100.0f, 20.0f));
-	}
+        // ImGui::Text("\uF04B"); isn't correct it is 16-bit unicode whereas ImGui takes UTF-8.
+        // so use in c++11 use u8"\uf016" or
+        ImGui::Text("\xef\x80\x96" " File"); // use string literal concatenation, ouputs a file icon and File as a string
+        ImGui::Button("test", ImVec2(100.0f, 20.0f));
+    }
 
     return true;
 }

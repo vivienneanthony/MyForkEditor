@@ -59,8 +59,8 @@ ImVec2 ToImVec2(const String& source)
 {
     ImVec2 ret;
 
-    //unsigned elements = CountElements(source.CString(), ' '); //source.Split(' ').Size(); //
-    unsigned elements = source.Split(' ').Size();
+    unsigned elements = CountElements(source.CString(), ' '); //source.Split(' ').Size(); //
+    //unsigned elements = source.Split(' ').Size();
     if (elements < 2)
         return ret;
 
@@ -75,8 +75,8 @@ ImVec4 ToImVec4(const String& source)
 {
     ImVec4 ret;
 
-    //unsigned elements = Urho3D::CountElements(source.CString(), ' '); //source.Split(' ').Size(); //
-    unsigned elements = source.Split(' ').Size();
+    unsigned elements = Urho3D::CountElements(source.CString(), ' '); //source.Split(' ').Size(); //
+    //unsigned elements = source.Split(' ').Size();
     if (elements < 4)
         return ret;
 
@@ -760,12 +760,11 @@ void ImGuiInterface::RenderDrawLists(ImDrawData* data)
 #ifdef GL_ES_VERSION_2_0
                 graphics_->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, 0, cmd_list->VtxBuffer.size());
 #else
-                //graphics_->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, vtx_offset, 0, cmd_list->VtxBuffer.size());
-                graphics_->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, 0, cmd_list->VtxBuffer.size());
+                graphics_->ImGuiEnabledDraw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, vtx_offset, 0, cmd_list->VtxBuffer.size());
 
 #endif
 #else
-                graphics_->Draw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, vtx_offset, 0, cmd_list->VtxBuffer.size());
+                graphics_->ImGuiEnabledDraw(TRIANGLE_LIST, idx_offset, pcmd->ElemCount, vtx_offset, 0, cmd_list->VtxBuffer.size());
 #endif
             }
             idx_offset += pcmd->ElemCount;

@@ -123,6 +123,16 @@ public:
     bool ResolveToTexture(Texture2D* destination, const IntRect& viewport);
     /// Draw non-indexed geometry.
     void Draw(PrimitiveType type, unsigned vertexStart, unsigned vertexCount);
+
+
+ /// Draw non-indexed geometry.
+    void ImGuiEnabledDraw(PrimitiveType type, unsigned vertexStart, unsigned vertexCount);
+    /// Draw indexed geometry.
+    void ImGuiEnabledDraw(PrimitiveType type, unsigned indexStart, unsigned indexCount, unsigned minVertex, unsigned vertexCount);
+	/// Draw indexed geometry,render primitives with a per-element index offset.
+	void ImGuiEnabledDraw(PrimitiveType type, unsigned indexStart, unsigned indexCount, unsigned baseVertexIndex, unsigned minVertexIndex, unsigned vertexCount);
+
+
     /// Draw indexed geometry.
     void Draw(PrimitiveType type, unsigned indexStart, unsigned indexCount, unsigned minVertex, unsigned vertexCount);
     /// Draw indexed, instanced geometry.
