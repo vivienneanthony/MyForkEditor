@@ -22,10 +22,14 @@
 
 #pragma once
 
+#include <Urho3D/IO/FileSystem.h>
+
 //#include "ImGuiInterface.h"
 
 
 using namespace Urho3D;
+
+class ImGuiInterface;
 
 struct ImGuiSettings
 {

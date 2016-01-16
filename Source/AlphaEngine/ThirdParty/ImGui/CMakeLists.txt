@@ -21,7 +21,7 @@
 #
 
 # Define target name
-set (TARGET_NAME imgui)
+set (TARGET_NAME ImGui)
 
 # Define source files
 define_source_files (GLOB_CPP_PATTERNS *.cpp GLOB_H_PATTERNS *.h)
@@ -30,4 +30,4 @@ define_source_files (GLOB_CPP_PATTERNS *.cpp GLOB_H_PATTERNS *.h)
 setup_library ()
 
 # Install headers for building the Urho3D library
-install_header_files (DIRECTORY ./ DESTINATION ${DEST_INCLUDE_DIR}/ThirdParty/imgui FILES_MATCHING PATTERN *.h BUILD_TREE_ONLY)
+install_header_files (DIRECTORY ./ DESTINATION ${ENGINESTD_INCLUDE_DIR}/ThirdParty/ImGui FILES_MATCHING PATTERN *.h BUILD_TREE_ONLY)

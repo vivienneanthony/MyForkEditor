@@ -55,6 +55,10 @@
 
 #define TOUCHID_MASK(id) (1 << id)
 
+
+using namespace Urho3D;
+
+
 ImVec2 ToImVec2(const String& source)
 {
     ImVec2 ret;

@@ -22,6 +22,9 @@
 
 #pragma once
 
+#include <Urho3D/Core/Object.h>
+#include <Urho3D/Core/Timer.h>
+
 #include "ImGuiSettings.h"
 
 struct ImGuiStyle;
