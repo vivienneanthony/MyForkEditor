@@ -29,12 +29,12 @@ AlphaEngineApp::AlphaEngineApp(Context* context) : Application(context)
     g_pApp = this;
     m_bIsInit = false;
 
-	m_pCurrentCursor = NULL;
+    m_pCurrentCursor = NULL;
 
-	m_pBaseSocketManager = NULL;
-	m_pNetworkEventForwarder = NULL;
+    m_pBaseSocketManager = NULL;
+    m_pNetworkEventForwarder = NULL;
 
-	m_pDBConnection = NULL;
+    m_pDBConnection = NULL;
 }
 
 AlphaEngineApp::~AlphaEngineApp()
@@ -51,7 +51,7 @@ void AlphaEngineApp::Setup()
 
     // Get this platform
     m_CurrentPlatform = GetOS(GetPlatform());
-	URHO3D_LOGDEBUG(String("Current platform is ") + GetPlatform());
+    URHO3D_LOGDEBUG(String("Current platform is ") + GetPlatform());
 
     // Set Platform
     m_GameOptions.SetPlatform(m_CurrentPlatform);
@@ -93,15 +93,15 @@ void AlphaEngineApp::Start()
     // Save all necessary subsystems in Game Application Layer
     context_->RegisterSubsystem(new Script(context_));
 
-   // Get the game client context
+    // Get the game client context
     context_->RegisterSubsystem(new ImGuiInterface(context_));
 
-	m_pDatabase = GetSubsystem<Database>();
+    m_pDatabase = GetSubsystem<Database>();
     m_pGraphics = GetSubsystem<Graphics>();
     m_pRenderer = GetSubsystem<Renderer>();
     m_pUI = GetSubsystem<UI>();
     m_pAudio = GetSubsystem<Audio>();
-	m_pNetwork = GetSubsystem<Network>();
+    m_pNetwork = GetSubsystem<Network>();
 
     m_pConstantResourceCache = GetSubsystem<ResourceCache>();
     m_pFileSystem = GetSubsystem<FileSystem>();
@@ -150,51 +150,55 @@ void AlphaEngineApp::Start()
     m_pAudio->SetMasterGain(SOUND_MUSIC, m_GameOptions.m_MusicVolume / 100.0f);
     m_pAudio->SetMasterGain(SOUND_VOICE, m_GameOptions.m_SpeechVolume / 100.0f);
 
-	CreateConsole(style);
+    CreateConsole(style);
 
-	CreateDebugHud(style);
+    CreateDebugHud(style);
 
     m_bIsInit = true;
     URHO3D_LOGINFO("Game can be started");
 
-     // create custom imgui settings.
-    ImGuiSettings CustomSettings;
-    CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
-    CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
+    // if ImGuiInterface Exist
+    if(m_pImGuiInterface)
+    {
+        // create custom imgui settings.
+        ImGuiSettings CustomSettings;
+        CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
+        CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
 
-    Vector<ImWchar> iconRanges;
-    iconRanges.Push(0xf000);
-    iconRanges.Push(0xf3ff);
-    iconRanges.Push(0);
-    // Basic Latin + Latin Supplement
-    Vector<ImWchar> defaultranges;
-    defaultranges.Push(0x0020);
-    defaultranges.Push(0x00FF);
-    defaultranges.Push(0);
+        Vector<ImWchar> iconRanges;
+        iconRanges.Push(0xf000);
+        iconRanges.Push(0xf3ff);
+        iconRanges.Push(0);
+        // Basic Latin + Latin Supplement
+        Vector<ImWchar> defaultranges;
+        defaultranges.Push(0x0020);
+        defaultranges.Push(0x00FF);
+        defaultranges.Push(0);
 
-    CustomSettings.fontGlyphRanges("fontawesome-webfont", iconRanges);
-    CustomSettings.fontConfig("fontawesome-webfont", true, true, true, 1, 1);
-    CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
-    CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
+        CustomSettings.fontGlyphRanges("fontawesome-webfont", iconRanges);
+        CustomSettings.fontConfig("fontawesome-webfont", true, true, true, 1, 1);
+        CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
+        CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
 
-    m_pImGuiInterface->SetSettings(CustomSettings);
+        m_pImGuiInterface->SetSettings(CustomSettings);
+    }
 
 }
 
 void AlphaEngineApp::Stop()
 {
 
-	if (m_pBaseSocketManager)
-	{
-		m_pBaseSocketManager->Shutdown();
-		SAFE_DELETE(m_pBaseSocketManager);
+    if (m_pBaseSocketManager)
+    {
+        m_pBaseSocketManager->Shutdown();
+        SAFE_DELETE(m_pBaseSocketManager);
 
-		SAFE_DELETE(m_pNetworkEventForwarder);
-	}
+        SAFE_DELETE(m_pNetworkEventForwarder);
+    }
 
     m_pGameLogic->VShutdown();
 
-	//SAFE_DELETE(m_pGameLogic);
+    //SAFE_DELETE(m_pGameLogic);
 
     VDestroyAllDelegates();
 
@@ -219,16 +223,16 @@ void AlphaEngineApp::InitInstance(int screenWidth, int screenHeight, bool window
         engineParameters_["WindowHeight"] = screenHeight;
     }
 
-	if (m_GameOptions.m_bUseDevelopmentDirectories)
-	{
-		engineParameters_["ResourcePaths"] = String("Data;CoreData;GameData");
-	}
-	else
-	{
-		engineParameters_["ResourcePackages"] = String("CoreData.pak;Data.pak;GameData.pak");
-		engineParameters_["ResourcePaths"] = String("CoreData;Data;GameData");
+    if (m_GameOptions.m_bUseDevelopmentDirectories)
+    {
+        engineParameters_["ResourcePaths"] = String("Data;CoreData;GameData");
+    }
+    else
+    {
+        engineParameters_["ResourcePackages"] = String("CoreData.pak;Data.pak;GameData.pak");
+        engineParameters_["ResourcePaths"] = String("CoreData;Data;GameData");
 
-	}
+    }
 
     engineParameters_["FullScreen"] = !windowMode;
     engineParameters_["VSync"] = vsync;
@@ -299,42 +303,42 @@ bool AlphaEngineApp::OnMessageProc(AppMsg message)
 
 bool AlphaEngineApp::AttachAsClient()
 {
-	VariantMap identify;
-	identify["CLIENT_LOGIN"] = m_GameOptions.m_Login;
-	identify["CLIENT_PASSWORD"] = m_GameOptions.m_Password;
+    VariantMap identify;
+    identify["CLIENT_LOGIN"] = m_GameOptions.m_Login;
+    identify["CLIENT_PASSWORD"] = m_GameOptions.m_Password;
 
-	if (m_pBaseSocketManager == NULL)
-	{
-		m_pBaseSocketManager = new ClientSocketManager(context_, m_GameOptions.m_GameHost, m_GameOptions.m_ListenPort, identify);
-	}
+    if (m_pBaseSocketManager == NULL)
+    {
+        m_pBaseSocketManager = new ClientSocketManager(context_, m_GameOptions.m_GameHost, m_GameOptions.m_ListenPort, identify);
+    }
 
-	if (m_pBaseSocketManager)
-	{
-		ClientSocketManager* clientManager = (ClientSocketManager*)m_pBaseSocketManager;
-		if (clientManager)
-		{
-			if (!clientManager->Connect())
-			{
-				URHO3D_LOGDEBUG(String("Client connection to server failed. Propably server is shutdown."));
-				SAFE_DELETE(clientManager);
-				return false;
-			}
-		}
-	}
+    if (m_pBaseSocketManager)
+    {
+        ClientSocketManager* clientManager = (ClientSocketManager*)m_pBaseSocketManager;
+        if (clientManager)
+        {
+            if (!clientManager->Connect())
+            {
+                URHO3D_LOGDEBUG(String("Client connection to server failed. Propably server is shutdown."));
+                SAFE_DELETE(clientManager);
+                return false;
+            }
+        }
+    }
 
-	return true;
+    return true;
 }
 
 
 void AlphaEngineApp::VCreateNetworkEventForwarder(void)
 {
-	if (m_pNetworkEventForwarder != NULL)
-	{
-		URHO3D_LOGERROR("Overwriting network event forwarder in AlphaEngineApp!");
-		SAFE_DELETE(m_pNetworkEventForwarder);
-	}
+    if (m_pNetworkEventForwarder != NULL)
+    {
+        URHO3D_LOGERROR("Overwriting network event forwarder in AlphaEngineApp!");
+        SAFE_DELETE(m_pNetworkEventForwarder);
+    }
 
-	m_pNetworkEventForwarder = new NetworkEventForwarder(INVALID_CONNECTION_ID);
+    m_pNetworkEventForwarder = new NetworkEventForwarder(INVALID_CONNECTION_ID);
 }
 
 void AlphaEngineApp::VDestroyNetworkEventForwarder(void)
@@ -344,67 +348,67 @@ void AlphaEngineApp::VDestroyNetworkEventForwarder(void)
 
 void AlphaEngineApp::ForwardEventDelegate(StringHash eventType, VariantMap& eventData)
 {
-	m_pNetworkEventForwarder->ForwardEventDelegate(eventType, eventData);
+    m_pNetworkEventForwarder->ForwardEventDelegate(eventType, eventData);
 }
 
 DbConnection* AlphaEngineApp::ConnectToDB(String connectionString)
 {
-	m_pDBConnection = m_pDatabase->Connect(connectionString);
-	if (!m_pDBConnection)
-	{
-		URHO3D_LOGINFO("Failed connect to database. Check connection string");
-	}
+    m_pDBConnection = m_pDatabase->Connect(connectionString);
+    if (!m_pDBConnection)
+    {
+        URHO3D_LOGINFO("Failed connect to database. Check connection string");
+    }
 
-	return m_pDBConnection;
+    return m_pDBConnection;
 }
 
 
 void AlphaEngineApp::DestroyNetwork()
 {
-	URHO3D_LOGINFO("Network is destroyed");
+    URHO3D_LOGINFO("Network is destroyed");
 
-	if (g_pApp->GetGameLogic()->IsProxy())
-	{
-		VDestroyNetworkEventForwarder();
-	}
-	else
-	{
-		if (m_pNetwork)
-		{
-			g_pApp->GetGameLogic()->SetServerCreated(false);
-		}
-	}
+    if (g_pApp->GetGameLogic()->IsProxy())
+    {
+        VDestroyNetworkEventForwarder();
+    }
+    else
+    {
+        if (m_pNetwork)
+        {
+            g_pApp->GetGameLogic()->SetServerCreated(false);
+        }
+    }
 
-	m_pBaseSocketManager->Shutdown();
+    m_pBaseSocketManager->Shutdown();
 
-	SAFE_DELETE(m_pNetworkEventForwarder);
-	SAFE_DELETE(m_pBaseSocketManager);
+    SAFE_DELETE(m_pNetworkEventForwarder);
+    SAFE_DELETE(m_pBaseSocketManager);
 }
 
 void AlphaEngineApp::CreateConsole(XMLFile* style)
 {
-	// Create console
-	context_->RegisterSubsystem(new Console(context_));
+    // Create console
+    context_->RegisterSubsystem(new Console(context_));
 
-	// Show the console by default, make it large. Console will show the text edit field when there is at least one
-	// subscriber for the console command event
-	Console* console = GetSubsystem<Console>();
-	console->SetNumRows(GetSubsystem<Graphics>()->GetHeight() / 16);
-	console->SetNumBufferedRows(2 * console->GetNumRows());
-	console->SetCommandInterpreter(GetTypeName());
-	console->SetVisible(false);
-	console->GetCloseButton()->SetVisible(false);
-	console->SetDefaultStyle(style);
-	console->GetBackground()->SetOpacity(0.8f);
-	// Open the operating system console window (for stdin / stdout) if not open yet
-	OpenConsoleWindow();
+    // Show the console by default, make it large. Console will show the text edit field when there is at least one
+    // subscriber for the console command event
+    Console* console = GetSubsystem<Console>();
+    console->SetNumRows(GetSubsystem<Graphics>()->GetHeight() / 16);
+    console->SetNumBufferedRows(2 * console->GetNumRows());
+    console->SetCommandInterpreter(GetTypeName());
+    console->SetVisible(false);
+    console->GetCloseButton()->SetVisible(false);
+    console->SetDefaultStyle(style);
+    console->GetBackground()->SetOpacity(0.8f);
+    // Open the operating system console window (for stdin / stdout) if not open yet
+    OpenConsoleWindow();
 }
 
 void AlphaEngineApp::CreateDebugHud(XMLFile* style)
 {
-	// Create debug HUD.
-	DebugHud* debugHud = engine_->CreateDebugHud();
-	debugHud->SetDefaultStyle(style);
+    // Create debug HUD.
+    DebugHud* debugHud = engine_->CreateDebugHud();
+    debugHud->SetDefaultStyle(style);
 }
 
 void AlphaEngineApp::VInitializeAllDelegates()
@@ -432,16 +436,16 @@ void AlphaEngineApp::UpdateDelegate(StringHash eventType, VariantMap& eventData)
 {
     float timeStep = eventData[Update::P_TIMESTEP].GetFloat();
 
-	if (m_pGameLogic)
-	{
-		if (m_pBaseSocketManager)
-		{
-			// Send/Recieve/Delete network messages
-			m_pBaseSocketManager->DoSelect();
-		}
+    if (m_pGameLogic)
+    {
+        if (m_pBaseSocketManager)
+        {
+            // Send/Recieve/Delete network messages
+            m_pBaseSocketManager->DoSelect();
+        }
 
-		m_pGameLogic->VOnUpdate(timeStep);
-	}
+        m_pGameLogic->VOnUpdate(timeStep);
+    }
 }
 
 void AlphaEngineApp::KeyDownDelegate(StringHash eventType, VariantMap& eventData)

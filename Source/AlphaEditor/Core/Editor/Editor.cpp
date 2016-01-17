@@ -174,7 +174,7 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     AboutTeamGDPWindow::RegisterObject(context_);
 
     // Get the game client context
-  //  context_->RegisterSubsystem(new ImGuiInterface(context_));
+    //  context_->RegisterSubsystem(new ImGuiInterface(context_));
 
     m_pGuiInterface = context_->GetSubsystem<ImGuiInterface>();
 
@@ -840,24 +840,26 @@ void Editor::CloseFileSelector(unsigned int& filterIndex, String& path)
 void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
 
 {
-	// check if window "hello" is collapsed, dubble clicked on the header/title
-	if (ImGui::Begin("Hello"))
-	{
-		// normal text
-		ImGui::Text("Hallo world! ...");
-		// if font icons are loaded, use u8"" to place them.
+    if(g_pApp->GetImGuiInterface())
+    {
+        // check if window "hello" is collapsed, dubble clicked on the header/title
+        if (ImGui::Begin("Hello"))
+        {
+            // normal text
+            ImGui::Text("Hallo world! ...");
+            // if font icons are loaded, use u8"" to place them.
 
-		// ImGui::Text("\uF04B"); isn't correct it is 16-bit unicode whereas ImGui takes UTF-8.
-		// so use in c++11 use u8"\uf016" or
-		ImGui::Text("\xef\x80\x96" " File"); // use string literal concatenation, ouputs a file icon and File as a string
-		ImGui::Button("test", ImVec2(100.0f, 20.0f));
-	}
-	// if Begin was called, the corresponding End must be called too !!
-	ImGui::End();
+            // ImGui::Text("\uF04B"); isn't correct it is 16-bit unicode whereas ImGui takes UTF-8.
+            // so use in c++11 use u8"\uf016" or
+            ImGui::Text("\xef\x80\x96" " File"); // use string literal concatenation, ouputs a file icon and File as a string
+            ImGui::Button("test", ImVec2(100.0f, 20.0f));
+        }
+        // if Begin was called, the corresponding End must be called too !!
+        ImGui::End();
 
-	// ImGui has some tests implemented.
-	ImGui::ShowTestWindow();
-
+        // ImGui has some tests implemented.
+        ImGui::ShowTestWindow();
+    }
 
     using namespace Update;
     float timestep = eventData[P_TIMESTEP].GetFloat();
