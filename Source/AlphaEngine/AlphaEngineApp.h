@@ -17,6 +17,8 @@ class BaseGameLogic;
 class BaseSocketManager;
 class NetworkEventForwarder;
 
+class ImGuiInterface;
+
 class AlphaEngineApp : public Application
 {
 public:
@@ -68,7 +70,7 @@ protected:
 
 	// Network
 	// Any events that will be received from the server logic should be here!
-	// So events from client sends to the server 
+	// So events from client sends to the server
 	// and we get response from the server on that events.
 	virtual void VCreateNetworkEventForwarder(void);
 	virtual void VDestroyNetworkEventForwarder(void);
@@ -140,6 +142,8 @@ protected:
 												// and controls the frequency of the OS low-resolution timer
 
 	WorkQueue* m_pWorkQueue;					// Executes background tasks in worker threads
+
+    ImGuiInterface * m_pImGuiInterface;
 
 // Network
 	Network* m_pNetwork;

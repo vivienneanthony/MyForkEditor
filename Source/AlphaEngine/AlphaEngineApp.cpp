@@ -10,6 +10,11 @@
 #include "GameLogic/BaseGameLogic.h"
 #include "Interfaces/IGameView.h"
 
+#include <AlphaEngine/ThirdParty/ImGui/imgui.h>
+#include <AlphaEngine/Interfaces/ImGui/ImGuiSettings.h>
+#include <AlphaEngine/Interfaces/ImGui/ImGuiInterface.h>
+
+
 #include "AlphaEnginePlatform.h"
 #include "AlphaEngineApp.h"
 
@@ -88,6 +93,9 @@ void AlphaEngineApp::Start()
     // Save all necessary subsystems in Game Application Layer
     context_->RegisterSubsystem(new Script(context_));
 
+   // Get the game client context
+    context_->RegisterSubsystem(new ImGuiInterface(context_));
+
 	m_pDatabase = GetSubsystem<Database>();
     m_pGraphics = GetSubsystem<Graphics>();
     m_pRenderer = GetSubsystem<Renderer>();
@@ -108,6 +116,10 @@ void AlphaEngineApp::Start()
     m_SaveDirectory = "";
     m_SaveDirectory = m_CurrentWorkDirectory;
     m_SaveDirectory += "GameData/Save";
+
+    // Imgui Addition
+    m_pImGuiInterface = GetSubsystem<ImGuiInterface>();
+
 
     VInitializeAllDelegates();
 
@@ -141,8 +153,32 @@ void AlphaEngineApp::Start()
 	CreateConsole(style);
 
 	CreateDebugHud(style);
+
     m_bIsInit = true;
     URHO3D_LOGINFO("Game can be started");
+
+     // create custom imgui settings.
+    ImGuiSettings CustomSettings;
+    CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
+    CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
+
+    Vector<ImWchar> iconRanges;
+    iconRanges.Push(0xf000);
+    iconRanges.Push(0xf3ff);
+    iconRanges.Push(0);
+    // Basic Latin + Latin Supplement
+    Vector<ImWchar> defaultranges;
+    defaultranges.Push(0x0020);
+    defaultranges.Push(0x00FF);
+    defaultranges.Push(0);
+
+    CustomSettings.fontGlyphRanges("fontawesome-webfont", iconRanges);
+    CustomSettings.fontConfig("fontawesome-webfont", true, true, true, 1, 1);
+    CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
+    CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
+
+    m_pImGuiInterface->SetSettings(CustomSettings);
+
 }
 
 void AlphaEngineApp::Stop()
@@ -155,7 +191,7 @@ void AlphaEngineApp::Stop()
 
 		SAFE_DELETE(m_pNetworkEventForwarder);
 	}
-	
+
     m_pGameLogic->VShutdown();
 
 	//SAFE_DELETE(m_pGameLogic);
@@ -191,7 +227,7 @@ void AlphaEngineApp::InitInstance(int screenWidth, int screenHeight, bool window
 	{
 		engineParameters_["ResourcePackages"] = String("CoreData.pak;Data.pak;GameData.pak");
 		engineParameters_["ResourcePaths"] = String("CoreData;Data;GameData");
-		
+
 	}
 
     engineParameters_["FullScreen"] = !windowMode;
@@ -285,7 +321,7 @@ bool AlphaEngineApp::AttachAsClient()
 			}
 		}
 	}
-	
+
 	return true;
 }
 
@@ -326,7 +362,7 @@ DbConnection* AlphaEngineApp::ConnectToDB(String connectionString)
 void AlphaEngineApp::DestroyNetwork()
 {
 	URHO3D_LOGINFO("Network is destroyed");
-	
+
 	if (g_pApp->GetGameLogic()->IsProxy())
 	{
 		VDestroyNetworkEventForwarder();
@@ -340,7 +376,7 @@ void AlphaEngineApp::DestroyNetwork()
 	}
 
 	m_pBaseSocketManager->Shutdown();
-	
+
 	SAFE_DELETE(m_pNetworkEventForwarder);
 	SAFE_DELETE(m_pBaseSocketManager);
 }

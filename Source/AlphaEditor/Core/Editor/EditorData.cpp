@@ -12,6 +12,8 @@
 #include "Plugin/EditorPlugin.h"
 
 using namespace Urho3D;
+using namespace ImGui;
+
 
 EditorData::EditorData(Context* context, Editor* editor) : Object(context),
 	m_pEditor(editor)

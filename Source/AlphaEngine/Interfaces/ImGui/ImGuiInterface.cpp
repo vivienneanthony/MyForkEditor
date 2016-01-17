@@ -56,7 +56,7 @@
 #define TOUCHID_MASK(id) (1 << id)
 
 
-using namespace Urho3D;
+//using namespace Urho3D;
 
 
 ImVec2 ToImVec2(const String& source)
@@ -164,17 +164,25 @@ ImGuiInterface::~ImGuiInterface()
 
 void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
 {
+    // TODO: is a hack!
+    String dataAssetPath;
+
     settings_ = settings;
     if(initialized_)
     {
         ImGuiIO& io = ImGui::GetIO();
 
-        ResourceCache* cache = GetSubsystem<ResourceCache>();
+        // Get the resource cache
+        ResourceCache * cache = g_pApp->GetConstantResCache();
 
-        // TODO: is a hack!
-        String dataAssetPath;
+        // Use file system
+        FileSystem * pfileSystem = g_pApp->GetSubsystem<FileSystem>();
 
-        dataAssetPath.Append(cache->GetResourceDirs()[0]);
+        // Get working directory
+        String WorkingDirectory =g_pApp->GetCurrentWorkDirectory();
+
+        // Use CoreData as the base directory
+        dataAssetPath.Append(WorkingDirectory.Append("CoreData"));
 
         // setup core imgui settings
         io.IniSavingRate = settings.mIniSavingRate;

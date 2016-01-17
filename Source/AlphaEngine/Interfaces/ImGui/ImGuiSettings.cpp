@@ -52,7 +52,7 @@
 #include "../DebugNew.h"
 
 
-using namespace Urho3D;
+//using namespace Urho3D;
 
 void SetImVec2(ImVec2& dest ,const Vector2 & src)
 {

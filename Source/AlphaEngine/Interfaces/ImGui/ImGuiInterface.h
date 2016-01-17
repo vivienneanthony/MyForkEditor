@@ -33,7 +33,8 @@ struct ImDrawData;
 class ImGuiSettings;
 
 
-using namespace Urho3D;
+//using namespace Urho3D;
+
 
 // TODO: Input handler for Touch, Gesture, Joystick ?
 //		 for now simple one touch input handling implemented.
@@ -41,9 +42,6 @@ using namespace Urho3D;
 // TODO: imgui saves window positions and sizes to an ini file, use urho3d file system for that ?
 class ImGuiInterface : public LogicComponent
 {
-    friend class Editor;
-    friend class AlphaEngineApp;
-
     URHO3D_OBJECT(ImGuiInterface, LogicComponent);
 public:
     ImGuiInterface(Context* context);

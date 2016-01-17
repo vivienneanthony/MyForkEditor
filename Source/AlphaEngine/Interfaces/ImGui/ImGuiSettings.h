@@ -22,12 +22,8 @@
 
 #pragma once
 
-#include <Urho3D/IO/FileSystem.h>
-
-//#include "ImGuiInterface.h"
-
-
-using namespace Urho3D;
+#include <Urho3D/Core/Object.h>
+#include <AlphaEngine/ThirdParty/ImGui/imgui.h>
 
 class ImGuiInterface;
 

@@ -49,6 +49,10 @@
 
 #include "Urho3D/AngelScript/APITemplates.h"
 
+#include <AlphaEngine/ThirdParty/ImGui/imgui.h>
+#include <AlphaEngine/Interfaces/ImGui/ImGuiSettings.h>
+#include <AlphaEngine/Interfaces/ImGui/ImGuiInterface.h>
+
 
 #include "AlphaEditorApplication.h"
 
