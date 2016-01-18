@@ -46,6 +46,10 @@ AlphaEngineApp::~AlphaEngineApp()
 void AlphaEngineApp::Setup()
 {
     m_bIsInit = false;
+
+    // Init Imui
+    engineParameters_["EnableImGui"] = true; // if false does not create IMUI subsystem, default true.
+
     // Initialize logging system
     Logger::Init("logging.log");
 
@@ -85,6 +89,7 @@ void AlphaEngineApp::Setup()
                  m_GameOptions.m_Multisample,
                  m_GameOptions.m_bTripleBuffer
                 );
+
 }
 
 
@@ -93,9 +98,14 @@ void AlphaEngineApp::Start()
     // Save all necessary subsystems in Game Application Layer
     context_->RegisterSubsystem(new Script(context_));
 
-    // Get the game client context
-    context_->RegisterSubsystem(new ImGuiInterface(context_));
+    // If Enabled GUI then register interface
+    if(engine_->GetParameter(engineParameters_, "EnableImGui").GetBool())
+    {
+        // Get the game client context
+        context_->RegisterSubsystem(new ImGuiInterface(context_));
+    }
 
+    // Setup base defaults
     m_pDatabase = GetSubsystem<Database>();
     m_pGraphics = GetSubsystem<Graphics>();
     m_pRenderer = GetSubsystem<Renderer>();
@@ -117,12 +127,19 @@ void AlphaEngineApp::Start()
     m_SaveDirectory = m_CurrentWorkDirectory;
     m_SaveDirectory += "GameData/Save";
 
-    // Imgui Addition
-    m_pImGuiInterface = GetSubsystem<ImGuiInterface>();
+    // Imgui Addition if Enabled attach to node
+    if(engine_->GetParameter(engineParameters_, "EnableImGui").GetBool())
+    {
+        m_pImGuiInterface = GetSubsystem<ImGuiInterface>();
+    }
+    else
+    {
+        // null makes sure it's nothing
+        m_pImGuiInterface = NULL;
+    }
 
-
+    // VInitialize
     VInitializeAllDelegates();
-
 
     if (CreateCursor())
     {
@@ -145,42 +162,49 @@ void AlphaEngineApp::Start()
         AbortGame();
     }
 
+    // Configure sound
     m_pAudio->SetMasterGain(SOUND_MASTER, m_GameOptions.m_MasterVolume / 100.0f);
     m_pAudio->SetMasterGain(SOUND_EFFECT, m_GameOptions.m_SoundEffectsVolume / 100.0f);
     m_pAudio->SetMasterGain(SOUND_MUSIC, m_GameOptions.m_MusicVolume / 100.0f);
     m_pAudio->SetMasterGain(SOUND_VOICE, m_GameOptions.m_SpeechVolume / 100.0f);
 
+    // Create Console UI
     CreateConsole(style);
 
+    // Create Debug Hud UI
     CreateDebugHud(style);
 
     m_bIsInit = true;
     URHO3D_LOGINFO("Game can be started");
 
-    // if ImGuiInterface Exist
-    if(m_pImGuiInterface)
+    // if engine parameter is true then setup imgui interface
+    if(engine_->GetParameter(engineParameters_, "EnableImGui").GetBool())
     {
-        // create custom imgui settings.
-        ImGuiSettings CustomSettings;
-        CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
-        CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
+        // if ImGuiInterface Exist
+        if(m_pImGuiInterface)
+        {
+            // create custom imgui settings.
+            ImGuiSettings CustomSettings;
+            CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
+            CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
 
-        Vector<ImWchar> iconRanges;
-        iconRanges.Push(0xf000);
-        iconRanges.Push(0xf3ff);
-        iconRanges.Push(0);
-        // Basic Latin + Latin Supplement
-        Vector<ImWchar> defaultranges;
-        defaultranges.Push(0x0020);
-        defaultranges.Push(0x00FF);
-        defaultranges.Push(0);
+            Vector<ImWchar> iconRanges;
+            iconRanges.Push(0xf000);
+            iconRanges.Push(0xf3ff);
+            iconRanges.Push(0);
+            // Basic Latin + Latin Supplement
+            Vector<ImWchar> defaultranges;
+            defaultranges.Push(0x0020);
+            defaultranges.Push(0x00FF);
+            defaultranges.Push(0);
 
-        CustomSettings.fontGlyphRanges("fontawesome-webfont", iconRanges);
-        CustomSettings.fontConfig("fontawesome-webfont", true, true, true, 1, 1);
-        CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
-        CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
+            CustomSettings.fontGlyphRanges("fontawesome-webfont", iconRanges);
+            CustomSettings.fontConfig("fontawesome-webfont", true, true, true, 1, 1);
+            CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
+            CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
 
-        m_pImGuiInterface->SetSettings(CustomSettings);
+            m_pImGuiInterface->SetSettings(CustomSettings);
+        }
     }
 
 }
