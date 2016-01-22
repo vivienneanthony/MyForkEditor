@@ -187,21 +187,29 @@ void AlphaEngineApp::Start()
             ImGuiSettings CustomSettings;
             CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
             CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
+            CustomSettings.font("Fonts/UrhoCraz-Icons-Interface1.ttf", 48, false);
 
+            // Icon range
             Vector<ImWchar> iconRanges;
             iconRanges.Push(0xf000);
             iconRanges.Push(0xf3ff);
             iconRanges.Push(0);
+
             // Basic Latin + Latin Supplement
             Vector<ImWchar> defaultranges;
             defaultranges.Push(0x0020);
             defaultranges.Push(0x00FF);
             defaultranges.Push(0);
 
+            // Set ranges and config for other fonts
             CustomSettings.fontGlyphRanges("fontawesome-webfont", iconRanges);
             CustomSettings.fontConfig("fontawesome-webfont", true, true, true, 1, 1);
+
             CustomSettings.fontGlyphRanges("Anonymous Pro", defaultranges);
             CustomSettings.fontConfig("Anonymous Pro", false, false, false,3, 1);
+
+            CustomSettings.fontGlyphRanges("UrhoCraz-Icons-Interface1", defaultranges);
+            CustomSettings.fontConfig("UrhoCraz-Icons-Interface1", false, false, false,3, 1);
 
             m_pImGuiInterface->SetSettings(CustomSettings);
         }
@@ -211,6 +219,8 @@ void AlphaEngineApp::Start()
 
 void AlphaEngineApp::Stop()
 {
+    // shutdown ImgUI
+    ImGui::Shutdown();
 
     if (m_pBaseSocketManager)
     {
@@ -226,11 +236,14 @@ void AlphaEngineApp::Stop()
 
     VDestroyAllDelegates();
 
+
+
     Logger::Shutdown();
 }
 
 void AlphaEngineApp::AbortGame()
 {
+
     engine_->Exit();
 
 }

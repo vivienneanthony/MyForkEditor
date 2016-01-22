@@ -241,4 +241,5 @@ protected:
 
 	SharedPtr<ImGuiInterface> m_pGuiInterface;
 
+    bool * m_pShowToolBar;
 };

@@ -85,25 +85,8 @@ unsigned TabWindow::AddTab(const String& name, UIElement* content)
         nameTabMapping_[id] = index;
 
         tabsContent_.Push(SharedPtr<UIElement>(content));
-        content->SetFixedHeight(GetHeight() - buttonContainer_->GetHeight());
-        int layoutwidth = GetLayoutBorder().left_ + GetLayoutBorder().right_;
-        content->SetFixedWidth(GetWidth() - layoutwidth);
-
-        SharedPtr<Button> tabbutton( buttonContainer_->CreateChild<Button>(name));
-        tabbutton->SetStyle("TabButton");
-        tabbutton->SetVar(TAB_INDEX,index);
-
-        SubscribeToEvent(tabbutton.Get(), E_RELEASED, URHO3D_HANDLER(TabWindow, HandleButton));
-
-        Text* tabButtonLabel = tabbutton->CreateChild<Text>(name+"_Text");
-        tabButtonLabel->SetStyle("Text");
-        tabButtonLabel->SetText(name);
-
-        // Changed alignment so it's clearer
-        tabButtonLabel->SetAlignment(HA_CENTER, VA_BOTTOM);
-
-        tabsButtons_.Push(tabbutton);
-        tabbutton->SetFixedWidth(tabButtonLabel->GetRowWidth(0) + tabbutton->GetLayoutBorder().left_ + tabbutton->GetLayoutBorder().right_);
+        content->SetFixedHeight(GetHeight());
+        content->SetFixedWidth(GetWidth());
 
         if (activeContent_.Null())
             SetActiveTab(index);

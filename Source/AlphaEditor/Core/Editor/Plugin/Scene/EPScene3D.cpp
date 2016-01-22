@@ -45,6 +45,9 @@
 
 #include "EPScene3D.h"
 
+#include <AlphaEngine/ThirdParty/ImGui/imgui.h>
+#include "../../../ImGuiUI/Window/CameraInfoImGuiUI.h"
+
 
 using namespace Urho3D;
 
@@ -213,8 +216,8 @@ void EPScene3D::SetVisible(bool visible)
     if (window_)
     {
         window_->SetVisible(visible);
-        sceneMenu_->SetVisible(visible);
-        createMenu_->SetVisible(visible);
+        //    sceneMenu_->SetVisible(visible);
+        //  createMenu_->SetVisible(visible);
 
         for (unsigned i = 0; i < miniToolBarButtons_.Size(); i++)
             miniToolBarButtons_[i]->SetVisible(visible);
@@ -262,8 +265,8 @@ void EPScene3D::Update(float timeStep)
     if (runUpdate)
         editorData_->GetEditorScene()->Update(timeStep);
 
-    if (toolBarDirty && editorView_->IsToolBarVisible())
-        UpdateToolBar();
+    //if (toolBarDirty && editorView_->IsToolBarVisible())
+    //UpdateToolBar();
 
     gizmo_->UpdateGizmo();
 
@@ -446,16 +449,10 @@ void EPScene3D::CreateStatsBar()
     renderStatsText = new Text(context_);
     activeView->AddChild(renderStatsText);
 
-    if (window_->GetWidth() >= 1200)
-    {
-        SetupStatsBarText(editorModeText, font, 35, 64, HA_LEFT, VA_TOP);
-        SetupStatsBarText(renderStatsText, font, -4, 64, HA_RIGHT, VA_TOP);
-    }
-    else
-    {
-        SetupStatsBarText(editorModeText, font, 1, 1, HA_LEFT, VA_TOP);
-        SetupStatsBarText(renderStatsText, font, 1, 15, HA_LEFT, VA_TOP);
-    }
+
+    SetupStatsBarText(editorModeText, font, 1, 48, HA_LEFT, VA_TOP);
+    SetupStatsBarText(renderStatsText, font, 1, 72, HA_LEFT, VA_TOP);
+
 }
 
 void EPScene3D::SetupStatsBarText(Text* text, Font* font, int x, int y, HorizontalAlignment hAlign, VerticalAlignment vAlign)
@@ -471,22 +468,25 @@ void EPScene3D::SetupStatsBarText(Text* text, Font* font, int x, int y, Horizont
 
 void EPScene3D::UpdateStats(float timeStep)
 {
-    editorModeText->SetText(String(
-                                "Mode: " + editModeText[editMode] +
-                                "  Axis: " + axisModeText[axisMode] +
-                                "  Pick: " + pickModeText[pickMode] +
-                                "  Fill: " + fillModeText[fillMode] +
-                                "  Updates: " + (runUpdate ? "Running" : "Paused")));
+    String ModeInfo = String( "Mode: " + editModeText[editMode] +
+                              "  Axis: " + axisModeText[axisMode] +
+                              "  Pick: " + pickModeText[pickMode] +
+                              "  Fill: " + fillModeText[fillMode] +
+                              "  Updates: " + (runUpdate ? "Running" : "Paused"));
 
-    renderStatsText->SetText(String(
-                                 "Tris: " + String(renderer->GetNumPrimitives()) +
-                                 "  Batches: " + String(renderer->GetNumBatches()) +
-                                 "  Lights: " + String(renderer->GetNumLights(true)) +
-                                 "  Shadowmaps: " + String(renderer->GetNumShadowMaps(true)) +
-                                 "  Occluders: " + String(renderer->GetNumOccluders(true))));
+    String SceneInfo = String(" Tris: " + String(renderer->GetNumPrimitives()) +
+                              "  Batches: " + String(renderer->GetNumBatches()) +
+                              "  Lights: " + String(renderer->GetNumLights(true)) +
+                              "  Shadowmaps: " + String(renderer->GetNumShadowMaps(true)) +
+                              "  Occluders: " + String(renderer->GetNumOccluders(true)));
+
+    String UseText = ModeInfo+SceneInfo;
+
+
+    editorModeText->SetText(UseText);
 
     editorModeText->SetSize(editorModeText->GetMinSize());
-    renderStatsText->SetSize(renderStatsText->GetMinSize());
+
 }
 
 void EPScene3D::SetFillMode(FillMode fM_)
@@ -520,90 +520,90 @@ void EPScene3D::Start()
     //////////////////////////////////////////////////////////////////////////
     /// Menu Bar entries
 
-    sceneMenu_ = editorView_->GetMenuBar()->CreateMenu("Scene");
-    editorView_->GetMenuBar()->CreateMenuItem("Scene", "New scene", A_NEWSCENE_VAR, 'N', QUAL_SHIFT | QUAL_CTRL);
-    editorView_->GetMenuBar()->CreateMenuItem("Scene", "Open scene...", A_OPENSCENE_VAR, 'O', QUAL_CTRL);
-    editorView_->GetMenuBar()->CreateMenuItem("Scene", "Save scene", A_SAVESCENE_VAR, 'S', QUAL_CTRL);
-    editorView_->GetMenuBar()->CreateMenuItem("Scene", "Save scene as...", A_SAVESCENEAS_VAR, 'S', QUAL_SHIFT | QUAL_CTRL);
+    /*sceneMenu_ = editorView_->GetMenuBar()->CreateMenu("Scene");
+     editorView_->GetMenuBar()->CreateMenuItem("Scene", "New scene", A_NEWSCENE_VAR, 'N', QUAL_SHIFT | QUAL_CTRL);
+     editorView_->GetMenuBar()->CreateMenuItem("Scene", "Open scene...", A_OPENSCENE_VAR, 'O', QUAL_CTRL);
+     editorView_->GetMenuBar()->CreateMenuItem("Scene", "Save scene", A_SAVESCENE_VAR, 'S', QUAL_CTRL);
+     editorView_->GetMenuBar()->CreateMenuItem("Scene", "Save scene as...", A_SAVESCENEAS_VAR, 'S', QUAL_SHIFT | QUAL_CTRL);
 
-    editorView_->GetMenuBar()->CreateMenuItem("Scene", "Load node as replicated", A_LOADNODEASREP_VAR);
-    editorView_->GetMenuBar()->CreateMenuItem("Scene", "Load node as local", A_LOADNODEASLOCAL_VAR);
-    editorView_->GetMenuBar()->CreateMenuItem("Scene", "Save node as", A_SAVENODEAS_VAR);
+     editorView_->GetMenuBar()->CreateMenuItem("Scene", "Load node as replicated", A_LOADNODEASREP_VAR);
+     editorView_->GetMenuBar()->CreateMenuItem("Scene", "Load node as local", A_LOADNODEASLOCAL_VAR);
+     editorView_->GetMenuBar()->CreateMenuItem("Scene", "Save node as", A_SAVENODEAS_VAR);
 
-    createMenu_ = editorView_->GetMenuBar()->CreateMenu("Create");
+     createMenu_ = editorView_->GetMenuBar()->CreateMenu("Create");
 
-    editorView_->GetMenuBar()->CreateMenuItem("Create", "Replicated node", A_CREATEREPNODE_VAR, 0, 0, true, "Create Replicated node");
-    editorView_->GetMenuBar()->CreateMenuItem("Create", "Local node", A_CREATELOCALNODE_VAR, 0, 0, true, "Create Local node");
+     editorView_->GetMenuBar()->CreateMenuItem("Create", "Replicated node", A_CREATEREPNODE_VAR, 0, 0, true, "Create Replicated node");
+     editorView_->GetMenuBar()->CreateMenuItem("Create", "Local node", A_CREATELOCALNODE_VAR, 0, 0, true, "Create Local node");
 
 
-    Menu* childMenu = editorView_->GetMenuBar()->CreateMenuItem("Create", "Component", StringHash::ZERO, SHOW_POPUP_INDICATOR);
-    Window* childPopup = editorView_->GetMenuBar()->CreatePopupMenu(childMenu);
+     Menu* childMenu = editorView_->GetMenuBar()->CreateMenuItem("Create", "Component", StringHash::ZERO, SHOW_POPUP_INDICATOR);
+     Window* childPopup = editorView_->GetMenuBar()->CreatePopupMenu(childMenu);
 
-    const HashMap<String, Vector<StringHash> >& objectCategories = context_->GetObjectCategories();
-    HashMap<String, Vector<StringHash> >::ConstIterator it;
+     const HashMap<String, Vector<StringHash> >& objectCategories = context_->GetObjectCategories();
+     HashMap<String, Vector<StringHash> >::ConstIterator it;
+
+     /// Mini Tool Bar entries
+     /// \todo create scroll bar for the mini tool bar or something ... because there are to many components that can be added this way
+    // 		MiniToolBarUI* minitool = editorView_->GetMiniToolBar();
+    // 		Button* b = (Button*)minitool->CreateSmallToolBarButton("Node", "Replicated Node");
+    // 		miniToolBarButtons_.Push(b);
+    // 		SubscribeToEvent(b, E_RELEASED, HANDLER(EPScene3D, MiniToolBarCreateReplNode));
+    // 		b = (Button*)minitool->CreateSmallToolBarButton("Node", "Local Node");
+    // 		miniToolBarButtons_.Push(b);
+    // 		SubscribeToEvent(b, E_RELEASED, HANDLER(EPScene3D, MiniToolBarCreateLocalNode));
+
+
+     for (it = objectCategories.Begin(); it != objectCategories.End(); it++)
+     {
+         // Skip the UI category for the component menus
+         if (it->first_ == "UI")
+             continue;
+
+         Menu* menu = editorView_->GetMenuBar()->CreatePopupMenuItem(childPopup, it->first_, StringHash::ZERO, SHOW_POPUP_INDICATOR);
+         Window* popup = editorView_->GetMenuBar()->CreatePopupMenu(menu);
+
+         /// GetObjectsByCategory
+         Vector<String> components;
+         const HashMap<StringHash, SharedPtr<ObjectFactory> >& factories = context_->GetObjectFactories();
+         const Vector<StringHash>& factoryHashes = it->second_;
+         components.Reserve(factoryHashes.Size());
+         for (unsigned j = 0; j < factoryHashes.Size(); ++j)
+         {
+             HashMap<StringHash, SharedPtr<ObjectFactory> >::ConstIterator k = factories.Find(factoryHashes[j]);
+             if (k != factories.End())
+                 components.Push(k->second_->GetTypeName());
+         }
+         //minitool->CreateSmallToolBarSpacer(3);
+         /// \todo CreateIconizedMenuItem
+         for (unsigned j = 0; j < components.Size(); ++j)
+         {
+             editorView_->GetMenuBar()->CreatePopupMenuItem(popup, components[j], A_CREATECOMPONENT_VAR);
+             /// Mini Tool Bar entries
+    // 				b = (Button*)minitool->CreateSmallToolBarButton(components[j]);
+    // 				miniToolBarButtons_.Push(b);
+         }
+
+     }
+
+     childMenu = editorView_->GetMenuBar()->CreateMenuItem("Create", "Builtin object", StringHash::ZERO, SHOW_POPUP_INDICATOR);
+     childPopup = editorView_->GetMenuBar()->CreatePopupMenu(childMenu);
+     String objects[] = { "Box", "Cone", "Cylinder", "Plane", "Pyramid", "Sphere", "TeaPot", "Torus" };
+     for (int i = 0; i < 8; i++)
+     {
+         editorView_->GetMenuBar()->CreatePopupMenuItem(childPopup, objects[i], A_CREATEBUILTINOBJ_VAR);
+     }
+
+     // Create game asset menu add to menubar
+     editorView_->GetMenuBar()->CreateMenuItem("Create", "Game Asset", A_CREATEGAMEASSETNODE_VAR, 0, 0, false, "Create Game Asset Node");
+
+     SubscribeToEvent(editorView_->GetMenuBar(), E_MENUBAR_ACTION, URHO3D_HANDLER(EPScene3D, HandleMenuBarAction));
+    */
 
     /// Mini Tool Bar entries
-    /// \todo create scroll bar for the mini tool bar or something ... because there are to many components that can be added this way
-// 		MiniToolBarUI* minitool = editorView_->GetMiniToolBar();
-// 		Button* b = (Button*)minitool->CreateSmallToolBarButton("Node", "Replicated Node");
-// 		miniToolBarButtons_.Push(b);
-// 		SubscribeToEvent(b, E_RELEASED, HANDLER(EPScene3D, MiniToolBarCreateReplNode));
-// 		b = (Button*)minitool->CreateSmallToolBarButton("Node", "Local Node");
-// 		miniToolBarButtons_.Push(b);
-// 		SubscribeToEvent(b, E_RELEASED, HANDLER(EPScene3D, MiniToolBarCreateLocalNode));
-
-
-    for (it = objectCategories.Begin(); it != objectCategories.End(); it++)
-    {
-        // Skip the UI category for the component menus
-        if (it->first_ == "UI")
-            continue;
-
-        Menu* menu = editorView_->GetMenuBar()->CreatePopupMenuItem(childPopup, it->first_, StringHash::ZERO, SHOW_POPUP_INDICATOR);
-        Window* popup = editorView_->GetMenuBar()->CreatePopupMenu(menu);
-
-        /// GetObjectsByCategory
-        Vector<String> components;
-        const HashMap<StringHash, SharedPtr<ObjectFactory> >& factories = context_->GetObjectFactories();
-        const Vector<StringHash>& factoryHashes = it->second_;
-        components.Reserve(factoryHashes.Size());
-        for (unsigned j = 0; j < factoryHashes.Size(); ++j)
-        {
-            HashMap<StringHash, SharedPtr<ObjectFactory> >::ConstIterator k = factories.Find(factoryHashes[j]);
-            if (k != factories.End())
-                components.Push(k->second_->GetTypeName());
-        }
-        //minitool->CreateSmallToolBarSpacer(3);
-        /// \todo CreateIconizedMenuItem
-        for (unsigned j = 0; j < components.Size(); ++j)
-        {
-            editorView_->GetMenuBar()->CreatePopupMenuItem(popup, components[j], A_CREATECOMPONENT_VAR);
-            /// Mini Tool Bar entries
-// 				b = (Button*)minitool->CreateSmallToolBarButton(components[j]);
-// 				miniToolBarButtons_.Push(b);
-        }
-
-    }
-
-    childMenu = editorView_->GetMenuBar()->CreateMenuItem("Create", "Builtin object", StringHash::ZERO, SHOW_POPUP_INDICATOR);
-    childPopup = editorView_->GetMenuBar()->CreatePopupMenu(childMenu);
-    String objects[] = { "Box", "Cone", "Cylinder", "Plane", "Pyramid", "Sphere", "TeaPot", "Torus" };
-    for (int i = 0; i < 8; i++)
-    {
-        editorView_->GetMenuBar()->CreatePopupMenuItem(childPopup, objects[i], A_CREATEBUILTINOBJ_VAR);
-    }
-
-    // Create game asset menu add to menubar
-    editorView_->GetMenuBar()->CreateMenuItem("Create", "Game Asset", A_CREATEGAMEASSETNODE_VAR, 0, 0, false, "Create Game Asset Node");
-
-    SubscribeToEvent(editorView_->GetMenuBar(), E_MENUBAR_ACTION, URHO3D_HANDLER(EPScene3D, HandleMenuBarAction));
-
-
-    /// Mini Tool Bar entries
-    CreateMiniToolBarUI();
+    //CreateMiniToolBarUI();
 
     /// Tool Bar entries
-    CreateToolBarUI();
+    // CreateToolBarUI();
 
     /// create gizmo
     gizmo_ = new GizmoScene3D(context_, this);
@@ -619,97 +619,97 @@ void EPScene3D::Start()
 void EPScene3D::CreateMiniToolBarUI()
 {
 
-    MiniToolBarUI* minitool = editorView_->GetMiniToolBar();
+    /* MiniToolBarUI* minitool = editorView_->GetMiniToolBar();
 
-    Button* b = (Button*)minitool->CreateSmallToolBarButton("Node", "Replicated Node");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateReplNode));
-    b = (Button*)minitool->CreateSmallToolBarButton("Node", "Local Node");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateLocalNode));
+     Button* b = (Button*)minitool->CreateSmallToolBarButton("Node", "Replicated Node");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateReplNode));
+     b = (Button*)minitool->CreateSmallToolBarButton("Node", "Local Node");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateLocalNode));
 
-    minitool->CreateSmallToolBarSpacer(3);
-    b = (Button*)minitool->CreateSmallToolBarButton("Light");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("Camera");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("Zone");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("StaticModel");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("AnimatedModel");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("BillboardSet");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("ParticleEmitter");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("Skybox");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("Terrain");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("Text3D");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     minitool->CreateSmallToolBarSpacer(3);
+     b = (Button*)minitool->CreateSmallToolBarButton("Light");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("Camera");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("Zone");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("StaticModel");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("AnimatedModel");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("BillboardSet");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("ParticleEmitter");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("Skybox");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("Terrain");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("Text3D");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
 
-    minitool->CreateSmallToolBarSpacer(3);
-    b = (Button*)minitool->CreateSmallToolBarButton("SoundListener");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("SoundSource3D");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("SoundSource");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     minitool->CreateSmallToolBarSpacer(3);
+     b = (Button*)minitool->CreateSmallToolBarButton("SoundListener");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("SoundSource3D");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("SoundSource");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
 
-    minitool->CreateSmallToolBarSpacer(3);
-    b = (Button*)minitool->CreateSmallToolBarButton("RigidBody");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("CollisionShape");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("Constraint");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     minitool->CreateSmallToolBarSpacer(3);
+     b = (Button*)minitool->CreateSmallToolBarButton("RigidBody");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("CollisionShape");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("Constraint");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
 
-    minitool->CreateSmallToolBarSpacer(3);
-    b = (Button*)minitool->CreateSmallToolBarButton("AnimationController");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("ScriptInstance");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     minitool->CreateSmallToolBarSpacer(3);
+     b = (Button*)minitool->CreateSmallToolBarButton("AnimationController");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("ScriptInstance");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
 
-    minitool->CreateSmallToolBarSpacer(3);
-    b = (Button*)minitool->CreateSmallToolBarButton("Navigable");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("NavigationMesh");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    b = (Button*)minitool->CreateSmallToolBarButton("OffMeshConnection");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
-    minitool->CreateSmallToolBarSpacer(3);
-    b = (Button*)minitool->CreateSmallToolBarButton("NetworkPriority");
-    miniToolBarButtons_.Push(b);
-    SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     minitool->CreateSmallToolBarSpacer(3);
+     b = (Button*)minitool->CreateSmallToolBarButton("Navigable");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("NavigationMesh");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     b = (Button*)minitool->CreateSmallToolBarButton("OffMeshConnection");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));
+     minitool->CreateSmallToolBarSpacer(3);
+     b = (Button*)minitool->CreateSmallToolBarButton("NetworkPriority");
+     miniToolBarButtons_.Push(b);
+     SubscribeToEvent(b, E_RELEASED, URHO3D_HANDLER(EPScene3D, MiniToolBarCreateComponent));*/
 }
 
 void EPScene3D::CreateToolBarUI()
 {
 
-    ToolBarUI* minitool = editorView_->GetToolBar();
+    /*ToolBarUI* minitool = editorView_->GetToolBar();
 
     UIElement* e = minitool->CreateGroup("RunUpdateGroup", LM_HORIZONTAL);
     toolBarToggles.Push(e);
@@ -828,7 +828,7 @@ void EPScene3D::CreateToolBarUI()
     SubscribeToEvent(checkbox, E_TOGGLED, URHO3D_HANDLER(EPScene3D, ToolBarFillModeSolid));
 
     // Added to fill in void space - Set to possibly highest desktop size
-    minitool->SetMinWidth(1440);
+    minitool->SetMinWidth(1440);*/
 }
 
 Urho3D::Vector3 EPScene3D::SelectedNodesCenterPoint()
@@ -1144,7 +1144,7 @@ void EPScene3D::ViewRaycast(bool mouseClick)
 
 void EPScene3D::SelectComponent(Component* component, bool multiselect)
 {
-    if (component == NULL && !multiselect)
+    /*if (component == NULL && !multiselect)
     {
         editor_->GetHierarchyWindow()->GetHierarchyList()->ClearSelection();
         return;
@@ -1185,42 +1185,44 @@ void EPScene3D::SelectComponent(Component* component, bool multiselect)
     }
     else if (!multiselect)
         hierarchyList->ClearSelection();
+        */
 }
 
 void EPScene3D::SelectNode(Node* node, bool multiselect)
 {
-    if (node == NULL && !multiselect)
-    {
-        editor_->GetHierarchyWindow()->GetHierarchyList()->ClearSelection();
-        return;
-    }
-    ListView* hierarchyList = editor_->GetHierarchyWindow()->GetHierarchyList();
-    unsigned int index = editor_->GetHierarchyWindow()->GetListIndex(node);
-    unsigned int numItems = hierarchyList->GetNumItems();
+    /*   if (node == NULL && !multiselect)
+       {
+           editor_->GetHierarchyWindow()->GetHierarchyList()->ClearSelection();
+           return;
+       }
+       ListView* hierarchyList = editor_->GetHierarchyWindow()->GetHierarchyList();
+       unsigned int index = editor_->GetHierarchyWindow()->GetListIndex(node);
+       unsigned int numItems = hierarchyList->GetNumItems();
 
-    if (index < numItems)
-    {
-        // Expand the node chain now
-        if (!multiselect || !hierarchyList->IsSelected(index))
-        {
-            // Go in the parent chain up to make sure the chain is expanded
-            Node* current = node;
-            do
-            {
-                hierarchyList->Expand(editor_->GetHierarchyWindow()->GetListIndex(current), true);
-                current = current->GetParent();
-            }
-            while (current != NULL);
-        }
+       if (index < numItems)
+       {
+           // Expand the node chain now
+           if (!multiselect || !hierarchyList->IsSelected(index))
+           {
+               // Go in the parent chain up to make sure the chain is expanded
+               Node* current = node;
+               do
+               {
+                   hierarchyList->Expand(editor_->GetHierarchyWindow()->GetListIndex(current), true);
+                   current = current->GetParent();
+               }
+               while (current != NULL);
+           }
 
-        // This causes an event to be sent, in response we set the node/component selections, and refresh editors
-        if (!multiselect)
-            hierarchyList->SetSelection( index);
-        else
-            hierarchyList->ToggleSelection(index);
-    }
-    else if (!multiselect)
-        hierarchyList->ClearSelection();
+           // This causes an event to be sent, in response we set the node/component selections, and refresh editors
+           if (!multiselect)
+               hierarchyList->SetSelection( index);
+           else
+               hierarchyList->ToggleSelection(index);
+       }
+       else if (!multiselect)
+           hierarchyList->ClearSelection();
+           */
 }
 
 void EPScene3D::SetMouseMode(bool enable)
@@ -2881,16 +2883,8 @@ void EPScene3DView::ToggleViewportSettingsWindow(StringHash eventType, VariantMa
 
 void EPScene3DView::Update(float timeStep)
 {
-    Vector3 cameraPos = cameraNode_->GetPosition();
+    // Show camera info
+    CameraInfoImGuiUI::ShowCameraInfo(cameraNode_);
 
-    String xText(cameraPos.x_);
-    String yText(cameraPos.y_);
-    String zText(cameraPos.z_);
-
-    cameraPosText->SetText(String(
-                               "Pos: " + xText + " " + yText + " " + zText +
-                               " Zoom: " + String(camera_->GetZoom())));
-
-    cameraPosText->SetSize(cameraPosText->GetMinSize());
 }
 

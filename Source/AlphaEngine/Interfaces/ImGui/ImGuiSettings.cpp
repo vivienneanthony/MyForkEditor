@@ -62,8 +62,8 @@ void SetImVec2(ImVec2& dest ,const Vector2 & src)
 
 ImGuiSettings::ImGuiSettings():
     mIniSavingRate(5.0f),
-    mIniFilename("imgui.ini"),
-    mLogFilename("imgui_log.txt"),
+    mIniFilename("ImGui.ini"),
+    mLogFilename("ImGuiLog.txt"),
     mMouseDoubleClickTime(0.30f),
     mMouseDoubleClickMaxDist(6.0f),
     mMouseDragThreshold(6.0f),

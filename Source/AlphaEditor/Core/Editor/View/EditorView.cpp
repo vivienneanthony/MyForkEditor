@@ -71,20 +71,22 @@ bool EditorView::Initialize(Editor* editor, EditorData* data)
     m_MaxRightFrameWidth = 300;
 
 
-    if (!CreateMenu(styleFile, iconstyle))
-    {
-        URHO3D_LOGERROR("Failed to create menu.");
-        return false;
-    }
+    // if (!CreateMenu(styleFile, iconstyle))
+    //{
+    //URHO3D_LOGERROR("Failed to create menu.");
+    //return false;
+//    }
 
 
-    if (!CreateToolBar(styleFile, iconstyle))
-    {
-        URHO3D_LOGERROR("Failed to create tool bar.");
-        return false;
-    }
+    //  if (!CreateToolBar(styleFile, iconstyle))
+//    {
+    //      URHO3D_LOGERROR("Failed to create tool bar.");
+    //return false;
+    //}
 
     m_MiniToolHeight = m_pUI->GetRoot()->GetHeight() - m_pToolbar->GetMinHeight() - m_pMenubar->GetMinHeight();
+
+    m_MiniToolHeight=0;
 
     if (!CreateMainFrame(styleFile, iconstyle))
     {
@@ -92,17 +94,17 @@ bool EditorView::Initialize(Editor* editor, EditorData* data)
         return false;
     }
 
-    if (!CreateMiniToolBar(styleFile, iconstyle))
-    {
-        URHO3D_LOGERROR("Failed to create mini tool bar.");
-        return false;
-    }
+    //  if (!CreateMiniToolBar(styleFile, iconstyle))
+//    {
+    //URHO3D_LOGERROR("Failed to create mini tool bar.");
+    //return false;
+    //}
 
-    if (!CreateLeftFrame(styleFile, iconstyle))
-    {
-        URHO3D_LOGERROR("Failed to create LeftFrame.");
-        return false;
-    }
+    //if (!CreateLeftFrame(styleFile, iconstyle))
+    //{
+    //  URHO3D_LOGERROR("Failed to create LeftFrame.");
+//        return false;
+    //  }
 
     if (!CreateMiddleFrame(styleFile, iconstyle))
     {
@@ -110,11 +112,11 @@ bool EditorView::Initialize(Editor* editor, EditorData* data)
         return false;
     }
 
-    if (!CreateRightFrame(styleFile, iconstyle))
-    {
-        URHO3D_LOGERROR("Failed to create RightFrame.");
-        return false;
-    }
+    //if (!CreateRightFrame(styleFile, iconstyle))
+    //{
+    //URHO3D_LOGERROR("Failed to create RightFrame.");
+    //return false;
+    //}
 
     InitializeAllDelegates();
 
@@ -173,8 +175,12 @@ bool EditorView::CreateMainFrame(XMLFile* styleFile, XMLFile* iconstyle)
         return false;
     }
 
+    unsigned int Width = g_pApp->GetGraphics()->GetWidth();
+    unsigned int Height = g_pApp->GetGraphics()->GetWidth();
+
     m_pMainFrame->SetDefaultStyle(styleFile);
-    m_pMainFrame->SetFixedSize(m_pUI->GetRoot()->GetWidth(), m_MiniToolHeight);
+    m_pMainFrame->SetFixedSize(Width, Height);
+
     return true;
 }
 
@@ -203,17 +209,25 @@ bool EditorView::CreateMiddleFrame(XMLFile* styleFile, XMLFile* iconstyle)
 {
     m_pMiddleFrame = m_pMainFrame->CreateChild<TabWindow>("MiddleFrame");
 
+    // set frame
     if (!m_pMiddleFrame)
     {
         return false;
     }
 
-    m_pMiddleFrame->SetPosition(m_pLeftFrame->GetPosition() + IntVector2(m_pLeftFrame->GetWidth(), 0));
+
+    // probably can be removed not needed
+    unsigned int Width = g_pApp->GetGraphics()->GetWidth();
+    unsigned int Height = g_pApp->GetGraphics()->GetWidth();
+
+    // Set position
+    m_pMiddleFrame->SetPosition(0,0);
     m_pMiddleFrame->SetStyle("TabWindow");
-    m_pMiddleFrame->SetHeight(m_MiniToolHeight);
-    m_pMiddleFrame->SetMinWidth(m_pUIRoot->GetWidth() - 400);
-    m_pMiddleFrame->SetWidth(m_pUIRoot->GetWidth() - 400);
+    m_pMiddleFrame->SetHeight(Height);
+    m_pMiddleFrame->SetMinWidth(Width);
+    m_pMiddleFrame->SetWidth(Width);
     m_pMiddleFrame->SetLayoutBorder(IntRect(4, 4, 4, 4));
+
     return true;
 }
 
@@ -282,115 +296,12 @@ void EditorView::HandleScreenUpdateDelegate(StringHash eventType, VariantMap& ev
     m_pUIRoot->SetWidth(windowHeight);
 
     // Work on the rest next
-    m_MiniToolHeight = windowHeight - m_pMenubar->GetMinHeight();
+    //m_MiniToolHeight = windowHeight - m_pMenubar->GetMinHeight();
 
     // Change fixed size
-    m_pMainFrame->SetFixedSize(windowWidth, m_MiniToolHeight);
+    m_pMainFrame->SetFixedSize(windowWidth, windowHeight);
+    m_pMiddleFrame->SetFixedSize(windowWidth, windowHeight);
 
-    if (m_pToolbar->IsVisible())
-    {
-        m_MiniToolHeight -= m_pToolbar->GetMinHeight();
-    }
-
-    // set fixed height
-    m_pMiniToolbar->SetFixedHeight(m_MiniToolHeight);
-    m_pMiddleFrame->SetFixedHeight(m_MiniToolHeight);
-    m_pLeftFrame->SetFixedHeightResizing(m_MiniToolHeight);
-    m_pRightFrame->SetFixedHeightResizing(m_MiniToolHeight);
-
-
-    if (element == m_pLeftFrame)
-    {
-        if (newWidth < m_MinLeftFrameWidth)
-        {
-            m_pLeftFrame->SetWidth(m_MinLeftFrameWidth);
-        }
-
-        if (newWidth > m_MaxLeftFrameWidth)
-        {
-            m_pLeftFrame->SetWidth(m_MaxLeftFrameWidth);
-        }
-
-
-        m_pMiddleFrame->SetPosition(m_pLeftFrame->GetPosition() + IntVector2(m_pLeftFrame->GetWidth(), 0));
-        if (m_pRightFrame->IsVisible())
-        {
-            m_pMiddleFrame->SetWidth(m_pUIRoot->GetWidth() - m_pLeftFrame->GetWidth() - m_pRightFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-        }
-        else
-            m_pMiddleFrame->SetWidth(m_pUIRoot->GetWidth() - m_pLeftFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-    }
-    else if (element == m_pRightFrame)
-    {
-        if (newWidth < m_MinRightFrameWidth)
-        {
-            m_pRightFrame->SetWidth(m_MinRightFrameWidth);
-        }
-
-        if (newWidth > m_MaxRightFrameWidth)
-        {
-            m_pRightFrame->SetWidth(m_MaxRightFrameWidth);
-        }
-
-        if (m_pLeftFrame->IsVisible())
-        {
-            m_pMiddleFrame->SetWidth(m_pUIRoot->GetWidth() - m_pLeftFrame->GetWidth() - m_pRightFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-        }
-        else
-            m_pMiddleFrame->SetWidth(m_pUIRoot->GetWidth() - m_pRightFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-
-        m_pRightFrame->SetPosition(m_pMiddleFrame->GetPosition() + IntVector2(m_pMiddleFrame->GetWidth(), 0));
-    }
-
-
-    // alter the screen here
-    if (m_pLeftFrame->IsVisible())
-    {
-        if (m_pMiniToolbar->IsVisible())
-        {
-            m_pLeftFrame->SetPosition(m_pMiniToolbar->GetPosition() + IntVector2(m_pMiniToolbar->GetWidth(), 0));
-        }
-        else
-        {
-            m_pLeftFrame->SetPosition(IntVector2::ZERO);
-        }
-
-        m_pMiddleFrame->SetPosition(m_pLeftFrame->GetPosition() + IntVector2(m_pLeftFrame->GetWidth(), 0));
-        m_pLeftFrame->SetFixedHeight(m_MiniToolHeight);
-
-        if (m_pRightFrame->IsVisible())
-        {
-            m_pRightFrame->SetFixedHeight(m_MiniToolHeight);
-            m_pMiddleFrame->SetWidth( m_pMainFrame->GetWidth()- m_pLeftFrame->GetWidth() - m_pRightFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-            m_pRightFrame->SetPosition(m_pMiddleFrame->GetPosition() + IntVector2(m_pMiddleFrame->GetWidth(), 0));
-        }
-        else
-        {
-            m_pMiddleFrame->SetWidth(m_pMainFrame->GetWidth() - m_pLeftFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-        }
-    }
-    else
-    {
-        if (m_pMiniToolbar->IsVisible())
-        {
-            m_pMiddleFrame->SetPosition(m_pMiniToolbar->GetPosition() + IntVector2(m_pMiniToolbar->GetWidth(), 0));
-        }
-        else
-        {
-            m_pMiddleFrame->SetPosition(IntVector2::ZERO);
-        }
-
-        if (m_pRightFrame->IsVisible())
-        {
-            m_pRightFrame->SetFixedHeight(m_MiniToolHeight);
-            m_pMiddleFrame->SetWidth(m_pMainFrame->GetWidth()- m_pRightFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-            m_pRightFrame->SetPosition(m_pMiddleFrame->GetPosition() + IntVector2(m_pMiddleFrame->GetWidth(), 0));
-        }
-        else
-        {
-            m_pMiddleFrame->SetWidth(m_pMainFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-        }
-    }
 
     // Store height and width
     m_PreviousHeight= windowHeight;
@@ -402,62 +313,6 @@ void EditorView::HandleScreenUpdateDelegate(StringHash eventType, VariantMap& ev
 
 void EditorView::UpdateLayout()
 {
-    /*m_MiniToolHeight = m_pUI->GetRoot()->GetHeight() - m_pMenubar->GetMinHeight();
 
-    if (m_pToolbar->IsVisible())
-    {
-    	m_MiniToolHeight -= m_pToolbar->GetMinHeight();
-    }
-
-    m_pMiniToolbar->SetFixedHeight(m_MiniToolHeight);
-    m_pMiddleFrame->SetFixedHeight(m_MiniToolHeight);
-
-    if (m_pLeftFrame->IsVisible())
-    {
-    	if (m_pMiniToolbar->IsVisible())
-    	{
-    		m_pLeftFrame->SetPosition(m_pMiniToolbar->GetPosition() + IntVector2(m_pMiniToolbar->GetWidth(), 0));
-    	}
-    	else
-    	{
-    		m_pLeftFrame->SetPosition(IntVector2::ZERO);
-    	}
-
-    	m_pMiddleFrame->SetPosition(m_pLeftFrame->GetPosition() + IntVector2(m_pLeftFrame->GetWidth(), 0));
-    	m_pLeftFrame->SetFixedHeight(m_MiniToolHeight);
-
-        if (m_pRightFrame->IsVisible())
-        {
-    		m_pRightFrame->SetFixedHeight(m_MiniToolHeight);
-    		m_pMiddleFrame->SetWidth(m_pUI->GetRoot()->GetWidth() - m_pLeftFrame->GetWidth() - m_pRightFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-    		m_pRightFrame->SetPosition(m_pMiddleFrame->GetPosition() + IntVector2(m_pMiddleFrame->GetWidth(), 0));
-        }
-    	else
-    	{
-    		m_pMiddleFrame->SetWidth(m_pUI->GetRoot()->GetWidth() - m_pLeftFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-    	}
-    }
-    else
-    {
-    	if (m_pMiniToolbar->IsVisible())
-    	{
-    		m_pMiddleFrame->SetPosition(m_pMiniToolbar->GetPosition() + IntVector2(m_pMiniToolbar->GetWidth(), 0));
-    	}
-    	else
-    	{
-    		m_pMiddleFrame->SetPosition(IntVector2::ZERO);
-    	}
-
-    	if (m_pRightFrame->IsVisible())
-        {
-    		m_pRightFrame->SetFixedHeight(m_MiniToolHeight);
-    		m_pMiddleFrame->SetWidth(m_pUI->GetRoot()->GetWidth() - m_pRightFrame->GetWidth() - m_pMiniToolbar->GetWidth());
-    		m_pRightFrame->SetPosition(m_pMiddleFrame->GetPosition() + IntVector2(m_pMiddleFrame->GetWidth(), 0));
-        }
-    	else
-    	{
-    		m_pMiddleFrame->SetWidth(m_pUI->GetRoot()->GetWidth() - m_pMiniToolbar->GetWidth());
-    	}
-    }*/
 }
 

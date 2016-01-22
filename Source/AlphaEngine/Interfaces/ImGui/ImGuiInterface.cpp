@@ -138,6 +138,7 @@ ImGuiInterface::ImGuiInterface(Context* context) : LogicComponent(context),
     graphics_(NULL),
     input_(NULL),
     fontTexture_(NULL),
+    fontTexture2_(NULL),
     touchId_(-1),
     touch_(false),
 #if defined(ANDROID) || defined(IOS)
@@ -166,6 +167,7 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
 {
     // TODO: is a hack!
     String dataAssetPath;
+    String systemPath;
 
     settings_ = settings;
     if(initialized_)
@@ -182,7 +184,8 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
         String WorkingDirectory =g_pApp->GetCurrentWorkDirectory();
 
         // Use CoreData as the base directory
-        dataAssetPath.Append(WorkingDirectory.Append("CoreData"));
+        dataAssetPath.Append(WorkingDirectory+String("Data/"));
+        systemPath.Append(WorkingDirectory+String("System/"));
 
         // setup core imgui settings
         io.IniSavingRate = settings.mIniSavingRate;
@@ -196,12 +199,14 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
         io.DisplayFramebufferScale = settings.mDisplayFramebufferScale;
         io.DisplayVisibleMin = settings.mDisplayVisibleMin;
         io.DisplayVisibleMax = settings.mDisplayVisibleMax;
-        iniFilename_ = dataAssetPath + settings.mIniFilename;
-        logFilename_ = dataAssetPath + settings.mLogFilename;
+        iniFilename_ = systemPath + settings.mIniFilename;
+        logFilename_ = systemPath + settings.mLogFilename;
+        URHO3D_LOGINFO(iniFilename_);
+
         io.IniFilename = iniFilename_.CString();
         io.LogFilename = logFilename_.CString();
 
-        // setup fonts
+        // setup   }
         ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
         fontAtlas->Clear();
         fonts_.Clear();
@@ -216,8 +221,14 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
         for (it = fontconfigs_map.Begin(); it != fontconfigs_map.End(); it++)
         {
             String name = GetFileName(it->second_.filename_);
-            fonts_[name] = io.Fonts->AddFontFromFileTTF(cache->GetResourceFileName(it->second_.filename_).CString(),
+            String filePathName = dataAssetPath+String("Fonts/")+name+String(".ttf");
+            URHO3D_LOGINFO(filePathName);
+
+
+            fonts_[name] = io.Fonts->AddFontFromFileTTF(filePathName.CString(),
                            it->second_.size_, &it->second_.config_, it->second_.glyphRanges_.Empty() ? NULL : &it->second_.glyphRanges_[0]);
+//fonts_[name] = io.Fonts->AddFontFromFileTTF(cache->GetResourceFileName(it->second_.filename_).CString(),
+            //it->second_.size_, &it->second_.config_, it->second_.glyphRanges_.Empty() ? NULL : &it->second_.glyphRanges_
         }
 
         // setup font Texture
@@ -226,6 +237,17 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
             delete fontTexture_;
             fontTexture_ = NULL;
         }
+
+
+        // setup font Texture
+        if (fontTexture2_)
+        {
+            delete fontTexture2_;
+            fontTexture2_ = NULL;
+        }
+
+
+
         unsigned char* pixels;
         int width, height;
         io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
@@ -243,6 +265,7 @@ void ImGuiInterface::SetSettings(const ImGuiSettings& settings)
         io.Fonts->TexID = (void *)(intptr_t)fontTexture_;
 
         io.Fonts->ClearTexData();
+
 
         // set style
         const ImGuiStyle& style = settings.getStyle();
@@ -466,6 +489,14 @@ void ImGuiInterface::Shutdown()
         delete fontTexture_;
         fontTexture_ = NULL;
     }
+
+
+    if (fontTexture2_)
+    {
+        delete fontTexture2_;
+        fontTexture2_ = NULL;
+    }
+
     URHO3D_LOGINFO("ImGuiInterface::Shutdown");
 }
 

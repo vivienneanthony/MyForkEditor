@@ -49,6 +49,10 @@
 // Engine
 #include "AlphaEngine/GameLogic/BaseGameLogic.h"
 
+#include "../ImGuiUI/Menu/MenuBarImGuiUI.h"
+#include "../ImGuiUI/ToolBar/MainToolBarImGuiUI.h"
+#include "../ImGuiUI/Window/LeftFrameImGuiUI.h"
+#include "../ImGuiUI/Window/RightFrameImGuiUI.h"
 
 using namespace Urho3D;
 
@@ -275,7 +279,7 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     //////////////////////////////////////////////////////////////////////////
 
     // Create base menu
-    if (!CreateBaseMenu())
+    /*if (!CreateBaseMenu())
     {
         URHO3D_LOGERROR("Failed to create base menu.");
         return false;
@@ -323,11 +327,12 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 
         return false;
     }
-
+*/
     m_bIsVisible = true;
     m_bIsInitialized = true;
 
     InitializeAllDelegates();
+
 
 
     return true;
@@ -375,14 +380,14 @@ bool Editor::CreateBaseMenu()
     }
 
     // Set base maximum size to 1440
-    pMenubar->SetMinWidth(1440);
+    /*pMenubar->SetMinWidth(1440);
 
     pMenubar->CreateMenu("File");
     pMenubar->CreateMenuItem("File", "Quit", A_QUITEDITOR_VAR);
 
     pMenubar->CreateMenuItem("File", "Export to AlphaEngine...", A_EXPORTTOALPHAENGINE_VAR);
 
-    pMenubar->CreateMenuItem("File", "Set project directory...", A_SETPROJECTDIRECTORY_VAR);
+    pMenubar->CreateMenuItem("File", "Set project directory...", A_SETPROJECTDIRECTORY_VAR);*/
     return true;
 }
 
@@ -603,7 +608,7 @@ bool Editor::CreateViewSettingsWindow()
 // Create Settings menu
 bool Editor::CreateSettingsMenu(void)
 {
-    // Create Settings Menu
+  /*  // Create Settings Menu
     MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
 
     if (!pMenubar)
@@ -615,7 +620,7 @@ bool Editor::CreateSettingsMenu(void)
     pMenubar->CreateMenu("Settings");
 
     pMenubar->CreateMenuItem("Settings", "Preferences", A_SETTINGSPREFERENCES_VAR);
-
+*/
     return true;
 }
 
@@ -623,7 +628,7 @@ bool Editor::CreateSettingsMenu(void)
 bool Editor::CreateAboutMenu(void)
 {
     // Create about menu
-    MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
+  /*  MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
 
     if (!pMenubar)
     {
@@ -637,7 +642,7 @@ bool Editor::CreateAboutMenu(void)
     pMenubar->CreateMenuItem("About", "Garage Door Productions", A_ABOUTGDP_VAR);
     pMenubar->CreateMenuItem("About", "Developers", A_ABOUTGDPTEAM_VAR);
 
-
+*/
     return true;
 }
 
@@ -838,27 +843,14 @@ void Editor::CloseFileSelector(unsigned int& filterIndex, String& path)
 }
 
 void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
-
 {
     if(g_pApp->GetImGuiInterface())
     {
-        // check if window "hello" is collapsed, dubble clicked on the header/title
-        if (ImGui::Begin("Hello"))
-        {
-            // normal text
-            ImGui::Text("Hallo world! ...");
-            // if font icons are loaded, use u8"" to place them.
+        MenuBarImGuiUI::ShowMenuBar();
+        MainToolBarImGuiUI::ShowToolBar();
+        LeftFrameImGuiUI::ShowLeftFrame();
+        RightFrameImGuiUI::ShowRightFrame();
 
-            // ImGui::Text("\uF04B"); isn't correct it is 16-bit unicode whereas ImGui takes UTF-8.
-            // so use in c++11 use u8"\uf016" or
-            ImGui::Text("\xef\x80\x96" " File"); // use string literal concatenation, ouputs a file icon and File as a string
-            ImGui::Button("test", ImVec2(100.0f, 20.0f));
-        }
-        // if Begin was called, the corresponding End must be called too !!
-        ImGui::End();
-
-        // ImGui has some tests implemented.
-        ImGui::ShowTestWindow();
     }
 
     using namespace Update;
@@ -874,10 +866,10 @@ void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
         m_pEditorPluginOver->Update(timestep);
     }
 
-    if (m_pResourceBrowser->IsVisible())
+/*    if (m_pResourceBrowser->IsVisible())
     {
         m_pResourceBrowser->Update();
-    }
+    }*/
 
     // Handle editor keypress check
     HandleKeyDownDelegate(eventType,eventData);

@@ -112,6 +112,8 @@ protected:
     IntRect screenSize_;
     /// imgui font Texture
     Texture2D* fontTexture_;
+     /// imgui font Texture
+    Texture2D* fontTexture2_;
     /// UI vertex buffer.
     SharedPtr<VertexBuffer> vertexBuffer_;
     /// UI index buffer.
