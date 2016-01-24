@@ -5,9 +5,13 @@
 #include <AlphaEngine/ThirdParty/ImGui/imgui.h>
 #include <AlphaEngine/ThirdParty/ImGui/imgui_internal.h>
 
+#include "../../Editor/Editor.h"
+#include "../../Editor/EditorData.h"
+
 #include "LeftFrameImGuiUI.h"
 
 bool LeftFrameImGuiUI::initialized= false;
+EditorData * LeftFrameImGuiUI::pEditorData=NULL;
 
 LeftFrameImGuiUI::LeftFrameImGuiUI(Context * context = g_pApp->GetGameLogic()->GetContext())
     :Object(context)
@@ -20,8 +24,11 @@ LeftFrameImGuiUI::~LeftFrameImGuiUI()
     //dtor
 }
 
-void LeftFrameImGuiUI::ShowLeftFrame(void)
+bool *  LeftFrameImGuiUI::ShowLeftFrame(void)
 {
+    // return p_opened
+    bool * p_opened = NULL;
+
     // create tool bar
     ImGuiWindowFlags window_flags = 0;
 
@@ -33,7 +40,7 @@ void LeftFrameImGuiUI::ShowLeftFrame(void)
     window_flags |= ImGuiWindowFlags_NoTitleBar;
 
     // Create window
-    ImGui::Begin("LeftFrame", NULL,  ImVec2(200,Height-8-128), 0.5,  window_flags);
+    ImGui::Begin("LeftFrame", p_opened,  ImVec2(200,Height-8-128), 0.5,  window_flags);
 
     // set location if its not set
     if(!initialized)
@@ -53,28 +60,26 @@ void LeftFrameImGuiUI::ShowLeftFrame(void)
 
     ImGui::SetCursorPosY(96);
 
-    // Use Tree Format for Nodes
+
     if(ImGui::TreeNode("Outline"))
     {
-        if(ImGui::TreeNode("Scene"))
+        // if editor data
+        if(pEditorData)
         {
-            // Scene
-            for (int i = 0; i < 5; i++)
+            Scene * ThisScene = pEditorData->GetEditorScene();
+            // if scene
+            if(ThisScene)
             {
-                if (ImGui::TreeNode((void*)(intptr_t)i, "Child %d", i))
-                {
-                    ImGui::Text("StaticComponent");
+                Node * ParentNode = ThisScene->GetParent();
 
-                    ImGui::TreePop();
+                for(unsigned int i=0; i<ParentNode->GetNumChildren(); i++)
+                {
+                    GetNodeData(ParentNode->GetChild(i));
                 }
             }
-        ImGui::TreePop();
         }
 
-        if(ImGui::TreeNode("UI"))
-        {
-            ImGui::TreePop();
-        }
+
     }
 
     ImGui::TreePop();
@@ -82,9 +87,51 @@ void LeftFrameImGuiUI::ShowLeftFrame(void)
 
 
 // Close current ImGui Context
-ImGui::End();
+    ImGui::End();
 
-initialized=true;
+    initialized=true;
 
-return;
+    return p_opened;
 }
+
+void  LeftFrameImGuiUI::SetEditorData( EditorData * pSetEditorData)
+{
+
+    pEditorData = pSetEditorData;
+
+    return;
+}
+
+void LeftFrameImGuiUI::GetNodeData(Node * ParentNode)
+{
+    for(unsigned int i=0; i<ParentNode->GetNumChildren(); i++)
+    {
+        GetNodeData(ParentNode->GetChild(i));
+    }
+
+    return;
+}
+
+// tree node
+// test code
+/*// Use Tree Format for Nodes
+      if(ImGui::TreeNode("Scene"))
+      {
+          // Scene
+          for (int i = 0; i < 5; i++)
+          {
+              if (ImGui::TreeNode((void*)(intptr_t)i, "Child %d", i))
+              {
+                  ImGui::Text("StaticComponent");
+
+                  ImGui::TreePop();
+              }
+          }
+          ImGui::TreePop();
+      }*/
+
+/*   if(ImGui::TreeNode("UI"))
+   {
+       ImGui::TreePop();
+   }*/
+

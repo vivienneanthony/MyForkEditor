@@ -187,7 +187,7 @@ void AlphaEngineApp::Start()
             ImGuiSettings CustomSettings;
             CustomSettings.font("Fonts/Anonymous Pro.ttf",14, false);
             CustomSettings.font("Fonts/fontawesome-webfont.ttf", 14, true);
-            CustomSettings.font("Fonts/UrhoCraz-Icons-Interface1.ttf", 48, false);
+            CustomSettings.font("Fonts/UrhoCraz-Icons-Interface1.ttf", 36, false);
 
             // Icon range
             Vector<ImWchar> iconRanges;

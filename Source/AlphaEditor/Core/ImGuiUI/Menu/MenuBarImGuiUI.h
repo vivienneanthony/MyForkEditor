@@ -1,5 +1,4 @@
-#ifndef MenuBarImGuiUI_H
-#define MenuBarImGuiUI_H
+#pragma once
 
 
 class MenuBarImGuiUI : public Object
@@ -9,10 +8,9 @@ class MenuBarImGuiUI : public Object
         MenuBarImGuiUI(Context * context);
         virtual ~MenuBarImGuiUI();
 
-        static void ShowMenuBar();
+        static void ShowMenuBar(const Vector<SubMenu> & EditorMenuBar);
 
     protected:
     private:
 };
 
-#endif // MenuBarImGuiUI_H

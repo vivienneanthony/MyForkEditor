@@ -47,6 +47,7 @@
 
 #include <AlphaEngine/ThirdParty/ImGui/imgui.h>
 #include "../../../ImGuiUI/Window/CameraInfoImGuiUI.h"
+#include "../../../ImGuiUI/Window/StatusBarImGuiUI.h"
 
 
 using namespace Urho3D;
@@ -480,12 +481,9 @@ void EPScene3D::UpdateStats(float timeStep)
                               "  Shadowmaps: " + String(renderer->GetNumShadowMaps(true)) +
                               "  Occluders: " + String(renderer->GetNumOccluders(true)));
 
-    String UseText = ModeInfo+SceneInfo;
+    String UseString = ModeInfo+SceneInfo;
 
-
-    editorModeText->SetText(UseText);
-
-    editorModeText->SetSize(editorModeText->GetMinSize());
+    StatusBarImGuiUI::ShowStatusBar(UseString);
 
 }
 

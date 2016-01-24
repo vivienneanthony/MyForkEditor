@@ -22,12 +22,15 @@ CameraInfoImGuiUI::~CameraInfoImGuiUI()
     //dtor
 }
 
-void CameraInfoImGuiUI::ShowCameraInfo(const Node* NodeCamera=NULL)
+bool * CameraInfoImGuiUI::ShowCameraInfo(const Node* NodeCamera=NULL)
 {
+    // p_opened
+    bool * p_opened = NULL;
+
     // if no node
     if(NodeCamera==NULL)
     {
-        return;
+        return p_opened;
     }
 
     Vector3 cameraPos = NodeCamera->GetPosition();
@@ -67,5 +70,5 @@ void CameraInfoImGuiUI::ShowCameraInfo(const Node* NodeCamera=NULL)
     initialized = true;
 
 
-    return;
+    return p_opened;
 }

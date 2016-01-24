@@ -8,9 +8,10 @@ public:
     CameraInfoImGuiUI(Context * context);
     virtual ~CameraInfoImGuiUI();
 
-    static void ShowCameraInfo(const Node * NodeCamera);
+    static bool * ShowCameraInfo(const Node * NodeCamera);
 
-    static bool initialized;
+
 protected:
 private:
+  static bool initialized;
 };

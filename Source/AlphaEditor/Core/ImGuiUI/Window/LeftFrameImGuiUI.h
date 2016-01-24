@@ -1,6 +1,7 @@
 #pragma once
 
 
+class editorData;
 
 class LeftFrameImGuiUI : public Object
 {
@@ -10,12 +11,16 @@ public:
     LeftFrameImGuiUI(Context * context);
     virtual ~LeftFrameImGuiUI();
 
-    static void ShowLeftFrame(void);
+    static bool * ShowLeftFrame(void);
 
-    static bool initialized;
+    static void SetEditorData(EditorData * pSetEditorData);
 
 protected:
 private:
+ static bool initialized;
+ static EditorData *  pEditorData;
+
+ static void GetNodeData(Node * ParentNode);
 };
 
 

@@ -11,7 +11,6 @@
 #include <AlphaEngine/Interfaces/ImGui/ImGuiInterface.h>
 
 
-
 // Editor Core
 #include "Editor.h"
 #include "EditorData.h"
@@ -49,10 +48,12 @@
 // Engine
 #include "AlphaEngine/GameLogic/BaseGameLogic.h"
 
+#include "../ImGuiUI/EditorImGuiInterface.h"
 #include "../ImGuiUI/Menu/MenuBarImGuiUI.h"
 #include "../ImGuiUI/ToolBar/MainToolBarImGuiUI.h"
 #include "../ImGuiUI/Window/LeftFrameImGuiUI.h"
 #include "../ImGuiUI/Window/RightFrameImGuiUI.h"
+
 
 using namespace Urho3D;
 
@@ -327,12 +328,16 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
 
         return false;
     }
-*/
+    */
     m_bIsVisible = true;
     m_bIsInitialized = true;
 
     InitializeAllDelegates();
 
+    CreateMenuBar();
+    CreateIcons();
+
+//    MainToolBarImGuiUI::SetToolBar(EditorToolBar, EditorToolBar);
 
 
     return true;
@@ -427,6 +432,9 @@ bool Editor::CreateHierarchyWindow()
 
     // Connect the hierarchy with the editable ui.
     m_pHierarchyWindow->SetUIElement(m_pSceneRootUI);
+
+    LeftFrameImGuiUI::SetEditorData(m_pEditorData);
+
 
     return true;
 }
@@ -608,19 +616,19 @@ bool Editor::CreateViewSettingsWindow()
 // Create Settings menu
 bool Editor::CreateSettingsMenu(void)
 {
-  /*  // Create Settings Menu
-    MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
+    /*  // Create Settings Menu
+      MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
 
-    if (!pMenubar)
-    {
-        return false;
-    }
+      if (!pMenubar)
+      {
+          return false;
+      }
 
-    // Create Menu
-    pMenubar->CreateMenu("Settings");
+      // Create Menu
+      pMenubar->CreateMenu("Settings");
 
-    pMenubar->CreateMenuItem("Settings", "Preferences", A_SETTINGSPREFERENCES_VAR);
-*/
+      pMenubar->CreateMenuItem("Settings", "Preferences", A_SETTINGSPREFERENCES_VAR);
+    */
     return true;
 }
 
@@ -628,21 +636,21 @@ bool Editor::CreateSettingsMenu(void)
 bool Editor::CreateAboutMenu(void)
 {
     // Create about menu
-  /*  MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
+    /*  MenuBarUI* pMenubar = m_pEditorView->GetMenuBar();
 
-    if (!pMenubar)
-    {
-        return false;
-    }
+      if (!pMenubar)
+      {
+          return false;
+      }
 
-    // Create Menu
-    pMenubar->CreateMenu("About");
+      // Create Menu
+      pMenubar->CreateMenu("About");
 
 
-    pMenubar->CreateMenuItem("About", "Garage Door Productions", A_ABOUTGDP_VAR);
-    pMenubar->CreateMenuItem("About", "Developers", A_ABOUTGDPTEAM_VAR);
+      pMenubar->CreateMenuItem("About", "Garage Door Productions", A_ABOUTGDP_VAR);
+      pMenubar->CreateMenuItem("About", "Developers", A_ABOUTGDPTEAM_VAR);
 
-*/
+    */
     return true;
 }
 
@@ -846,8 +854,9 @@ void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
 {
     if(g_pApp->GetImGuiInterface())
     {
-        MenuBarImGuiUI::ShowMenuBar();
-        MainToolBarImGuiUI::ShowToolBar();
+        MenuBarImGuiUI::ShowMenuBar(EditorMenuBar);
+        //MainToolBarImGuiUI::ShowToolBar(bEditorToolBar,EditorToolBar);
+        MainToolBarImGuiUI::ShowToolBar(1,EditorToolBar);
         LeftFrameImGuiUI::ShowLeftFrame();
         RightFrameImGuiUI::ShowRightFrame();
 
@@ -866,10 +875,10 @@ void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
         m_pEditorPluginOver->Update(timestep);
     }
 
-/*    if (m_pResourceBrowser->IsVisible())
-    {
-        m_pResourceBrowser->Update();
-    }*/
+    /*    if (m_pResourceBrowser->IsVisible())
+        {
+            m_pResourceBrowser->Update();
+        }*/
 
     // Handle editor keypress check
     HandleKeyDownDelegate(eventType,eventData);
@@ -1109,4 +1118,171 @@ void Editor::Refresh3DViewSettings(void)
         m_pEditorPluginMain->Update3DViewSettings();
     }
 
+}
+
+void Editor::CreateMenuBar()
+{
+    // create struct
+    // create fist submenu
+    SubMenu SubMenuAlpha;
+    SubMenuAlpha.Options.Push((MenuItem)
+    {"AlphaEditor",0,true
+    });
+    SubMenuAlpha.Options.Push((MenuItem)
+    {"Export to AlphaEngine",0,true
+    });
+    SubMenuAlpha.Options.Push((MenuItem)
+    {"Exit",0,true
+    });
+
+
+    SubMenu SubMenuFile;
+    SubMenuFile.Options.Push((MenuItem)
+    {"File",0,true
+    });
+    SubMenuFile.Options.Push((MenuItem)
+    {"New scene", 0, true
+    });
+    SubMenuFile.Options.Push((MenuItem)
+    {"Open scene...", 0, true
+    });
+    SubMenuFile.Options.Push((MenuItem)
+    {"Save scene", 0, true
+    });
+    SubMenuFile.Options.Push((MenuItem)
+    {"Save scene as...", 0, true
+    });
+    SubMenuFile.Options.Push((MenuItem)
+    {"Load node as replicated", 0, true
+    });
+    SubMenuFile.Options.Push((MenuItem)
+    {"Load node as local", 0, true
+    });
+    SubMenuFile.Options.Push((MenuItem)
+    {"Save node as", 0, true
+    });
+
+    SubMenu SubMenuCreate;
+    SubMenuCreate.Options.Push((MenuItem)
+    {"Create",0,true
+    });
+    SubMenuCreate.Options.Push((MenuItem)
+    {"Replicated node", 0, true
+    });
+    SubMenuCreate.Options.Push((MenuItem)
+    {"Local node", 0, true
+    });
+    SubMenuCreate.Options.Push((MenuItem)
+    {"Game Asset", 0, true
+    });
+
+    SubMenu SubMenuTools;
+    SubMenuTools.Options.Push((MenuItem)
+    {"Tools",0,true
+    });
+     SubMenuTools.Options.Push((MenuItem)
+    {"Materials",0,true
+    });
+
+    SubMenu SubMenuPreferences;
+    SubMenuPreferences.Options.Push((MenuItem)
+    {"Preferences",0,true
+    });
+    SubMenuPreferences.Options.Push((MenuItem)
+    {"Configuration",0,true
+    });
+
+    SubMenu SubMenuAbout;
+    SubMenuAbout.Options.Push((MenuItem)
+    {"About",0,true
+    });
+    SubMenuAbout.Options.Push((MenuItem)
+    {"Garage Door Productions", 0, true
+    });
+    SubMenuAbout.Options.Push((MenuItem)
+    {"Alpha Dev Team", 0, true
+    });
+
+
+    EditorMenuBar.Push(SubMenuAlpha);
+    EditorMenuBar.Push(SubMenuFile);
+    EditorMenuBar.Push(SubMenuCreate);
+    EditorMenuBar.Push(SubMenuTools);
+    EditorMenuBar.Push(SubMenuPreferences);
+    EditorMenuBar.Push(SubMenuAbout);
+
+
+    return;
+}
+
+
+void Editor::CreateIcons()
+{
+
+    // create fist submenu
+    ToolBarRow ToolBar0;
+    ToolBar0.Options.Push((ToolBarIcon){'A', false});
+    ToolBar0.Options.Push((ToolBarIcon){'U', false});
+    ToolBar0.Options.Push((ToolBarIcon){'W', false});
+    ToolBar0.Options.Push((ToolBarIcon){' ', true});
+    ToolBar0.Options.Push((ToolBarIcon){'A', false});
+    ToolBar0.Options.Push((ToolBarIcon){'B', false});
+    ToolBar0.Options.Push((ToolBarIcon){'C', false});
+    ToolBar0.Options.Push((ToolBarIcon){' ', true});
+    ToolBar0.Options.Push((ToolBarIcon){'D', false});
+    ToolBar0.Options.Push((ToolBarIcon){' ', true});
+    ToolBar0.Options.Push((ToolBarIcon){'E', false});
+    ToolBar0.Options.Push((ToolBarIcon){'F', false});
+    ToolBar0.Options.Push((ToolBarIcon){' ', true});
+    ToolBar0.Options.Push((ToolBarIcon){'G', false});
+    ToolBar0.Options.Push((ToolBarIcon){'H', false});
+    ToolBar0.Options.Push((ToolBarIcon){'I', false});
+    ToolBar0.Options.Push((ToolBarIcon){' ', true});
+    ToolBar0.Options.Push((ToolBarIcon){'O', false});
+    ToolBar0.Options.Push((ToolBarIcon){'P', false});
+    ToolBar0.Options.Push((ToolBarIcon){' ', true});
+    ToolBar0.Options.Push((ToolBarIcon){'J', false});
+    ToolBar0.Options.Push((ToolBarIcon){'K', false});
+    ToolBar0.Options.Push((ToolBarIcon){'L', false});
+    ToolBar0.Options.Push((ToolBarIcon){'M', false});
+    ToolBar0.Options.Push((ToolBarIcon){'N', false});
+    ToolBar0.Options.Push((ToolBarIcon){' ', true});
+    ToolBar0.Options.Push((ToolBarIcon){'Q', false});
+    ToolBar0.Options.Push((ToolBarIcon){'R', false});
+    ToolBar0.Options.Push((ToolBarIcon){'S', false});
+
+
+    // create fist submenu
+    ToolBarRow ToolBar1;
+    ToolBar1.Options.Push((ToolBarIcon){'a', false});
+    ToolBar1.Options.Push((ToolBarIcon){'b', false});
+    ToolBar1.Options.Push((ToolBarIcon){'$', false});
+    ToolBar1.Options.Push((ToolBarIcon){'c', false});
+    ToolBar1.Options.Push((ToolBarIcon){'d', false});
+    ToolBar1.Options.Push((ToolBarIcon){'e', false});
+    ToolBar1.Options.Push((ToolBarIcon){'f', false});
+    ToolBar1.Options.Push((ToolBarIcon){'g', false});
+    ToolBar1.Options.Push((ToolBarIcon){'h', false});
+    ToolBar1.Options.Push((ToolBarIcon){'i', false});
+    ToolBar1.Options.Push((ToolBarIcon){'j', false});
+    ToolBar1.Options.Push((ToolBarIcon){'k', false});
+    ToolBar1.Options.Push((ToolBarIcon){'l', false});
+    ToolBar1.Options.Push((ToolBarIcon){'m', false});
+    ToolBar1.Options.Push((ToolBarIcon){'n', false});
+    ToolBar1.Options.Push((ToolBarIcon){'o', false});
+    ToolBar1.Options.Push((ToolBarIcon){'p', false});
+    ToolBar1.Options.Push((ToolBarIcon){'q', false});
+    ToolBar1.Options.Push((ToolBarIcon){'r', false});
+    ToolBar1.Options.Push((ToolBarIcon){'s', false});
+    ToolBar1.Options.Push((ToolBarIcon){'t', false});
+    ToolBar1.Options.Push((ToolBarIcon){'u', false});
+    ToolBar1.Options.Push((ToolBarIcon){'v', false});
+    ToolBar1.Options.Push((ToolBarIcon){'w', false});
+    ToolBar1.Options.Push((ToolBarIcon){'x', false});
+
+
+    EditorToolBar.Push(ToolBar0);
+    EditorToolBar.Push(ToolBar1);
+
+    return;
 }

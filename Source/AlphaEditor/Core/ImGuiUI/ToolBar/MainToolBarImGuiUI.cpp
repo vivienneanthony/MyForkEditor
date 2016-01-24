@@ -4,9 +4,13 @@
 
 #include <AlphaEngine/ThirdParty/ImGui/imgui.h>
 
+#include "../../Editor/Editor.h"
+
 #include "MainToolBarImGuiUI.h"
 
 static unsigned int currentToolBar;
+//static Vector<ToolBarRow> ToolBars;
+
 
 MainToolBarImGuiUI::MainToolBarImGuiUI(Context * context = g_pApp->GetGameLogic()->GetContext())
     :Object(context)
@@ -22,7 +26,8 @@ MainToolBarImGuiUI::~MainToolBarImGuiUI()
     //dtor
 }
 
-bool * MainToolBarImGuiUI::ShowToolBar(void)
+
+bool * MainToolBarImGuiUI::ShowToolBar(const unsigned int & SetToolBar, const Vector<ToolBarRow> & SetToolBars )
 {
     // null
     bool * p_opened = NULL;
@@ -55,17 +60,29 @@ bool * MainToolBarImGuiUI::ShowToolBar(void)
 
     ImGui::PushFont(font);
 
-    for(unsigned int i=0; i<26; i++)
+
+    for(unsigned int i=0; i<SetToolBars.At(SetToolBar).Options.Size(); i++)
     {
         if(i)
         {
             ImGui::SameLine();
         }
 
-        String label;
-        label.Append('A'+i);
+        // get letter
+        char character = SetToolBars.At(SetToolBar).Options.At(i).Letter;
+        bool isseparater = SetToolBars.At(SetToolBar).Options.At(i).Separator;
 
-        ImGui::SmallButton(label.CString());
+        if(!isseparater)
+        {
+            ImGui::SmallButton(String((char)character).CString());
+        }
+        else
+        {
+            // Add dummy item
+            ImGui::SameLine();
+            ImGui::Dummy(ImVec2(8,8));
+
+        }
     }
 
 
