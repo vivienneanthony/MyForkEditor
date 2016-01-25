@@ -337,8 +337,18 @@ bool Editor::Create(Scene* scene, UIElement* sceneUI)
     CreateMenuBar();
     CreateIcons();
 
+    EditorCurrentToolBar=0;
+    bShowTestWindow=false;
+
 //    MainToolBarImGuiUI::SetToolBar(EditorToolBar, EditorToolBar);
 
+
+    ResourceCache * ResCache = g_pApp ->GetConstantResCache();
+
+    SharedPtr<File> file = ResCache->GetFile("Scenes/SceneLoadExample.xml");
+    m_pScene->LoadXML(*file);
+
+    LeftFrameImGuiUI::SetScene(m_pScene);
 
     return true;
 }
@@ -433,7 +443,7 @@ bool Editor::CreateHierarchyWindow()
     // Connect the hierarchy with the editable ui.
     m_pHierarchyWindow->SetUIElement(m_pSceneRootUI);
 
-    LeftFrameImGuiUI::SetEditorData(m_pEditorData);
+
 
 
     return true;
@@ -609,6 +619,9 @@ bool Editor::CreateViewSettingsWindow()
     m_pViewSettingsWindow->UpdateSettings(m_pViewSettings);
 
     m_pViewSettingsWindow->SetEditor(this);
+
+
+
 
     return true;
 }
@@ -856,9 +869,14 @@ void Editor::HandleUpdateDelegate(StringHash eventType, VariantMap& eventData)
     {
         MenuBarImGuiUI::ShowMenuBar(EditorMenuBar);
         //MainToolBarImGuiUI::ShowToolBar(bEditorToolBar,EditorToolBar);
-        MainToolBarImGuiUI::ShowToolBar(1,EditorToolBar);
+        MainToolBarImGuiUI::ShowToolBar(EditorCurrentToolBar,EditorToolBar);
         LeftFrameImGuiUI::ShowLeftFrame();
         RightFrameImGuiUI::ShowRightFrame();
+
+        if(bShowTestWindow==true)
+        {
+            ImGui::ShowTestWindow();
+        }
 
     }
 
@@ -1041,6 +1059,33 @@ void Editor::HandleKeyDownDelegate(StringHash eventType, VariantMap& eventData)
     // Get input subsystem
     Input * input_ = g_pApp->GetSubsystem<Input>();
 
+    if (input_->GetKeyPress(KEY_TAB)==true)
+    {
+        if(EditorCurrentToolBar==0)
+        {
+            EditorCurrentToolBar=1;
+        }
+        else
+        {
+            EditorCurrentToolBar=0;
+        }
+    }
+
+
+    if (input_->GetKeyPress(KEY_F10)==true)
+    {
+
+        if(EditorCurrentToolBar==false)
+        {
+            bShowTestWindow=true;
+        }
+        else
+        {
+            bShowTestWindow=false;
+        }
+    }
+
+
     // Check for delete key was pressed
     if (input_->GetKeyPress(KEY_DELETE)==true)
     {
@@ -1176,12 +1221,30 @@ void Editor::CreateMenuBar()
     {"Game Asset", 0, true
     });
 
+    SubMenu SubMenuEdit;
+    SubMenuEdit.Options.Push((MenuItem)
+    {"Edit",0,true
+    });
+    SubMenuEdit.Options.Push((MenuItem)
+    {"Copy", 0, true
+    });
+    SubMenuEdit.Options.Push((MenuItem)
+    {"Paste", 0, true
+    });
+
     SubMenu SubMenuTools;
     SubMenuTools.Options.Push((MenuItem)
     {"Tools",0,true
     });
-     SubMenuTools.Options.Push((MenuItem)
+    SubMenuTools.Options.Push((MenuItem)
     {"Materials",0,true
+    });
+    SubMenuTools.Options.Push((MenuItem)
+    {"Particle",0,true
+    });
+
+    SubMenuTools.Options.Push((MenuItem)
+    {"Sound",0,true
     });
 
     SubMenu SubMenuPreferences;
@@ -1207,6 +1270,7 @@ void Editor::CreateMenuBar()
     EditorMenuBar.Push(SubMenuAlpha);
     EditorMenuBar.Push(SubMenuFile);
     EditorMenuBar.Push(SubMenuCreate);
+    EditorMenuBar.Push(SubMenuEdit);
     EditorMenuBar.Push(SubMenuTools);
     EditorMenuBar.Push(SubMenuPreferences);
     EditorMenuBar.Push(SubMenuAbout);
@@ -1219,66 +1283,182 @@ void Editor::CreateMenuBar()
 void Editor::CreateIcons()
 {
 
+
     // create fist submenu
     ToolBarRow ToolBar0;
-    ToolBar0.Options.Push((ToolBarIcon){'A', false});
-    ToolBar0.Options.Push((ToolBarIcon){'U', false});
-    ToolBar0.Options.Push((ToolBarIcon){'W', false});
-    ToolBar0.Options.Push((ToolBarIcon){' ', true});
-    ToolBar0.Options.Push((ToolBarIcon){'A', false});
-    ToolBar0.Options.Push((ToolBarIcon){'B', false});
-    ToolBar0.Options.Push((ToolBarIcon){'C', false});
-    ToolBar0.Options.Push((ToolBarIcon){' ', true});
-    ToolBar0.Options.Push((ToolBarIcon){'D', false});
-    ToolBar0.Options.Push((ToolBarIcon){' ', true});
-    ToolBar0.Options.Push((ToolBarIcon){'E', false});
-    ToolBar0.Options.Push((ToolBarIcon){'F', false});
-    ToolBar0.Options.Push((ToolBarIcon){' ', true});
-    ToolBar0.Options.Push((ToolBarIcon){'G', false});
-    ToolBar0.Options.Push((ToolBarIcon){'H', false});
-    ToolBar0.Options.Push((ToolBarIcon){'I', false});
-    ToolBar0.Options.Push((ToolBarIcon){' ', true});
-    ToolBar0.Options.Push((ToolBarIcon){'O', false});
-    ToolBar0.Options.Push((ToolBarIcon){'P', false});
-    ToolBar0.Options.Push((ToolBarIcon){' ', true});
-    ToolBar0.Options.Push((ToolBarIcon){'J', false});
-    ToolBar0.Options.Push((ToolBarIcon){'K', false});
-    ToolBar0.Options.Push((ToolBarIcon){'L', false});
-    ToolBar0.Options.Push((ToolBarIcon){'M', false});
-    ToolBar0.Options.Push((ToolBarIcon){'N', false});
-    ToolBar0.Options.Push((ToolBarIcon){' ', true});
-    ToolBar0.Options.Push((ToolBarIcon){'Q', false});
-    ToolBar0.Options.Push((ToolBarIcon){'R', false});
-    ToolBar0.Options.Push((ToolBarIcon){'S', false});
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'1', false
+    });
+
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'A', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'U', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'W', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {' ', true
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'A', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'B', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'C', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {' ', true
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'D', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {' ', true
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'E', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'F', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {' ', true
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'G', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'H', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'I', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {' ', true
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'O', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'P', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {' ', true
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'J', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'K', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'L', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'M', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'N', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {' ', true
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'Q', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'R', false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {'S', false
+    });
 
 
     // create fist submenu
     ToolBarRow ToolBar1;
-    ToolBar1.Options.Push((ToolBarIcon){'a', false});
-    ToolBar1.Options.Push((ToolBarIcon){'b', false});
-    ToolBar1.Options.Push((ToolBarIcon){'$', false});
-    ToolBar1.Options.Push((ToolBarIcon){'c', false});
-    ToolBar1.Options.Push((ToolBarIcon){'d', false});
-    ToolBar1.Options.Push((ToolBarIcon){'e', false});
-    ToolBar1.Options.Push((ToolBarIcon){'f', false});
-    ToolBar1.Options.Push((ToolBarIcon){'g', false});
-    ToolBar1.Options.Push((ToolBarIcon){'h', false});
-    ToolBar1.Options.Push((ToolBarIcon){'i', false});
-    ToolBar1.Options.Push((ToolBarIcon){'j', false});
-    ToolBar1.Options.Push((ToolBarIcon){'k', false});
-    ToolBar1.Options.Push((ToolBarIcon){'l', false});
-    ToolBar1.Options.Push((ToolBarIcon){'m', false});
-    ToolBar1.Options.Push((ToolBarIcon){'n', false});
-    ToolBar1.Options.Push((ToolBarIcon){'o', false});
-    ToolBar1.Options.Push((ToolBarIcon){'p', false});
-    ToolBar1.Options.Push((ToolBarIcon){'q', false});
-    ToolBar1.Options.Push((ToolBarIcon){'r', false});
-    ToolBar1.Options.Push((ToolBarIcon){'s', false});
-    ToolBar1.Options.Push((ToolBarIcon){'t', false});
-    ToolBar1.Options.Push((ToolBarIcon){'u', false});
-    ToolBar1.Options.Push((ToolBarIcon){'v', false});
-    ToolBar1.Options.Push((ToolBarIcon){'w', false});
-    ToolBar1.Options.Push((ToolBarIcon){'x', false});
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'1', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'a', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'b', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'$', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'c', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'d', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'e', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'f', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'g', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'h', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'i', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'j', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'k', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'l', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'m', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'n', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'o', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'p', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'q', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'r', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'s', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'t', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'u', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'v', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'w', false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {'x', false
+    });
 
 
     EditorToolBar.Push(ToolBar0);

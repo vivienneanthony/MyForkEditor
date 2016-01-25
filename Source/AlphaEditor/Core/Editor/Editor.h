@@ -316,8 +316,12 @@ protected:
 
     // Imgui related
     Vector<SubMenu> EditorMenuBar;
-    unsigned int bEditorToolBar;
+    //unsigned int bEditorToolBar;
     Vector<ToolBarRow> EditorToolBar;
+    unsigned int EditorCurrentToolBar;
+
 
     bool * m_pShowToolBar;
+    bool bShowTestWindow;
+
 };

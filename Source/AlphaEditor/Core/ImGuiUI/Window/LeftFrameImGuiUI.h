@@ -13,14 +13,17 @@ public:
 
     static bool * ShowLeftFrame(void);
 
-    static void SetEditorData(EditorData * pSetEditorData);
+    static void SetScene(Scene * pSetEditorScene);
 
 protected:
 private:
  static bool initialized;
- static EditorData *  pEditorData;
+ static Scene*  pEditorScene;
 
  static void GetNodeData(Node * ParentNode);
+
+ static void ShowResourcesView(void);
+ static void ShowHierarchyView(void);
 };
 
 

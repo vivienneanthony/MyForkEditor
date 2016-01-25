@@ -11,7 +11,7 @@
 #include "LeftFrameImGuiUI.h"
 
 bool LeftFrameImGuiUI::initialized= false;
-EditorData * LeftFrameImGuiUI::pEditorData=NULL;
+Scene * LeftFrameImGuiUI::pEditorScene=NULL;
 
 LeftFrameImGuiUI::LeftFrameImGuiUI(Context * context = g_pApp->GetGameLogic()->GetContext())
     :Object(context)
@@ -61,25 +61,14 @@ bool *  LeftFrameImGuiUI::ShowLeftFrame(void)
     ImGui::SetCursorPosY(96);
 
 
-    if(ImGui::TreeNode("Outline"))
+    if(selectedTab==0)
     {
-        // if editor data
-        if(pEditorData)
-        {
-            Scene * ThisScene = pEditorData->GetEditorScene();
-            // if scene
-            if(ThisScene)
-            {
-                Node * ParentNode = ThisScene->GetParent();
+        ShowHierarchyView();
+    }
 
-                for(unsigned int i=0; i<ParentNode->GetNumChildren(); i++)
-                {
-                    GetNodeData(ParentNode->GetChild(i));
-                }
-            }
-        }
-
-
+    if(selectedTab==1)
+    {
+        ShowResourcesView();
     }
 
     ImGui::TreePop();
@@ -94,44 +83,88 @@ bool *  LeftFrameImGuiUI::ShowLeftFrame(void)
     return p_opened;
 }
 
-void  LeftFrameImGuiUI::SetEditorData( EditorData * pSetEditorData)
+void  LeftFrameImGuiUI::SetScene(Scene * pSetEditorScene)
 {
 
-    pEditorData = pSetEditorData;
+    pEditorScene = pSetEditorScene;
 
     return;
 }
 
-void LeftFrameImGuiUI::GetNodeData(Node * ParentNode)
+
+void  LeftFrameImGuiUI::ShowHierarchyView(void)
 {
-    for(unsigned int i=0; i<ParentNode->GetNumChildren(); i++)
+
+    // Do the outline
+    if(ImGui::TreeNode("Outline"))
     {
-        GetNodeData(ParentNode->GetChild(i));
+        // if editor data
+        if(pEditorScene)
+        {
+            URHO3D_LOGINFO("It Got Here");
+
+            for(unsigned int i=0; i<pEditorScene->GetNumChildren(); i++)
+            {
+                GetNodeData(pEditorScene->GetChild(i));
+            }
+        }
+
+        ImGui::TreePop();
+
     }
 
     return;
 }
 
-// tree node
-// test code
-/*// Use Tree Format for Nodes
-      if(ImGui::TreeNode("Scene"))
-      {
-          // Scene
-          for (int i = 0; i < 5; i++)
-          {
-              if (ImGui::TreeNode((void*)(intptr_t)i, "Child %d", i))
-              {
-                  ImGui::Text("StaticComponent");
 
-                  ImGui::TreePop();
-              }
-          }
-          ImGui::TreePop();
-      }*/
 
-/*   if(ImGui::TreeNode("UI"))
-   {
-       ImGui::TreePop();
-   }*/
+void LeftFrameImGuiUI::GetNodeData(Node * ParentNode)
+{
 
+    // Create a unique name
+    String NodeName = ParentNode->GetName();
+    unsigned int NodeID= ParentNode->GetID();
+
+    String NameString = NodeName+String(":")+String(NodeID);
+
+    // Do the outline
+    if(ImGui::TreeNode(NameString.CString()))
+    {
+        // for now just get the node
+        for(unsigned int i=0; i<ParentNode->GetNumChildren(); i++)
+        {
+            GetNodeData(ParentNode->GetChild(i));
+        }
+        ImGui::TreePop();
+    }
+
+    return;
+}
+
+
+
+
+void LeftFrameImGuiUI::ShowResourcesView(void)
+{
+
+    ImGui::Text("Browser");
+
+    ImGui::Dummy(ImVec2(8,8));
+
+    const char* listbox_items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
+    static int listbox_item_current = 1;
+    ImGui::ListBox("", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items), 4);
+
+    ImGui::Dummy(ImVec2(8,8));
+
+
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY()+32);
+
+    ImGui::Separator();
+
+
+    ImGui::Dummy(ImVec2(8,8));
+
+    ImGui::Text("Preview");
+
+}
