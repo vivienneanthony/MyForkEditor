@@ -95,13 +95,13 @@ void  LeftFrameImGuiUI::SetScene(Scene * pSetEditorScene)
 void  LeftFrameImGuiUI::ShowHierarchyView(void)
 {
 
+
     // Do the outline
     if(ImGui::TreeNode("Outline"))
     {
         // if editor data
         if(pEditorScene)
         {
-            URHO3D_LOGINFO("It Got Here");
 
             for(unsigned int i=0; i<pEditorScene->GetNumChildren(); i++)
             {
@@ -118,23 +118,42 @@ void  LeftFrameImGuiUI::ShowHierarchyView(void)
 
 
 
-void LeftFrameImGuiUI::GetNodeData(Node * ParentNode)
+void LeftFrameImGuiUI::GetNodeData(const Node * ParentNode)
 {
 
     // Create a unique name
-    String NodeName = ParentNode->GetName();
-    unsigned int NodeID= ParentNode->GetID();
+    //String NodeName = ParentNode->GetName();
+    //unsigned int NodeID= ParentNode->GetID();
 
-    String NameString = NodeName+String(":")+String(NodeID);
+    // Get the Node Id and Component Type
+    String NameString = ParentNode->GetName()+String(":Id(")+String(ParentNode->GetID())+String(")");
+
+    //ImVec2 pos = ImGui::GetCursorScreenPos();
+    //ImU32 col = ImColor(ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered]);
+    //ImGui::RenderFrame(pos, ImVec2(pos.x + ImGui::GetContentRegionMax().x, pos.y + ImGui::GetTextLineHeight()), col, false);
+
+    // assign a id
+    NameString.Append(String("###Node_ID") + String(ParentNode->GetID())  );
+
 
     // Do the outline
     if(ImGui::TreeNode(NameString.CString()))
     {
+        // Get Components
+        const Vector< SharedPtr< Component > > & NodeComponents = ParentNode->GetComponents();
+
+        for(unsigned int i=0; i < NodeComponents.Size(); i++)
+        {
+            String ComponentInfo = NodeComponents.At(i)->GetTypeName()+String(":Id(")+ String(NodeComponents.At(i)->GetID())+String(")");
+            ImGui::Text(ComponentInfo.CString());
+        }
+
         // for now just get the node
-        for(unsigned int i=0; i<ParentNode->GetNumChildren(); i++)
+        for(unsigned int i=0; i <ParentNode->GetNumChildren(); i++)
         {
             GetNodeData(ParentNode->GetChild(i));
         }
+
         ImGui::TreePop();
     }
 

@@ -69,12 +69,12 @@ bool * MainToolBarImGuiUI::ShowToolBar(const unsigned int & SetToolBar, const Ve
         }
 
         // get letter
-        char character = SetToolBars.At(SetToolBar).Options.At(i).Letter;
+        const char * Assignment = SetToolBars.At(SetToolBar).Options.At(i).Assignment;
         bool isseparater = SetToolBars.At(SetToolBar).Options.At(i).Separator;
 
         if(!isseparater)
         {
-            ImGui::SmallButton(String((char)character).CString());
+            ImGui::SmallButton(Assignment);
         }
         else
         {

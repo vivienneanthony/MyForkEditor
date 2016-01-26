@@ -80,54 +80,63 @@ void  RightFrameImGuiUI::ShowSettingsPanel(void)
     ImGui::Columns(2,NULL,false);
 
     // float test
-    static float bar = .5f;
+    static float CameraBaseSpeed = .5f;
+    static float CameraRotationSpeed = .5f;
+    static float CameraShiftSpeedMultiplier = .5f;
+    static float ViewNearClip=0.5f;
+    static float ViewFarClip=0.5f;
+    static float ViewFov=0.5f;
+    static float StepMove=0.5f;
+    static float StepRotate=0.5f;
+    static float StepScale=0.5f;
+    static float SnapScale=0.5f;
 
 
     ImGui::Text("Cam Base Speed");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###CameraBaseSpeed_", &CameraBaseSpeed, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
 
     ImGui::Text("Cam Rotation Speed");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###CameraRotationSpeed_", &CameraRotationSpeed, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
 
     ImGui::Text("Cam Shift Speed(X)");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###CameraShiftSpeedMultiplier_", &CameraShiftSpeedMultiplier, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
 
     //camera viewport
     ImGui::Text("View NearClip");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###ViewNearClip_", &ViewNearClip, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
     ImGui::Text("View FarClip");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###ViewFarClip_", &ViewFarClip, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
     ImGui::Text("View Fov");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###ViewFov_", &ViewFov, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
 
     // move steps
     ImGui::Text("Move Step");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###StepMove_", &StepMove, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
     ImGui::Text("Rotate Step");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###StepRotate_", &StepRotate, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
     ImGui::Text("Scale Step");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###StepScale_", &StepScale, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
     ImGui::Text("Snap Scale");
     ImGui::NextColumn();
-    ImGui::InputFloat("", &bar, 0.01f, 0.05f, -1);
+    ImGui::InputFloat("###SnapScale_", &SnapScale, 0.01f, 0.05f, -1);
     ImGui::NextColumn();
 
     return;

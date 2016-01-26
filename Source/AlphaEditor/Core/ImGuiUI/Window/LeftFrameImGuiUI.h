@@ -20,7 +20,7 @@ private:
  static bool initialized;
  static Scene*  pEditorScene;
 
- static void GetNodeData(Node * ParentNode);
+ static void GetNodeData(const Node * ParentNode) ;
 
  static void ShowResourcesView(void);
  static void ShowHierarchyView(void);

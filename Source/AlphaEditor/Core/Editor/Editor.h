@@ -56,7 +56,7 @@ struct SubMenu
 
 struct ToolBarIcon
 {
-    char Letter;
+    const char * Assignment;
     bool Separator;
 };
 

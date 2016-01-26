@@ -1054,6 +1054,12 @@ void EPScene3D::ViewRaycast(bool mouseClick)
     const IntVector2& screenpos = activeView->GetScreenPosition();
     float	posx = float(pos.x_ - screenpos.x_) / float(activeView->GetWidth());
     float	posy = float(pos.y_ - screenpos.y_) / float(activeView->GetHeight());
+
+    if(ImGui::IsMouseHoveringAnyWindow())
+    {
+        return;
+    }
+
     Ray cameraRay = camera_->GetScreenRay(posx, posy);
 
     Component* selectedComponent = NULL;

@@ -1174,10 +1174,10 @@ void Editor::CreateMenuBar()
     {"AlphaEditor",0,true
     });
     SubMenuAlpha.Options.Push((MenuItem)
-    {"Export to AlphaEngine",0,true
+    {"Export to AlphaEngine###ExportAlphaEngine",0,true
     });
     SubMenuAlpha.Options.Push((MenuItem)
-    {"Exit",0,true
+    {"Exit###ExitAlphaEditor",0,true
     });
 
 
@@ -1186,25 +1186,25 @@ void Editor::CreateMenuBar()
     {"File",0,true
     });
     SubMenuFile.Options.Push((MenuItem)
-    {"New scene", 0, true
+    {"New scene###File_NewScene", 0, true
     });
     SubMenuFile.Options.Push((MenuItem)
-    {"Open scene...", 0, true
+    {"Open scene...###File_OpenScene", 0, true
     });
     SubMenuFile.Options.Push((MenuItem)
-    {"Save scene", 0, true
+    {"Save scene###File_SaveScene", 0, true
     });
     SubMenuFile.Options.Push((MenuItem)
-    {"Save scene as...", 0, true
+    {"Save scene as...###File_SaveSceneAs", 0, true
     });
     SubMenuFile.Options.Push((MenuItem)
-    {"Load node as replicated", 0, true
+    {"Load node as replicated###File_LoadNodeReplicated", 0, true
     });
     SubMenuFile.Options.Push((MenuItem)
-    {"Load node as local", 0, true
+    {"Load node as local###File_LoadNodeLocal", 0, true
     });
     SubMenuFile.Options.Push((MenuItem)
-    {"Save node as", 0, true
+    {"Save node as###File_SaveNodeAs", 0, true
     });
 
     SubMenu SubMenuCreate;
@@ -1212,13 +1212,13 @@ void Editor::CreateMenuBar()
     {"Create",0,true
     });
     SubMenuCreate.Options.Push((MenuItem)
-    {"Replicated node", 0, true
+    {"Replicated node###Create_ReplicatedNode", 0, true
     });
     SubMenuCreate.Options.Push((MenuItem)
-    {"Local node", 0, true
+    {"Local node###Create_LocalNode", 0, true
     });
     SubMenuCreate.Options.Push((MenuItem)
-    {"Game Asset", 0, true
+    {"Game Asset###Create_GameAsset", 0, true
     });
 
     SubMenu SubMenuEdit;
@@ -1226,10 +1226,10 @@ void Editor::CreateMenuBar()
     {"Edit",0,true
     });
     SubMenuEdit.Options.Push((MenuItem)
-    {"Copy", 0, true
+    {"Copy###Edit_Copy", 0, true
     });
     SubMenuEdit.Options.Push((MenuItem)
-    {"Paste", 0, true
+    {"Paste###Edit_Paste", 0, true
     });
 
     SubMenu SubMenuTools;
@@ -1237,14 +1237,14 @@ void Editor::CreateMenuBar()
     {"Tools",0,true
     });
     SubMenuTools.Options.Push((MenuItem)
-    {"Materials",0,true
+    {"Materials###Tools_MaterialEditor",0,true
     });
     SubMenuTools.Options.Push((MenuItem)
-    {"Particle",0,true
+    {"Particle###Tools_ParticleEditor",0,true
     });
 
     SubMenuTools.Options.Push((MenuItem)
-    {"Sound",0,true
+    {"Sound###Tools_SoundEditor",0,true
     });
 
     SubMenu SubMenuPreferences;
@@ -1252,7 +1252,7 @@ void Editor::CreateMenuBar()
     {"Preferences",0,true
     });
     SubMenuPreferences.Options.Push((MenuItem)
-    {"Configuration",0,true
+    {"Configuration###Preferences_Configuration",0,true
     });
 
     SubMenu SubMenuAbout;
@@ -1260,10 +1260,10 @@ void Editor::CreateMenuBar()
     {"About",0,true
     });
     SubMenuAbout.Options.Push((MenuItem)
-    {"Garage Door Productions", 0, true
+    {"Garage Door Productions###About_GarageDoorProductions", 0, true
     });
     SubMenuAbout.Options.Push((MenuItem)
-    {"Alpha Dev Team", 0, true
+    {"Alpha Dev Team###About_DevTeam", 0, true
     });
 
 
@@ -1287,177 +1287,197 @@ void Editor::CreateIcons()
     // create fist submenu
     ToolBarRow ToolBar0;
     ToolBar0.Options.Push((ToolBarIcon)
-    {'1', false
-    });
-
-    ToolBar0.Options.Push((ToolBarIcon)
-    {'A', false
+    {"1###ToolBar_ToggleBar", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'U', false
+    {" ", true
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'W', false
+    {"A###ToolBar_RunUpdatePlay", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {' ', true
+    {"U###ToolBar_RunUpdatePause", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'A', false
+    {"W###ToolBar_RevertOnPause", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'B', false
+    {" ", true
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'C', false
+    {"A###ToolBar_EditMove", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {' ', true
+    {"B###ToolBar_EditRotate", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'D', false
+    {"C###ToolBar_EditScale", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {' ', true
+    {" ", true
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'E', false
+    {"D###ToolBar_EditSelect", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'F', false
+    {" ", true
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {' ', true
+    {"E###ToolBar_AxisWorld", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'G', false
+    {"F###ToolBar_AxisLocal", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'H', false
+    {" ", true
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'I', false
+    {"G###ToolBar_MoveSnap", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {' ', true
+    {"H###ToolBar_RotateSnap", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'O', false
+    {"I###ToolBar_ScaleSnap", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'P', false
+    {" ", true
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {' ', true
+    {"O###ToolBar_SnapScaleHalf", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'J', false
+    {"P###ToolBar_SnapScaleQuarter", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'K', false
+    {" ", true
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'L', false
+    {"J###ToolBar_PickGeometries", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'M', false
+    {"K###ToolBar_PickLight", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'N', false
+    {"L###ToolBar_PickZone", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {' ', true
+    {"M###ToolBar_PickRigidBodies", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'Q', false
+    {"N###ToolBar_PickUIElements", false
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'R', false
+    {" ", true
     });
     ToolBar0.Options.Push((ToolBarIcon)
-    {'S', false
+    {"Q###ToolBar_FillPoint", false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {"R###ToolBar_FillWireframe", false
+    });
+    ToolBar0.Options.Push((ToolBarIcon)
+    {"S###ToolBar_FillSolid", false
     });
 
 
     // create fist submenu
     ToolBarRow ToolBar1;
     ToolBar1.Options.Push((ToolBarIcon)
-    {'1', false
+    {"1###ToolBar_ToggleBar", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'a', false
+    {" ", true
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'b', false
+    {"a###ToolBar_ReplicatedNode", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'$', false
+    {"b###ToolBar_LocalNode", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'c', false
+    {"$###ToolBar_GameAsset", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'d', false
+    {"c###ToolBar_Light", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'e', false
+    {"d###ToolBar_Camera", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'f', false
+    {"e###ToolBar_Zone", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'g', false
+    {"f###ToolBar_StaticModel", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'h', false
+    {"g###ToolBar_AnimatedModel", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'i', false
+    {"h###ToolBar_BillBoardSet", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'j', false
+    {"i###ToolBar_ParticleEmitter", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'k', false
+    {"j###ToolBar_Skybox", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'l', false
+    {"k###ToolBar_Terrain", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'m', false
+    {"l###ToolBar_Text3D", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'n', false
+    {" ", true
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'o', false
+    {"m###ToolBar_SoundListener", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'p', false
+    {"n###ToolBar_SoundSource3D", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'q', false
+    {"o###ToolBar_SoundSource", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'r', false
+    {" ", true
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'s', false
+    {"p###ToolBar_RigidBody", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'t', false
+    {"q###ToolBar_CollisionShape", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'u', false
+    {"r###ToolBar_Constraint", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'v', false
+    {" ", true
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'w', false
+    {"s###ToolBar_AnimationController", false
     });
     ToolBar1.Options.Push((ToolBarIcon)
-    {'x', false
+    {"t###ToolBar_ScriptInstance", false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {" ", true
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {"u###ToolBar_Navigable", false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {"v###ToolBar_NavigationMesh", false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {" ", true
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {"w###ToolBar_OffMeshConnection", false
+    });
+    ToolBar1.Options.Push((ToolBarIcon)
+    {"x###ToolBar_NetworkPriority", false
     });
 
 
